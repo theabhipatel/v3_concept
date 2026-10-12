@@ -1,0 +1,90 @@
+{
+  "siteName": "TheAbhiPatel",
+  "titleTemplate": "%s | TheAbhiPatel",
+  "twitterHandle": "@theabhipatel",
+  "keywords": [
+    "TheAbhiPatel",
+    "Abhishek Patel",
+    "theabhipatel",
+    "the abhi patel",
+    "Abhishek Patel developer",
+    "Abhishek Patel full stack developer",
+    "Abhishek Patel ai engineer",
+    "Abhishek Patel devops engineer",
+    "Full Stack AI Engineer",
+    "AI Engineer",
+    "AI Agent Developer",
+    "LLM Engineer",
+    "RAG Engineer",
+    "LangGraph Developer",
+    "Generative AI Developer",
+    "Full Stack Developer",
+    "MERN Stack Developer",
+    "DevOps Engineer",
+    "ai engineer indore",
+    "ai engineer india",
+    "full stack developer indore",
+    "mern stack developer india",
+    "devops engineer indore",
+    "web developer indore",
+    "react developer india",
+    "hire ai engineer india",
+    "hire full stack developer india",
+    "freelance developer india",
+    "theabhipatel portfolio",
+    "ai engineer portfolio",
+    "devops engineer portfolio",
+    "web developer portfolio",
+    "React",
+    "Next.js",
+    "Node.js",
+    "TypeScript",
+    "Python",
+    "FastAPI",
+    "LangChain",
+    "LangGraph",
+    "OpenAI",
+    "MongoDB",
+    "PostgreSQL",
+    "Docker",
+    "Kubernetes",
+    "AWS"
+  ],
+  "pages": {
+    "home": {
+      "path": "/",
+      "title": "TheAbhiPatel | Full Stack AI Engineer | Abhishek Patel",
+      "description": "I'm Abhishek Patel (TheAbhiPatel), a Full Stack AI Engineer from Indore, India. I build AI agents, RAG systems and scalable web apps with React, Next.js, Node.js, Python and TypeScript, shipped with DevOps (Docker, Kubernetes, AWS). Ask my AI agent ABI anything."
+    },
+    "about": {
+      "path": "/about",
+      "title": "About Abhishek Patel (TheAbhiPatel) - Full Stack AI Engineer",
+      "description": "Learn about Abhishek Patel (TheAbhiPatel), a Full Stack AI Engineer from Indore, India with 4+ years of experience building AI agents, LLM-powered products and scalable web applications, with hands-on DevOps (Docker, Kubernetes, AWS)."
+    },
+    "skills": {
+      "path": "/skills",
+      "title": "Skills & Technologies - Abhishek Patel (TheAbhiPatel) | 70+ Technologies",
+      "description": "Explore 70+ skills and technologies of Abhishek Patel (TheAbhiPatel). LangChain, LangGraph, RAG, OpenAI, React, Next.js, Node.js, TypeScript, Python, FastAPI, Docker, Kubernetes, AWS and more."
+    },
+    "projects": {
+      "path": "/projects",
+      "title": "Projects by Abhishek Patel (TheAbhiPatel) - 20+ AI, Full Stack & DevOps Projects",
+      "description": "Explore 20+ projects built by Abhishek Patel (TheAbhiPatel): agentic AI platforms, AI chatbots, full stack web apps, DevOps pipelines and React Native apps."
+    },
+    "contact": {
+      "path": "/contact",
+      "title": "Contact Abhishek Patel (TheAbhiPatel) - Hire a Full Stack AI Engineer",
+      "description": "Get in touch with Abhishek Patel (TheAbhiPatel) for AI engineering, full stack development, DevOps consulting or freelance projects."
+    },
+    "abi": {
+      "path": "/abi",
+      "title": "Talk to ABI - Abhi's Brain Interface",
+      "description": "Chat or talk with ABI (Abhi's Brain Interface), the AI agent that knows everything about Abhishek Patel's work, skills and projects."
+    },
+    "lab": {
+      "path": "/lab",
+      "title": "AI Lab - Live Demos by Abhishek Patel (TheAbhiPatel)",
+      "description": "Small live AI demos built by Abhishek Patel (TheAbhiPatel), showing RAG, agents and LLM engineering in action."
+    }
+  }
+}

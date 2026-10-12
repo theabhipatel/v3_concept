@@ -1,0 +1,27 @@
+{
+  "responseTime": "Within 24 hours",
+  "openTo": ["Full-time roles", "Freelance projects", "AI and full stack consulting"],
+  "availability": [
+    { "day": "Monday - Friday", "time": "9:00 AM - 6:00 PM IST", "available": true },
+    { "day": "Saturday", "time": "10:00 AM - 2:00 PM IST", "available": true },
+    { "day": "Sunday", "time": "Closed", "available": false }
+  ],
+  "faqs": [
+    {
+      "question": "What is your typical response time?",
+      "answer": "I usually respond to all inquiries within 24 hours on business days. For urgent matters, please mention it in your message."
+    },
+    {
+      "question": "Do you work on freelance projects?",
+      "answer": "Yes! I'm open to freelance opportunities, especially interesting projects involving AI, full stack development or DevOps."
+    },
+    {
+      "question": "What are your hourly rates?",
+      "answer": "My rates depend on the project scope and complexity. Share your requirements and I'll send a detailed quote."
+    },
+    {
+      "question": "Can you help with existing projects?",
+      "answer": "Absolutely! I can help with code reviews, bug fixes, performance optimization or adding new features to existing projects."
+    }
+  ]
+}

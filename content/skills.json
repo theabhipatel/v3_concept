@@ -1,0 +1,650 @@
+{
+  "categories": [
+    {
+      "id": "AI",
+      "label": "AI & LLMs"
+    },
+    {
+      "id": "Frontend",
+      "label": "Frontend"
+    },
+    {
+      "id": "Backend",
+      "label": "Backend"
+    },
+    {
+      "id": "Languages",
+      "label": "Languages"
+    },
+    {
+      "id": "Database",
+      "label": "Databases"
+    },
+    {
+      "id": "DevOps",
+      "label": "DevOps"
+    },
+    {
+      "id": "Cloud",
+      "label": "Cloud"
+    },
+    {
+      "id": "Tools",
+      "label": "Tools"
+    },
+    {
+      "id": "Testing",
+      "label": "Testing"
+    }
+  ],
+  "skills": [
+    {
+      "slug": "langchain",
+      "name": "LangChain",
+      "icon": "https://cdn.simpleicons.org/langchain",
+      "category": "AI",
+      "level": "Advanced",
+      "experience": "2+ years"
+    },
+    {
+      "slug": "langgraph",
+      "name": "LangGraph",
+      "icon": "https://cdn.simpleicons.org/langgraph",
+      "category": "AI",
+      "level": "Advanced",
+      "experience": "2+ years"
+    },
+    {
+      "slug": "openai-api",
+      "name": "OpenAI API",
+      "icon": "https://unpkg.com/@lobehub/icons-static-png@1.75.0/dark/openai.png",
+      "category": "AI",
+      "level": "Advanced",
+      "experience": "2+ years"
+    },
+    {
+      "slug": "claude-api",
+      "name": "Claude API",
+      "icon": "https://cdn.simpleicons.org/claude",
+      "category": "AI",
+      "level": "Advanced",
+      "experience": "2+ years"
+    },
+    {
+      "slug": "google-gemini",
+      "name": "Google Gemini",
+      "icon": "https://cdn.simpleicons.org/googlegemini",
+      "category": "AI",
+      "level": "Advanced",
+      "experience": "2+ years"
+    },
+    {
+      "slug": "llamaindex",
+      "name": "LlamaIndex",
+      "icon": "https://unpkg.com/@lobehub/icons-static-svg@1.75.0/icons/llamaindex-color.svg",
+      "category": "AI",
+      "level": "Advanced",
+      "experience": "2+ years"
+    },
+    {
+      "slug": "hugging-face",
+      "name": "Hugging Face",
+      "icon": "https://cdn.simpleicons.org/huggingface",
+      "category": "AI",
+      "level": "Advanced",
+      "experience": "2+ years"
+    },
+    {
+      "slug": "ollama",
+      "name": "Ollama",
+      "icon": "https://cdn.simpleicons.org/ollama/white",
+      "category": "AI",
+      "level": "Advanced",
+      "experience": "2+ years"
+    },
+    {
+      "slug": "mcp",
+      "name": "MCP (Model Context Protocol)",
+      "icon": "https://cdn.simpleicons.org/modelcontextprotocol/white",
+      "category": "AI",
+      "level": "Advanced",
+      "experience": "2+ years"
+    },
+    {
+      "slug": "rag-vector-search",
+      "name": "RAG & Vector Search",
+      "icon": "https://cdn.simpleicons.org/qdrant",
+      "category": "AI",
+      "level": "Advanced",
+      "experience": "2+ years"
+    },
+    {
+      "slug": "ai-agents",
+      "name": "AI Agents",
+      "icon": "https://unpkg.com/@lobehub/icons-static-svg@1.75.0/icons/langgraph-color.svg",
+      "category": "AI",
+      "level": "Advanced",
+      "experience": "2+ years"
+    },
+    {
+      "slug": "prompt-engineering",
+      "name": "Prompt Engineering",
+      "icon": "https://unpkg.com/@lobehub/icons-static-png@1.75.0/dark/openai.png",
+      "category": "AI",
+      "level": "Advanced",
+      "experience": "2+ years"
+    },
+    {
+      "slug": "vercel-ai-sdk",
+      "name": "Vercel AI SDK",
+      "icon": "https://cdn.simpleicons.org/vercel/white",
+      "category": "AI",
+      "level": "Advanced",
+      "experience": "2+ years"
+    },
+    {
+      "slug": "n8n",
+      "name": "n8n",
+      "icon": "https://cdn.simpleicons.org/n8n",
+      "category": "AI",
+      "level": "Advanced",
+      "experience": "2+ years"
+    },
+    {
+      "slug": "react",
+      "name": "React",
+      "icon": "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg",
+      "category": "Frontend",
+      "level": "Expert",
+      "experience": "4+ years"
+    },
+    {
+      "slug": "next-js",
+      "name": "Next.js",
+      "icon": "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nextjs/nextjs-original.svg",
+      "category": "Frontend",
+      "level": "Expert",
+      "experience": "4+ years"
+    },
+    {
+      "slug": "html5",
+      "name": "HTML5",
+      "icon": "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/html5/html5-original.svg",
+      "category": "Frontend",
+      "level": "Expert",
+      "experience": "4+ years"
+    },
+    {
+      "slug": "css3",
+      "name": "CSS3",
+      "icon": "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/css3/css3-original.svg",
+      "category": "Frontend",
+      "level": "Expert",
+      "experience": "4+ years"
+    },
+    {
+      "slug": "tailwind-css",
+      "name": "Tailwind CSS",
+      "icon": "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/tailwindcss/tailwindcss-original.svg",
+      "category": "Frontend",
+      "level": "Expert",
+      "experience": "4+ years"
+    },
+    {
+      "slug": "redux",
+      "name": "Redux",
+      "icon": "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/redux/redux-original.svg",
+      "category": "Frontend",
+      "level": "Advanced",
+      "experience": "3+ years"
+    },
+    {
+      "slug": "material-ui",
+      "name": "Material-UI",
+      "icon": "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/materialui/materialui-original.svg",
+      "category": "Frontend",
+      "level": "Advanced",
+      "experience": "2+ years"
+    },
+    {
+      "slug": "sass",
+      "name": "Sass",
+      "icon": "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/sass/sass-original.svg",
+      "category": "Frontend",
+      "level": "Advanced",
+      "experience": "2+ years"
+    },
+    {
+      "slug": "fastapi",
+      "name": "FastAPI",
+      "icon": "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/fastapi/fastapi-original.svg",
+      "category": "Backend",
+      "level": "Advanced",
+      "experience": "2+ years"
+    },
+    {
+      "slug": "node-js",
+      "name": "Node.js",
+      "icon": "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nodejs/nodejs-original.svg",
+      "category": "Backend",
+      "level": "Expert",
+      "experience": "4+ years"
+    },
+    {
+      "slug": "express-js",
+      "name": "Express.js",
+      "icon": "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/express/express-original.svg",
+      "category": "Backend",
+      "level": "Expert",
+      "experience": "4+ years"
+    },
+    {
+      "slug": "nestjs",
+      "name": "NestJS",
+      "icon": "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nestjs/nestjs-original.svg",
+      "category": "Backend",
+      "level": "Advanced",
+      "experience": "2+ years"
+    },
+    {
+      "slug": "graphql",
+      "name": "GraphQL",
+      "icon": "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/graphql/graphql-plain.svg",
+      "category": "Backend",
+      "level": "Advanced",
+      "experience": "2+ years"
+    },
+    {
+      "slug": "rest-api",
+      "name": "REST API",
+      "icon": "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/fastapi/fastapi-original.svg",
+      "category": "Backend",
+      "level": "Expert",
+      "experience": "4+ years"
+    },
+    {
+      "slug": "socket-io",
+      "name": "Socket.io",
+      "icon": "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/socketio/socketio-original.svg",
+      "category": "Backend",
+      "level": "Advanced",
+      "experience": "2+ years"
+    },
+    {
+      "slug": "microservices",
+      "name": "Microservices",
+      "icon": "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/kubernetes/kubernetes-plain.svg",
+      "category": "Backend",
+      "level": "Advanced",
+      "experience": "2+ years"
+    },
+    {
+      "slug": "javascript",
+      "name": "JavaScript",
+      "icon": "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/javascript/javascript-original.svg",
+      "category": "Languages",
+      "level": "Expert",
+      "experience": "4+ years"
+    },
+    {
+      "slug": "typescript",
+      "name": "TypeScript",
+      "icon": "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/typescript/typescript-original.svg",
+      "category": "Languages",
+      "level": "Expert",
+      "experience": "4+ years"
+    },
+    {
+      "slug": "python",
+      "name": "Python",
+      "icon": "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg",
+      "category": "Languages",
+      "level": "Expert",
+      "experience": "4+ years"
+    },
+    {
+      "slug": "bash",
+      "name": "Bash",
+      "icon": "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/bash/bash-original.svg",
+      "category": "Languages",
+      "level": "Advanced",
+      "experience": "2+ years"
+    },
+    {
+      "slug": "sql",
+      "name": "SQL",
+      "icon": "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/azuresqldatabase/azuresqldatabase-original.svg",
+      "category": "Languages",
+      "level": "Expert",
+      "experience": "3+ years"
+    },
+    {
+      "slug": "mongodb",
+      "name": "MongoDB",
+      "icon": "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/mongodb/mongodb-original.svg",
+      "category": "Database",
+      "level": "Expert",
+      "experience": "4+ years"
+    },
+    {
+      "slug": "postgresql",
+      "name": "PostgreSQL",
+      "icon": "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/postgresql/postgresql-original.svg",
+      "category": "Database",
+      "level": "Advanced",
+      "experience": "2+ years"
+    },
+    {
+      "slug": "mysql",
+      "name": "MySQL",
+      "icon": "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/mysql/mysql-original.svg",
+      "category": "Database",
+      "level": "Advanced",
+      "experience": "2+ years"
+    },
+    {
+      "slug": "redis",
+      "name": "Redis",
+      "icon": "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/redis/redis-original.svg",
+      "category": "Database",
+      "level": "Advanced",
+      "experience": "2+ years"
+    },
+    {
+      "slug": "elasticsearch",
+      "name": "Elasticsearch",
+      "icon": "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/elasticsearch/elasticsearch-original.svg",
+      "category": "Database",
+      "level": "Intermediate",
+      "experience": "1+ year"
+    },
+    {
+      "slug": "dynamodb",
+      "name": "DynamoDB",
+      "icon": "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/dynamodb/dynamodb-original.svg",
+      "category": "Database",
+      "level": "Intermediate",
+      "experience": "1+ year"
+    },
+    {
+      "slug": "prisma",
+      "name": "Prisma",
+      "icon": "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/prisma/prisma-original.svg",
+      "category": "Database",
+      "level": "Advanced",
+      "experience": "2+ years"
+    },
+    {
+      "slug": "docker",
+      "name": "Docker",
+      "icon": "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/docker/docker-original.svg",
+      "category": "DevOps",
+      "level": "Expert",
+      "experience": "3+ years"
+    },
+    {
+      "slug": "kubernetes",
+      "name": "Kubernetes",
+      "icon": "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/kubernetes/kubernetes-plain.svg",
+      "category": "DevOps",
+      "level": "Advanced",
+      "experience": "2+ years"
+    },
+    {
+      "slug": "jenkins",
+      "name": "Jenkins",
+      "icon": "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/jenkins/jenkins-original.svg",
+      "category": "DevOps",
+      "level": "Advanced",
+      "experience": "2+ years"
+    },
+    {
+      "slug": "gitlab-ci",
+      "name": "GitLab CI",
+      "icon": "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/gitlab/gitlab-original.svg",
+      "category": "DevOps",
+      "level": "Advanced",
+      "experience": "2+ years"
+    },
+    {
+      "slug": "github-actions",
+      "name": "GitHub Actions",
+      "icon": "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/github/github-original.svg",
+      "category": "DevOps",
+      "level": "Expert",
+      "experience": "2+ years"
+    },
+    {
+      "slug": "terraform",
+      "name": "Terraform",
+      "icon": "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/terraform/terraform-original.svg",
+      "category": "DevOps",
+      "level": "Advanced",
+      "experience": "2+ years"
+    },
+    {
+      "slug": "argocd",
+      "name": "ArgoCD",
+      "icon": "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/argocd/argocd-original.svg",
+      "category": "DevOps",
+      "level": "Advanced",
+      "experience": "2+ years"
+    },
+    {
+      "slug": "ansible",
+      "name": "Ansible",
+      "icon": "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/ansible/ansible-original.svg",
+      "category": "DevOps",
+      "level": "Intermediate",
+      "experience": "1+ year"
+    },
+    {
+      "slug": "prometheus",
+      "name": "Prometheus",
+      "icon": "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/prometheus/prometheus-original.svg",
+      "category": "DevOps",
+      "level": "Advanced",
+      "experience": "2+ years"
+    },
+    {
+      "slug": "grafana",
+      "name": "Grafana",
+      "icon": "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/grafana/grafana-original.svg",
+      "category": "DevOps",
+      "level": "Advanced",
+      "experience": "2+ years"
+    },
+    {
+      "slug": "nginx",
+      "name": "Nginx",
+      "icon": "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nginx/nginx-original.svg",
+      "category": "DevOps",
+      "level": "Advanced",
+      "experience": "2+ years"
+    },
+    {
+      "slug": "apache",
+      "name": "Apache",
+      "icon": "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/apache/apache-original.svg",
+      "category": "DevOps",
+      "level": "Intermediate",
+      "experience": "1+ year"
+    },
+    {
+      "slug": "aws",
+      "name": "AWS",
+      "icon": "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/amazonwebservices/amazonwebservices-plain-wordmark.svg",
+      "category": "Cloud",
+      "level": "Expert",
+      "experience": "3+ years"
+    },
+    {
+      "slug": "azure",
+      "name": "Azure",
+      "icon": "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/azure/azure-original.svg",
+      "category": "Cloud",
+      "level": "Advanced",
+      "experience": "2+ years"
+    },
+    {
+      "slug": "google-cloud",
+      "name": "Google Cloud",
+      "icon": "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/googlecloud/googlecloud-original.svg",
+      "category": "Cloud",
+      "level": "Advanced",
+      "experience": "2+ years"
+    },
+    {
+      "slug": "digital-ocean",
+      "name": "Digital Ocean",
+      "icon": "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/digitalocean/digitalocean-original.svg",
+      "category": "Cloud",
+      "level": "Advanced",
+      "experience": "2+ years"
+    },
+    {
+      "slug": "vercel",
+      "name": "Vercel",
+      "icon": "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/vercel/vercel-original.svg",
+      "category": "Cloud",
+      "level": "Expert",
+      "experience": "2+ years"
+    },
+    {
+      "slug": "netlify",
+      "name": "Netlify",
+      "icon": "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/netlify/netlify-original.svg",
+      "category": "Cloud",
+      "level": "Advanced",
+      "experience": "2+ years"
+    },
+    {
+      "slug": "heroku",
+      "name": "Heroku",
+      "icon": "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/heroku/heroku-original.svg",
+      "category": "Cloud",
+      "level": "Advanced",
+      "experience": "2+ years"
+    },
+    {
+      "slug": "git",
+      "name": "Git",
+      "icon": "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/git/git-original.svg",
+      "category": "Tools",
+      "level": "Expert",
+      "experience": "4+ years"
+    },
+    {
+      "slug": "github",
+      "name": "GitHub",
+      "icon": "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/github/github-original.svg",
+      "category": "Tools",
+      "level": "Expert",
+      "experience": "4+ years"
+    },
+    {
+      "slug": "bitbucket",
+      "name": "Bitbucket",
+      "icon": "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/bitbucket/bitbucket-original.svg",
+      "category": "Tools",
+      "level": "Expert",
+      "experience": "3+ years"
+    },
+    {
+      "slug": "gitlab",
+      "name": "GitLab",
+      "icon": "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/gitlab/gitlab-original.svg",
+      "category": "Tools",
+      "level": "Expert",
+      "experience": "3+ years"
+    },
+    {
+      "slug": "vs-code",
+      "name": "VS Code",
+      "icon": "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/vscode/vscode-original.svg",
+      "category": "Tools",
+      "level": "Expert",
+      "experience": "4+ years"
+    },
+    {
+      "slug": "postman",
+      "name": "Postman",
+      "icon": "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/postman/postman-original.svg",
+      "category": "Tools",
+      "level": "Expert",
+      "experience": "4+ years"
+    },
+    {
+      "slug": "jira",
+      "name": "Jira",
+      "icon": "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/jira/jira-original.svg",
+      "category": "Tools",
+      "level": "Advanced",
+      "experience": "2+ years"
+    },
+    {
+      "slug": "figma",
+      "name": "Figma",
+      "icon": "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/figma/figma-original.svg",
+      "category": "Tools",
+      "level": "Advanced",
+      "experience": "2+ years"
+    },
+    {
+      "slug": "webpack",
+      "name": "Webpack",
+      "icon": "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/webpack/webpack-original.svg",
+      "category": "Tools",
+      "level": "Advanced",
+      "experience": "2+ years"
+    },
+    {
+      "slug": "vite",
+      "name": "Vite",
+      "icon": "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/vitejs/vitejs-original.svg",
+      "category": "Tools",
+      "level": "Advanced",
+      "experience": "2+ years"
+    },
+    {
+      "slug": "babel",
+      "name": "Babel",
+      "icon": "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/babel/babel-original.svg",
+      "category": "Tools",
+      "level": "Advanced",
+      "experience": "2+ years"
+    },
+    {
+      "slug": "eslint",
+      "name": "ESLint",
+      "icon": "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/eslint/eslint-original.svg",
+      "category": "Tools",
+      "level": "Expert",
+      "experience": "3+ years"
+    },
+    {
+      "slug": "jest",
+      "name": "Jest",
+      "icon": "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/jest/jest-plain.svg",
+      "category": "Testing",
+      "level": "Advanced",
+      "experience": "2+ years"
+    },
+    {
+      "slug": "mocha",
+      "name": "Mocha",
+      "icon": "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/mocha/mocha-plain.svg",
+      "category": "Testing",
+      "level": "Intermediate",
+      "experience": "1+ year"
+    },
+    {
+      "slug": "playwright",
+      "name": "Playwright",
+      "icon": "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/playwright/playwright-original.svg",
+      "category": "Testing",
+      "level": "Learning",
+      "experience": "<1 year"
+    }
+  ]
+}

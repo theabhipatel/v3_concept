@@ -1,0 +1,71 @@
+[
+  {
+    "slug": "ibr-infotech",
+    "company": "IBR Infotech",
+    "role": "Full Stack AI Engineer",
+    "start": "2025-02",
+    "end": null,
+    "period": "Feb 2025 - Present",
+    "location": "On-site",
+    "current": true,
+    "description": "Leading full-stack and AI product development, building agentic AI platforms and LLM-powered features on a scalable architecture.",
+    "highlights": [
+      "Full-stack product development",
+      "Built agentic AI platforms with LangGraph for multi-step agent orchestration",
+      "Integrated LLMs (OpenAI, Claude) with RAG and tool calling into production features",
+      "Architecture and system design",
+      "Developed high-impact features in production"
+    ],
+    "technologies": ["React.js", "TypeScript", "Node.js", "Python", "FastAPI", "LangChain", "LangGraph", "OpenAI", "PostgreSQL", "AWS", "Docker", "Kubernetes", "Terraform", "Ansible"]
+  },
+  {
+    "slug": "wiz91-technologies",
+    "company": "Wiz91 Technologies",
+    "role": "Full Stack Engineer",
+    "start": "2024-01",
+    "end": "2024-12",
+    "period": "Jan 2024 - Dec 2024",
+    "location": "On-site",
+    "current": false,
+    "description": "Built modern UI systems and led engineering initiatives.",
+    "highlights": [
+      "Created UI systems with React and Next.js",
+      "API design and integrations",
+      "Led small engineering initiatives"
+    ],
+    "technologies": ["React", "Node.js", "MongoDB", "Docker", "MySQL", "Redis", "AWS"]
+  },
+  {
+    "slug": "stack-infinite",
+    "company": "Stack Infinite",
+    "role": "Full Stack Engineer",
+    "start": "2023-03",
+    "end": "2023-11",
+    "period": "Mar 2023 - Nov 2023",
+    "location": "On-site",
+    "current": false,
+    "description": "Contributed to scalable web applications with a performance focus.",
+    "highlights": [
+      "Worked on scalable web applications",
+      "Built reusable components",
+      "Improved backend performance"
+    ],
+    "technologies": ["React", "Node.js", "Express", "React Native", "TypeScript"]
+  },
+  {
+    "slug": "stack-infinite-intern",
+    "company": "Stack Infinite",
+    "role": "Full Stack Engineer Intern",
+    "start": "2022-09",
+    "end": "2023-02",
+    "period": "Sep 2022 - Feb 2023",
+    "location": "On-site",
+    "current": false,
+    "description": "Built scalable and responsive web applications.",
+    "highlights": [
+      "Built responsive React and Next.js applications",
+      "Developed REST APIs with Node.js and MongoDB"
+    ],
+    "technologies": ["React", "Node.js", "Express", "TypeScript"]
+  }
+]

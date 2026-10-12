@@ -1,0 +1,90 @@
+{
+  "name": "Abhishek Patel",
+  "brand": "TheAbhiPatel",
+  "title": "Full Stack AI Engineer",
+  "site": "https://www.theabhipatel.com",
+  "location": {
+    "city": "Indore",
+    "region": "Madhya Pradesh",
+    "regionShort": "MP",
+    "country": "India",
+    "countryCode": "IN"
+  },
+  "email": "theabhipatel.co@gmail.com",
+  "phone": {
+    "display": "+91 70895 89563",
+    "href": "tel:+917089589563",
+    "note": "WhatsApp only. Share only when someone asks for a phone number."
+  },
+  "avatar": "/assets/theabhipatel.png",
+  "githubAvatar": "https://avatars.githubusercontent.com/u/127403805?v=4",
+  "currentCompany": "IBR Infotech",
+  "bio": "Full Stack AI Engineer with 4+ years of experience building scalable web applications, AI-powered products with LLMs and autonomous agents, DevOps pipelines and cloud infrastructure. I love solving complex problems and creating seamless user experiences.",
+  "longBio": [
+    "I'm a technologist who thrives where development meets operations. My journey started with a curiosity about how things work under the hood, which led me to explore both frontend elegance and backend robustness.",
+    "Over the years I've worked on diverse projects, from e-commerce platforms to real-time systems and agentic AI platforms. I believe in clean, maintainable code and systems that scale, combining modern development practices with DevOps principles to deliver reliable, high-performance products.",
+    "Beyond coding, I'm an advocate for continuous learning and knowledge sharing. I contribute to open-source projects and enjoy helping other developers grow.",
+    "When I'm not coding, you'll find me exploring new technologies, attending tech meetups, or working on side projects that solve real-world problems."
+  ],
+  "stats": [
+    { "key": "yearsExperience", "label": "Years Experience", "value": "4+" },
+    { "key": "projectsCompleted", "label": "Projects Completed", "value": "20+" },
+    { "key": "hobbyProjects", "label": "Hobby Projects", "value": "10+" },
+    { "key": "technologies", "label": "Technologies", "value": "70+" },
+    { "key": "companies", "label": "Companies", "value": "3" }
+  ],
+  "education": [
+    {
+      "year": "2022",
+      "degree": "Bachelor of Science (B.Sc.)",
+      "institution": "Rajmata Vijayraje Scindia University, Gwalior, MP",
+      "description": "Completed graduation with consistent academic performance and overall development."
+    }
+  ],
+  "values": [
+    { "title": "Innovation", "icon": "sparkles", "description": "Constantly exploring new technologies and approaches to solve problems in creative ways." },
+    { "title": "Excellence", "icon": "award", "description": "Committed to delivering high-quality work and continuously improving my craft." },
+    { "title": "Collaboration", "icon": "users", "description": "Believing in the power of teamwork and open communication to achieve great results." },
+    { "title": "Impact", "icon": "target", "description": "Focused on creating solutions that make a real difference for users and businesses." }
+  ],
+  "interests": [
+    { "name": "Open Source", "icon": "code", "description": "Contributing to open-source projects" },
+    { "name": "Reading", "icon": "book-open", "description": "Personal growth and self-help books" },
+    { "name": "Music", "icon": "music", "description": "Listening to beats of music I don't understand" },
+    { "name": "Travel", "icon": "globe", "description": "Exploring new places and cultures" },
+    { "name": "Fitness", "icon": "trending-up", "description": "Gym workouts and running" },
+    { "name": "Coffee", "icon": "coffee", "description": "I don't drink coffee" }
+  ],
+  "services": [
+    {
+      "title": "AI Engineering",
+      "icon": "brain",
+      "description": "LLM-powered products, agents and RAG systems that are grounded, observable and production-ready.",
+      "features": ["AI Agents with LangGraph", "RAG & Vector Search", "LLM Integrations & Tool Calling", "MCP Servers"]
+    },
+    {
+      "title": "Full Stack Development",
+      "icon": "code",
+      "description": "End-to-end web application development with modern frameworks and best practices.",
+      "features": ["MERN & Next.js Applications", "RESTful & GraphQL APIs", "Real-time Features", "Database Design"]
+    },
+    {
+      "title": "DevOps & Cloud",
+      "icon": "zap",
+      "description": "Cloud infrastructure setup, CI/CD pipelines and deployment automation.",
+      "features": ["Docker & Kubernetes", "AWS / Azure / GCP", "CI/CD Pipelines", "Infrastructure as Code"]
+    },
+    {
+      "title": "Consulting & Mentoring",
+      "icon": "users",
+      "description": "Technical consulting and mentoring for teams and individual developers.",
+      "features": ["Code Reviews", "Architecture Planning", "Team Training", "Best Practices"]
+    }
+  ],
+  "socials": [
+    { "name": "GitHub", "icon": "github", "url": "https://github.com/theabhipatel", "username": "@theabhipatel" },
+    { "name": "LinkedIn", "icon": "linkedin", "url": "https://www.linkedin.com/in/theabhipatel", "username": "theabhipatel" },
+    { "name": "X", "icon": "x", "url": "https://x.com/itheabhipatel", "username": "@itheabhipatel" },
+    { "name": "LeetCode", "icon": "leetcode", "url": "https://leetcode.com/u/theabhipatel", "username": "@theabhipatel" }
+  ]
+}
