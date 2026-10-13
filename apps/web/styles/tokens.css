@@ -118,6 +118,10 @@
 
 /* ---------- Theme-independent: type, shape, motion ---------- */
 :root {
+  --orb-shine: oklch(1 0 0 / 0.55);
+  --orb-deep: oklch(0.25 0.12 278);
+  --on-brand: oklch(0.99 0.005 278);
+
   --font-body: var(--font-geist), ui-sans-serif, system-ui, sans-serif;
   --font-heading: var(--font-bricolage), var(--font-geist), ui-sans-serif, sans-serif;
   --font-code: var(--font-geist-mono), ui-monospace, monospace;
@@ -174,6 +178,7 @@
   --color-destructive-foreground: var(--destructive-foreground);
   --color-success: var(--success);
   --color-grid-line: var(--grid-line);
+  --color-on-brand: var(--on-brand);
 
   --font-sans: var(--font-body);
   --font-display: var(--font-heading);

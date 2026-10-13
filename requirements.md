@@ -74,7 +74,8 @@ gives the full name. Show the full name in the UI (orb tooltip, `/abi` header, a
 
 ### 5.1 Knowledge: advanced RAG
 - Sources: everything in `content/`, plus Abhishek's public GitHub READMEs.
-- Hybrid retrieval: vector search (pgvector) + keyword search, then reranking.
+- Hybrid retrieval: vector search (pgvector) + keyword search + title match, fused with RRF,
+  then a light rerank. Embeddings: Gemini free tier (768 dims).
 - Answers cite their sources and link to the exact page, project or section.
 - Never invents facts. If something is not in the data, ABI says so and offers the contact form.
 
@@ -84,8 +85,10 @@ gives the full name. Show the full name in the UI (orb tooltip, `/abi` header, a
 - Show real code snippets from Abhishek's public repos.
 - Read live GitHub stats.
 - Job-description match: paste a JD, get a fit summary and a walkthrough of relevant work.
-- Generate a tailored resume PDF for a JD.
-- Book a call (scheduling link) and send a contact message.
+- Generate a tailored resume PDF for a JD (opens `/resume`; "Download PDF" uses the browser's
+  print to PDF, free).
+- Book a call (scheduling link from `BOOKING_URL`; empty = contact form) and draft a contact
+  message the visitor reviews and sends (never sent without a click).
 - Switch light/dark theme.
 
 ### 5.3 Operating the portfolio
@@ -192,8 +195,14 @@ loop and an always-running particles canvas. v3 must avoid all of that:
 ## 11. Abuse prevention and costs (DEFERRED)
 
 Decided for now: build everything on free tiers (Groq + browser voice). Groq's free limits act as
-a natural spend cap; when they run out, ABI says it is busy and points to the contact form.
-Basic per-IP/session rate limits and prompt-injection guardrails are built with the agent.
+a natural spend cap (8K tokens/min per model); when they run out, ABI says it is busy and points to
+the contact form. Built:
+- Every chat message is screened by Llama Prompt Guard (block at score >= 0.9).
+- Postgres fixed-window rate limits per IP: 30 requests / 10 min each for chat, voice and lab.
+- Message cap 6,000 characters (room for a JD), max 3 tool rounds per turn, audio cap 4 MB / 30 s.
+- System prompt treats retrieved content and tool results as data; output is cleaned (citations,
+  no em/en dashes).
+- Contact form: honeypot field + 3 messages per hour per IP; works without AI.
 
 Ideas parked for later (not decided):
 - **Owner mode:** a secret unlock link sets a signed cookie so only Abhishek gets paid OpenAI
@@ -223,13 +232,26 @@ v3/
 
 - [x] **Phase 1 - Foundation:** scaffold `apps/web` and `apps/agent`, port v2 data into
       `content/`, theme tokens for light + dark.
-- [ ] **Phase 2 - ABI brain:** RAG ingestion + retrieval, agent answering accurately with
-      citations, eval set.
-- [ ] **Phase 3 - Pages:** all pages with real content and SEO, contact form.
-- [ ] **Phase 4 - Home experience:** pipeline scroll story, neural core, orb navigation.
-- [ ] **Phase 5 - Agent actions:** tools, agent cursor, generative UI, "How I answered".
-- [ ] **Phase 6 - Voice:** realtime voice with push-to-talk and captions.
-- [ ] **Phase 7 - Safety and cost:** abuse prevention (after section 11 is decided).
-- [ ] **Phase 8 - Polish and launch:** nudges, performance budget, accessibility, deploy.
+- [x] **Phase 2 - ABI brain:** RAG ingestion + retrieval, agent answering accurately with
+      citations, eval set. Evals 16/16 on local DB. Ingest: `uv run python -m app.rag.ingest`,
+      evals: `uv run python -m evals.run` (in `apps/agent`). Local test DB: Docker container
+      `abi_pg` on port 5434. Models: `openai/gpt-oss-120b` (answers), `openai/gpt-oss-20b`
+      (follow-up rewrite). Groq also offers Orpheus TTS and Prompt Guard models: consider them
+      for voice (Phase 6) and injection checks (Phase 7). Neon is used at deploy time.
+- [x] **Phase 3 - Pages:** all pages with real content and SEO, contact form. Per-page OG
+      images, JSON-LD (Person, WebSite, ItemList, each project), sitemap, robots, llms.txt.
+- [x] **Phase 4 - Home experience:** pipeline scroll story, neural core, orb navigation.
+- [x] **Phase 5 - Agent actions:** tools, agent cursor, generative UI, "How I answered".
+- [x] **Phase 6 - Voice:** push-to-talk (hold Space or mic) + Groq Whisper + browser speech,
+      captions, interrupt. Mic privacy note before first use.
+- [x] **Phase 7 - Safety and cost:** see section 11.
+- [ ] **Phase 8 - Polish and launch:** nudges, performance budget and accessibility are done
+      and checked locally (no console errors, LCP 0.2 s / CLS 0 unthrottled, AI and 3D code
+      lazy-loaded). Remaining: deploy to Vercel (needs Vercel login + Neon `DATABASE_URL`,
+      then run ingest against Neon), SMTP credentials for the contact form, a real-device
+      Lighthouse run.
+
+Run locally: Docker `abi_pg` (port 5434), then `uv run uvicorn app.main:app --port 8000` in
+`apps/agent` and `npm run build && npm start` in `apps/web` (http://localhost:3000).
 
 Tick a phase here when it is done.

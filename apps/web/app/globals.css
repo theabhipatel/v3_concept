@@ -30,3 +30,141 @@
     @apply bg-brand/25;
   }
 }
+
+/* ---------- ABI orb (the navbar) ---------- */
+.abi-orb {
+  box-shadow: var(--elevation-glow);
+  transition: box-shadow var(--duration-base) var(--motion-ease-out-expo), transform var(--duration-fast);
+}
+.abi-orb:hover {
+  transform: scale(1.04);
+}
+.abi-orb:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 3px;
+}
+.abi-orb__ring {
+  position: absolute;
+  inset: 0;
+  border-radius: 9999px;
+  background: conic-gradient(from 0deg, var(--brand), var(--brand-2), var(--brand), var(--brand-2), var(--brand));
+  animation: abi-spin 6s linear infinite;
+}
+.abi-orb__core {
+  position: absolute;
+  inset: 4px;
+  border-radius: 9999px;
+  background:
+    radial-gradient(circle at 35% 30%, var(--orb-shine), transparent 45%),
+    radial-gradient(circle at 50% 60%, var(--brand) 0%, var(--orb-deep) 80%);
+}
+.abi-orb--active {
+  box-shadow: var(--elevation-glow-abi);
+}
+.abi-orb--active .abi-orb__ring {
+  background: conic-gradient(from 0deg, var(--abi), var(--brand-2), var(--abi), var(--brand), var(--abi));
+  animation-duration: 2.4s;
+}
+@keyframes abi-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ABI highlights the section it scrolled to. */
+.abi-highlight {
+  border-radius: var(--radius-xl);
+  animation: abi-highlight 2.4s var(--motion-ease-out-expo);
+}
+@keyframes abi-highlight {
+  0%,
+  60% {
+    box-shadow: 0 0 0 2px var(--abi), 0 0 40px -6px var(--glow-abi);
+  }
+  100% {
+    box-shadow: 0 0 0 2px transparent, 0 0 0 0 transparent;
+  }
+}
+
+/* Thin grid used behind page headers. */
+.bg-grid {
+  background-image:
+    linear-gradient(to right, var(--grid-line) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--grid-line) 1px, transparent 1px);
+  background-size: 56px 56px;
+}
+
+/* Chat markdown */
+.abi-prose {
+  font-size: 0.9375rem;
+  line-height: 1.65;
+}
+.abi-prose > * + * {
+  margin-top: 0.6em;
+}
+.abi-prose ul {
+  list-style: disc;
+  padding-left: 1.2em;
+}
+.abi-prose ol {
+  list-style: decimal;
+  padding-left: 1.2em;
+}
+.abi-prose li + li {
+  margin-top: 0.25em;
+}
+.abi-prose a {
+  color: var(--brand-text);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.abi-prose strong {
+  font-weight: 600;
+  color: var(--foreground);
+}
+.abi-prose code {
+  font-family: var(--font-code);
+  font-size: 0.85em;
+  background: var(--muted);
+  padding: 0.1em 0.35em;
+  border-radius: 0.375rem;
+}
+.abi-prose table {
+  width: 100%;
+  font-size: 0.8125rem;
+  border-collapse: collapse;
+  display: block;
+  overflow-x: auto;
+}
+.abi-prose th,
+.abi-prose td {
+  border: 1px solid var(--border);
+  padding: 0.4em 0.6em;
+  text-align: left;
+  vertical-align: top;
+}
+.abi-prose th {
+  background: var(--muted);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .abi-orb__ring {
+    animation: none;
+  }
+  .abi-highlight {
+    animation: none;
+    box-shadow: 0 0 0 2px var(--abi);
+  }
+}
+
+@media print {
+  #main ~ *,
+  body > header,
+  header.absolute,
+  footer {
+    display: none !important;
+  }
+  body {
+    background: white;
+  }
+}

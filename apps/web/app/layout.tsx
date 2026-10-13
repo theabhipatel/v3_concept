@@ -1,7 +1,16 @@
 import type { Metadata, Viewport } from "next";
 import { Bricolage_Grotesque, Geist, Geist_Mono } from "next/font/google";
+import "lenis/dist/lenis.css";
+import { AbiLoader } from "@/components/abi/abi-loader";
+import { Nudges } from "@/components/abi/nudges";
+import { CommandPalette } from "@/components/site/command-palette";
+import { Footer } from "@/components/site/footer";
+import { Header } from "@/components/site/header";
+import { OrbNav } from "@/components/site/orb-nav";
+import { SmoothScroll } from "@/components/site/smooth-scroll";
 import { ThemeProvider } from "@/components/theme-provider";
 import { profile, seo } from "@/lib/content";
+import { jsonLd as ld } from "@/lib/seo";
 import "./globals.css";
 
 const geist = Geist({ variable: "--font-geist", subsets: ["latin"], display: "swap" });
@@ -23,6 +32,7 @@ export const metadata: Metadata = {
   creator: `${profile.name} (${profile.brand})`,
   publisher: profile.brand,
   alternates: { canonical: "/" },
+  applicationName: seo.siteName,
   openGraph: {
     type: "website",
     locale: "en_US",
@@ -93,9 +103,26 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       <body className="min-h-full">
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+          dangerouslySetInnerHTML={ld(jsonLd)}
         />
-        <ThemeProvider>{children}</ThemeProvider>
+        <ThemeProvider>
+          <a
+            href="#main"
+            className="sr-only z-[90] rounded-full bg-primary px-4 py-2 text-primary-foreground focus:not-sr-only focus:fixed focus:left-4 focus:top-4"
+          >
+            Skip to content
+          </a>
+          <Header />
+          <main id="main" className="relative overflow-x-clip">
+            {children}
+          </main>
+          <Footer />
+          <OrbNav />
+          <CommandPalette />
+          <Nudges />
+          <AbiLoader />
+          <SmoothScroll />
+        </ThemeProvider>
       </body>
     </html>
   );
