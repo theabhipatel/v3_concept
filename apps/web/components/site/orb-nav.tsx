@@ -87,7 +87,7 @@ export function OrbNav() {
   }, []);
 
   return (
-    <div className="fixed bottom-5 right-5 z-50 sm:bottom-7 sm:right-7" data-abi-target="orb">
+    <div className="abi-shift fixed bottom-5 right-[calc(var(--abi-dock)+1.25rem)] z-50 sm:bottom-7 sm:right-[calc(var(--abi-dock)+1.75rem)]" data-abi-target="orb">
       {/* Full-screen backdrop: dims the page so the menu is the only thing in focus */}
       <div
         aria-hidden

@@ -138,12 +138,14 @@ Abhishek rejected. No photo on the home page.
   dismissed.
 
 ### 6.2 Navigation (not a traditional navbar)
-- **The ABI orb is the navbar:** a small glowing orb that stays on screen.
+- **The ABI orb is the navbar:** an animated robot button (AbiBot) that stays on screen.
   - Click: a radial menu of pages (icons with labels) over a dimmed full-screen backdrop with a
     slow glow and ripples from the orb. Click the backdrop or press Esc to close.
   - Cmd/Ctrl + K: command bar ("go to projects", "open Secure Vault").
   - Hold Space or the mic button: talk to ABI.
-- On the home page, a thin progress rail shows the current pipeline stage.
+- **ABI panel layouts** (remembered per visitor): docked as a right sidebar that pushes the page
+  aside (drag its edge to resize, double-click to reset), floating as a draggable, resizable
+  window, or full screen. Phones always use full screen.
 - Must stay fully keyboard and screen-reader accessible, with a visible text fallback.
 
 ## 7. Theme

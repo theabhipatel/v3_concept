@@ -97,7 +97,7 @@ export function Nudges() {
   return (
     <div
       role="status"
-      className="fixed bottom-24 right-5 z-50 w-[min(320px,calc(100vw-2.5rem))] animate-in fade-in slide-in-from-bottom-2 rounded-2xl border border-abi/30 bg-popover p-4 shadow-lg sm:bottom-28 sm:right-7"
+      className="abi-shift fixed bottom-24 right-[calc(var(--abi-dock)+1.25rem)] z-50 w-[min(320px,calc(100vw-2.5rem))] animate-in fade-in slide-in-from-bottom-2 rounded-2xl border border-abi/30 bg-popover p-4 shadow-lg sm:bottom-28 sm:right-[calc(var(--abi-dock)+1.75rem)]"
     >
       <button type="button" onClick={() => setActive(null)} className="absolute right-2 top-2 grid size-7 place-items-center rounded-full text-subtle-foreground hover:text-foreground" aria-label="Dismiss">
         <X className="size-3.5" aria-hidden />

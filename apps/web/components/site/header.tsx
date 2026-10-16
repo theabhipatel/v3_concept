@@ -6,7 +6,7 @@ import { PaletteTrigger } from "./command-palette";
 /** Not a navbar: a quiet wordmark and utilities. Navigation lives in the ABI orb. */
 export function Header() {
   return (
-    <header className="absolute inset-x-0 top-0 z-40">
+    <header className="abi-shift absolute left-0 right-(--abi-dock) top-0 z-40">
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:px-8">
         <Link
           href="/"

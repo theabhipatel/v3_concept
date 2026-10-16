@@ -47,9 +47,32 @@
   outline-offset: 3px;
 }
 
+/* ---------- ABI docked sidebar: the page makes room (see AbiPanel, --abi-dock) ---------- */
+:root {
+  --abi-dock: 0px;
+}
+body {
+  padding-right: var(--abi-dock);
+  transition: padding-right 0.3s var(--motion-ease-out-expo);
+}
+.abi-shift {
+  transition: right 0.3s var(--motion-ease-out-expo);
+}
+/* While resizing or dragging the panel: follow the pointer instantly, no text selection. */
+.abi-dragging,
+.abi-dragging * {
+  cursor: var(--abi-drag-cursor) !important;
+  user-select: none;
+}
+.abi-dragging body,
+.abi-dragging .abi-shift,
+.abi-dragging aside[data-mode] {
+  transition: none;
+}
+
 /* ---------- Orb menu backdrop: dims the page, with a slow glow and ripples from the orb ---------- */
 .orb-backdrop {
-  --orb-x: 48px;
+  --orb-x: calc(48px + var(--abi-dock));
   --orb-y: 48px;
   position: fixed;
   inset: 0;
@@ -61,7 +84,7 @@
 }
 @media (min-width: 40rem) {
   .orb-backdrop {
-    --orb-x: 56px;
+    --orb-x: calc(56px + var(--abi-dock));
     --orb-y: 56px;
   }
 }
