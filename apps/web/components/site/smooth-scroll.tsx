@@ -20,12 +20,19 @@ export function scrollToElement(el: HTMLElement, offset = -96) {
   }
 }
 
+/** Let inner scroll areas (ABI chat, panels, dialogs) scroll themselves instead of the page. */
+function isScrollable(node: HTMLElement) {
+  if (node === document.documentElement || node === document.body) return false;
+  const { overflowY } = getComputedStyle(node);
+  return (overflowY === "auto" || overflowY === "scroll") && node.scrollHeight > node.clientHeight;
+}
+
 export function SmoothScroll() {
   const pathname = usePathname();
 
   useEffect(() => {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    lenis = new Lenis({ autoRaf: true, lerp: 0.11 });
+    lenis = new Lenis({ autoRaf: true, lerp: 0.11, prevent: isScrollable });
     return () => {
       lenis?.destroy();
       lenis = null;

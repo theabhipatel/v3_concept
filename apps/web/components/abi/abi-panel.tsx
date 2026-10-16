@@ -4,12 +4,15 @@ import { Maximize2, X } from "lucide-react";
 import Link from "next/link";
 import { useEffect } from "react";
 import { cn } from "@/lib/utils";
+import { AbiBot } from "./abi-bot";
 import { AbiChat } from "./abi-chat";
 import { abi, useAbi } from "./abi-store";
 
 /** The ABI side panel (full screen on phones). Non-modal, so ABI can operate the page beside it. */
 export function AbiPanel() {
   const open = useAbi((s) => s.open);
+  const listening = useAbi((s) => s.listening);
+  const speaking = useAbi((s) => s.speaking);
 
   useEffect(() => {
     if (!open) return;
@@ -29,9 +32,7 @@ export function AbiPanel() {
       )}
     >
       <header className="flex items-center gap-3 border-b px-4 py-3">
-        <span className="abi-orb abi-orb--active relative size-8 shrink-0 rounded-full" aria-hidden>
-          <span className="abi-orb__core" />
-        </span>
+        <AbiBot state={listening ? "listening" : speaking ? "speaking" : "active"} size={36} />
         <div className="min-w-0 flex-1">
           <p className="font-display text-sm font-semibold">ABI</p>
           <p className="truncate text-xs text-muted-foreground">Abhi&apos;s Brain Interface</p>

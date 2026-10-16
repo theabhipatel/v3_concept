@@ -1,4 +1,5 @@
 import { Cpu, Database, MousePointer2, Mic, ShieldCheck, Wand2 } from "lucide-react";
+import { AbiBot } from "@/components/abi/abi-bot";
 import { AbiWorkspace } from "@/components/abi/abi-workspace";
 import { pageMetadata } from "@/lib/seo";
 
@@ -18,9 +19,7 @@ export default function AbiPage() {
     <div className="mx-auto grid min-h-dvh max-w-6xl gap-8 px-4 pb-28 pt-24 sm:px-8 lg:grid-cols-[1fr_300px] lg:pt-28">
       <section aria-labelledby="abi-title" className="flex min-h-[70dvh] flex-col overflow-hidden rounded-3xl border bg-card shadow-lg lg:h-[calc(100dvh-10rem)]">
         <header className="flex items-center gap-3 border-b px-5 py-4">
-          <span className="abi-orb abi-orb--active relative size-9 shrink-0 rounded-full" aria-hidden>
-            <span className="abi-orb__core" />
-          </span>
+          <AbiBot state="active" size={40} />
           <div>
             <h1 id="abi-title" className="text-lg font-semibold">ABI (Abhi&apos;s Brain Interface)</h1>
             <p className="text-xs text-muted-foreground">Abhishek&apos;s AI agent. Ask, paste a job description, or hold Space to talk.</p>

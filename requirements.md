@@ -139,7 +139,8 @@ Abhishek rejected. No photo on the home page.
 
 ### 6.2 Navigation (not a traditional navbar)
 - **The ABI orb is the navbar:** a small glowing orb that stays on screen.
-  - Click: a radial menu of pages.
+  - Click: a radial menu of pages (icons with labels) over a dimmed full-screen backdrop with a
+    slow glow and ripples from the orb. Click the backdrop or press Esc to close.
   - Cmd/Ctrl + K: command bar ("go to projects", "open Secure Vault").
   - Hold Space or the mic button: talk to ABI.
 - On the home page, a thin progress rail shows the current pipeline stage.
@@ -149,7 +150,7 @@ Abhishek rejected. No photo on the home page.
 
 - Palette: **orange** brand (warm, energetic) with **amber** as its partner, used for ABI moments,
   on warm neutrals. Clean, readable, positive; no glows.
-- Light: warm cream paper, white cards, warm ink text. Dark: warm charcoal with bright orange.
+- Light: warm cream paper, white cards, warm ink text. Dark: near black with a faint orange tint, so orange accents pop.
 - Font: **Plus Jakarta Sans** for headings and body (clean and very readable), Geist Mono only
   for code.
 - All tokens in **one file** (`apps/web/styles/tokens.css`, CSS variables mapped into Tailwind

@@ -1,4 +1,4 @@
-import { Bot, FlaskConical, FolderGit2, Home, Mail, Sparkles, UserRound, type LucideIcon } from "lucide-react";
+import { Bot, FlaskConical, FolderGit2, Home, Layers, Mail, UserRound, type LucideIcon } from "lucide-react";
 
 export interface NavItem {
   href: string;
@@ -8,7 +8,7 @@ export interface NavItem {
 
 export const NAV_ITEMS: NavItem[] = [
   { href: "/", label: "Home", icon: Home },
-  { href: "/skills", label: "Skills", icon: Sparkles },
+  { href: "/skills", label: "Skills", icon: Layers },
   { href: "/projects", label: "Projects", icon: FolderGit2 },
   { href: "/about", label: "About", icon: UserRound },
   { href: "/contact", label: "Contact", icon: Mail },

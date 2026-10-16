@@ -31,31 +31,356 @@
   }
 }
 
-/* ---------- ABI orb (the navbar): a calm solid button, amber ring when ABI is active ---------- */
+/* ---------- ABI orb (the navbar): the robot button ---------- */
 .abi-orb {
-  background: var(--primary);
-  box-shadow: var(--elevation-md);
-  transition: box-shadow var(--duration-base) var(--motion-ease-out-expo), transform var(--duration-fast);
+  border-radius: 9999px;
+  transition: transform var(--duration-base) var(--motion-ease-out-expo);
 }
 .abi-orb:hover {
-  transform: scale(1.04);
+  transform: scale(1.06);
+}
+.abi-orb:active {
+  transform: scale(0.96);
 }
 .abi-orb:focus-visible {
   outline: 2px solid var(--ring);
   outline-offset: 3px;
 }
-.abi-orb__core {
+
+/* ---------- Orb menu backdrop: dims the page, with a slow glow and ripples from the orb ---------- */
+.orb-backdrop {
+  --orb-x: 48px;
+  --orb-y: 48px;
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  opacity: 0;
+  background: oklch(0.08 0.005 50 / 0.84);
+  backdrop-filter: blur(6px);
+  transition: opacity 0.45s var(--motion-ease-out-expo);
+}
+@media (min-width: 40rem) {
+  .orb-backdrop {
+    --orb-x: 56px;
+    --orb-y: 56px;
+  }
+}
+.orb-backdrop--open {
+  opacity: 1;
+}
+.orb-backdrop__glow,
+.orb-backdrop__ring {
   position: absolute;
-  inset: 34%;
+  right: var(--orb-x);
+  bottom: var(--orb-y);
+  translate: 50% 50%;
   border-radius: 9999px;
-  background: var(--abi);
-  transition: inset var(--duration-base) var(--motion-ease-out-expo);
 }
-.abi-orb--active {
-  box-shadow: 0 0 0 3px var(--background), 0 0 0 5px var(--abi), var(--elevation-md);
+.orb-backdrop__glow {
+  width: 110vmax;
+  height: 110vmax;
+  background: radial-gradient(circle, oklch(0.72 0.19 48 / 0.2), oklch(0.72 0.19 48 / 0.06) 35%, transparent 62%);
+  animation: orb-breathe 6s ease-in-out infinite;
 }
-.abi-orb--active .abi-orb__core {
-  inset: 28%;
+.orb-backdrop__ring {
+  width: 120px;
+  height: 120px;
+  border: 1px solid oklch(0.72 0.19 48 / 0.45);
+  animation: orb-ripple 4.8s cubic-bezier(0.2, 0.6, 0.3, 1) infinite;
+}
+@keyframes orb-breathe {
+  0%,
+  100% {
+    transform: scale(0.92);
+    opacity: 0.75;
+  }
+  50% {
+    transform: scale(1.05);
+    opacity: 1;
+  }
+}
+@keyframes orb-ripple {
+  from {
+    transform: scale(0.5);
+    opacity: 0.9;
+  }
+  to {
+    transform: scale(7);
+    opacity: 0;
+  }
+}
+
+/* ---------- ABI's face (AbiBot): sized in em, so font-size sets the size ---------- */
+.abi-bot {
+  --bot-orange: oklch(0.72 0.19 48);
+  --bot-amber: oklch(0.86 0.16 78);
+  --ring-speed: 5s;
+  position: relative;
+  display: inline-block;
+  width: 1em;
+  height: 1em;
+  flex-shrink: 0;
+  border-radius: 9999px;
+  background: radial-gradient(circle at 50% 30%, oklch(0.25 0.02 50), oklch(0.12 0.008 50) 72%);
+  box-shadow:
+    0 0.12em 0.3em -0.08em oklch(0 0 0 / 0.55),
+    inset 0 0 0 0.018em oklch(0.72 0.19 48 / 0.35);
+}
+.abi-bot__ring {
+  position: absolute;
+  inset: 0.03em;
+  border-radius: 9999px;
+  background: conic-gradient(from 0turn, transparent 0turn 0.5turn, oklch(0.72 0.19 48 / 0.9) 0.88turn, var(--bot-amber) 1turn);
+  -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 0.035em), #000 calc(100% - 0.03em));
+  mask: radial-gradient(farthest-side, transparent calc(100% - 0.035em), #000 calc(100% - 0.03em));
+  animation: abi-spin var(--ring-speed) linear infinite;
+}
+.abi-bot__head {
+  position: absolute;
+  left: 50%;
+  top: 55%;
+  width: 0.54em;
+  height: 0.44em;
+  margin: -0.22em 0 0 -0.27em;
+  border-radius: 0.15em;
+  background: linear-gradient(165deg, oklch(0.44 0.02 55), oklch(0.2 0.012 50) 62%);
+  box-shadow:
+    inset 0 0.015em 0 oklch(1 0 0 / 0.25),
+    inset 0 -0.02em 0.03em oklch(0 0 0 / 0.45),
+    0 0.03em 0.06em oklch(0 0 0 / 0.5);
+  animation: abi-float 3.6s ease-in-out infinite;
+  transition: rotate var(--duration-base) var(--motion-ease-out-expo);
+}
+/* Ears */
+.abi-bot__head::before,
+.abi-bot__head::after {
+  content: "";
+  position: absolute;
+  top: 0.15em;
+  width: 0.05em;
+  height: 0.14em;
+  border-radius: 0.03em;
+  background: var(--bot-orange);
+}
+.abi-bot__head::before {
+  left: -0.035em;
+}
+.abi-bot__head::after {
+  right: -0.035em;
+}
+.abi-bot__antenna {
+  position: absolute;
+  left: 50%;
+  bottom: 100%;
+  width: 0.025em;
+  height: 0.08em;
+  margin-left: -0.0125em;
+  background: oklch(0.42 0.02 55);
+}
+.abi-bot__antenna::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: -0.055em;
+  width: 0.065em;
+  height: 0.065em;
+  margin-left: -0.0325em;
+  border-radius: 9999px;
+  background: var(--bot-amber);
+  box-shadow: 0 0 0.06em var(--bot-amber);
+  animation: abi-pulse 1.8s ease-in-out infinite;
+}
+.abi-bot__visor {
+  position: absolute;
+  left: 0.06em;
+  right: 0.06em;
+  top: 0.085em;
+  height: 0.19em;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  border-radius: 0.09em;
+  background: linear-gradient(180deg, oklch(0.15 0.01 50), oklch(0.08 0.005 50));
+  box-shadow:
+    inset 0 0 0 0.012em oklch(0.72 0.19 48 / 0.55),
+    inset 0 0.02em 0.04em oklch(0 0 0 / 0.6);
+}
+/* Glass glare */
+.abi-bot__visor::after {
+  content: "";
+  position: absolute;
+  top: 0.022em;
+  left: 0.045em;
+  width: 0.13em;
+  height: 0.025em;
+  border-radius: 9999px;
+  background: oklch(1 0 0 / 0.13);
+}
+.abi-bot__eyes {
+  display: flex;
+  align-items: center;
+  gap: 0.1em;
+  animation: abi-look 7s ease-in-out infinite;
+  transition: opacity var(--duration-fast);
+}
+.abi-bot__eye {
+  width: 0.09em;
+  height: 0.075em;
+  border-radius: 0.028em;
+  background: var(--bot-amber);
+  box-shadow:
+    0 0 0.04em var(--bot-orange),
+    0 0 0.1em oklch(0.72 0.19 48 / 0.6);
+  animation: abi-blink 5s ease-in-out infinite;
+  transition:
+    height var(--duration-base) var(--motion-ease-out-expo),
+    border-radius var(--duration-base) var(--motion-ease-out-expo);
+}
+.abi-bot__x {
+  position: absolute;
+  width: 0.12em;
+  height: 0.12em;
+  opacity: 0;
+  transform: rotate(-90deg) scale(0.6);
+  transition:
+    opacity var(--duration-fast),
+    transform var(--duration-base) var(--motion-ease-out-expo);
+}
+.abi-bot__x::before,
+.abi-bot__x::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 50%;
+  width: 100%;
+  height: 0.026em;
+  margin-top: -0.013em;
+  border-radius: 9999px;
+  background: var(--bot-amber);
+  box-shadow: 0 0 0.05em var(--bot-orange);
+  rotate: 45deg;
+}
+.abi-bot__x::after {
+  rotate: -45deg;
+}
+.abi-bot__mouth {
+  position: absolute;
+  left: 50%;
+  bottom: 0.05em;
+  height: 0.07em;
+  display: flex;
+  align-items: center;
+  gap: 0.022em;
+  translate: -50% 0;
+}
+.abi-bot__mouth i {
+  width: 0.024em;
+  height: 0.024em;
+  border-radius: 9999px;
+  background: oklch(0.72 0.19 48 / 0.75);
+}
+
+/* Hover: a friendly head tilt and happy eyes */
+.abi-orb:hover .abi-bot__head {
+  rotate: -8deg;
+}
+.abi-orb:hover .abi-bot[data-state="idle"] .abi-bot__eye {
+  height: 0.045em;
+  border-radius: 0.05em 0.05em 0.008em 0.008em;
+}
+
+.abi-bot[data-state="active"] {
+  --ring-speed: 3s;
+}
+.abi-bot[data-state="menu"] {
+  --ring-speed: 2.4s;
+}
+.abi-bot[data-state="menu"] .abi-bot__eyes {
+  opacity: 0;
+}
+.abi-bot[data-state="menu"] .abi-bot__x {
+  opacity: 1;
+  transform: none;
+}
+.abi-bot[data-state="listening"] {
+  --ring-speed: 1.4s;
+}
+.abi-bot[data-state="listening"] .abi-bot__eye {
+  height: 0.11em;
+  border-radius: 9999px;
+}
+.abi-bot[data-state="listening"] .abi-bot__mouth i,
+.abi-bot[data-state="speaking"] .abi-bot__mouth i {
+  background: var(--bot-amber);
+  animation: abi-eq 0.42s ease-in-out infinite alternate;
+}
+.abi-bot[data-state="speaking"] {
+  --ring-speed: 2s;
+}
+.abi-bot__mouth i:nth-child(2) {
+  animation-delay: -0.2s !important;
+}
+.abi-bot__mouth i:nth-child(3) {
+  animation-delay: -0.32s !important;
+}
+
+@keyframes abi-spin {
+  to {
+    transform: rotate(1turn);
+  }
+}
+@keyframes abi-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-0.028em);
+  }
+}
+@keyframes abi-pulse {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.4;
+    transform: scale(0.75);
+  }
+}
+@keyframes abi-blink {
+  0%,
+  90%,
+  100% {
+    transform: scaleY(1);
+  }
+  94% {
+    transform: scaleY(0.1);
+  }
+}
+@keyframes abi-look {
+  0%,
+  28%,
+  100% {
+    transform: translateX(0);
+  }
+  36%,
+  52% {
+    transform: translateX(-0.026em);
+  }
+  62%,
+  82% {
+    transform: translateX(0.026em);
+  }
+}
+@keyframes abi-eq {
+  from {
+    height: 0.024em;
+  }
+  to {
+    height: 0.07em;
+  }
 }
 
 /* Answers stream in word by word (see StreamedText). Full text is in the HTML. */
@@ -160,6 +485,12 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .orb-backdrop *,
+  .abi-bot *,
+  .abi-bot *::before,
+  .abi-bot *::after {
+    animation: none !important;
+  }
   .stream-w,
   .is-building .build-step,
   .is-building .build-block {

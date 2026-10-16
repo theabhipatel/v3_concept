@@ -55,29 +55,29 @@
   --elevation-lg: 0 24px 48px -20px oklch(0.3 0.05 45 / 0.22), 0 2px 6px oklch(0.22 0.02 50 / 0.06);
 }
 
-/* ---------- Dark: warm charcoal, soft cream text, bright orange ---------- */
+/* ---------- Dark: near black with a faint orange tint, so the orange pops ---------- */
 .dark {
   color-scheme: dark;
 
-  --background: oklch(0.17 0.01 55);
-  --background-deep: oklch(0.145 0.009 55);
+  --background: oklch(0.125 0.006 50);
+  --background-deep: oklch(0.105 0.005 50);
   --foreground: oklch(0.96 0.008 80);
-  --muted-foreground: oklch(0.76 0.015 65);
-  --subtle-foreground: oklch(0.65 0.015 60);
+  --muted-foreground: oklch(0.74 0.012 60);
+  --subtle-foreground: oklch(0.62 0.012 58);
 
-  --card: oklch(0.205 0.012 55);
+  --card: oklch(0.16 0.008 50);
   --card-foreground: var(--foreground);
-  --popover: oklch(0.225 0.013 55);
+  --popover: oklch(0.18 0.009 50);
   --popover-foreground: var(--foreground);
-  --muted: oklch(0.245 0.013 55);
-  --secondary: oklch(0.27 0.035 50);
+  --muted: oklch(0.2 0.009 50);
+  --secondary: oklch(0.22 0.035 48);
   --secondary-foreground: oklch(0.9 0.05 65);
-  --accent: oklch(0.28 0.045 50);
+  --accent: oklch(0.22 0.04 48);
   --accent-foreground: oklch(0.94 0.04 70);
 
-  --border: oklch(0.29 0.013 55);
-  --border-strong: oklch(0.37 0.016 55);
-  --input: oklch(0.32 0.014 55);
+  --border: oklch(0.24 0.01 50);
+  --border-strong: oklch(0.32 0.014 50);
+  --input: oklch(0.27 0.011 50);
   --ring: oklch(0.74 0.17 52);
 
   --primary: oklch(0.74 0.17 52);
@@ -91,7 +91,7 @@
   --abi: oklch(0.83 0.15 80);
   --abi-text: oklch(0.86 0.13 82);
   --abi-foreground: oklch(0.2 0.04 60);
-  --abi-soft: oklch(0.26 0.04 65);
+  --abi-soft: oklch(0.2 0.04 62);
   --aura: oklch(0.45 0.1 60);
 
   --destructive: oklch(0.66 0.19 27);
