@@ -67,6 +67,7 @@ export function AbiPanel() {
   const open = useAbi((s) => s.open);
   const listening = useAbi((s) => s.listening);
   const speaking = useAbi((s) => s.speaking);
+  const live = useAbi((s) => s.live);
   const layout = useAbiLayout();
   const wide = useWideScreen();
   const mode: AbiMode = wide ? layout.mode : "full";
@@ -74,7 +75,12 @@ export function AbiPanel() {
 
   useEffect(() => {
     if (!open) return;
-    const onKey = (e: KeyboardEvent) => e.key === "Escape" && abi.close();
+    const onKey = (e: KeyboardEvent) => {
+      // Esc closes ABI, unless it is closing something on top first (search, menu).
+      if (e.key !== "Escape" || e.defaultPrevented) return;
+      if (document.querySelector('[role="dialog"][data-state="open"], .orb-backdrop--open')) return;
+      abi.close();
+    };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, [open]);
@@ -165,7 +171,7 @@ export function AbiPanel() {
           mode === "full" && "sm:px-6",
         )}
       >
-        <AbiBot state={listening ? "listening" : speaking ? "speaking" : "active"} size={36} />
+        <AbiBot state={listening || live === "hearing" ? "listening" : speaking ? "speaking" : "active"} size={36} />
         <div className="min-w-0 flex-1">
           <p className="font-display text-sm font-semibold">ABI</p>
           <p className="truncate text-xs text-muted-foreground">Abhi&apos;s Brain Interface</p>
@@ -196,7 +202,10 @@ export function AbiPanel() {
         )}
         <button
           type="button"
-          onClick={() => abi.close()}
+          onClick={() => {
+            abi.stopLive();
+            abi.close();
+          }}
           className="grid size-9 place-items-center rounded-full text-muted-foreground hover:bg-accent hover:text-foreground"
           aria-label="Close ABI"
         >

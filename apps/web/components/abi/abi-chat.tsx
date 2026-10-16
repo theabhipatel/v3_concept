@@ -1,7 +1,7 @@
 "use client";
 
 import { useChat } from "@ai-sdk/react";
-import { ArrowUp, Briefcase, Loader2, Mic, Square } from "lucide-react";
+import { ArrowUp, AudioLines, Briefcase, Loader2, Mic, Square, X } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
 import ReactMarkdown from "react-markdown";
@@ -9,7 +9,8 @@ import remarkGfm from "remark-gfm";
 import { Button } from "@/components/ui/button";
 import { profile } from "@/lib/content";
 import { cn } from "@/lib/utils";
-import { abi, useAbi } from "./abi-store";
+import { abi, useAbi, type LiveState } from "./abi-store";
+import { interruptLive } from "./live";
 import { GenerativeUI } from "./generative";
 import { HowIAnswered } from "./how-i-answered";
 import { chat, send, type AbiData, type AbiMessage } from "./runtime";
@@ -105,6 +106,49 @@ function AssistantMessage({ message, last, busy }: { message: AbiMessage; last: 
   );
 }
 
+const LIVE_TEXT: Record<LiveState, string> = {
+  off: "",
+  starting: "Starting the microphone...",
+  listening: "Listening. Just talk.",
+  hearing: "Hearing you...",
+  thinking: "Thinking...",
+  speaking: "Speaking",
+  error: "Microphone unavailable",
+};
+
+/** The live conversation bar: replaces the composer while the hands-free loop runs. */
+function LiveBar() {
+  const live = useAbi((s) => s.live);
+  const caption = useAbi((s) => s.caption);
+  return (
+    <div className="border-t p-3" role="region" aria-label="Live conversation">
+      <div className="flex items-center gap-3 rounded-2xl border border-abi/40 bg-card p-2 pl-3 shadow-sm">
+        <span className="live-wave" data-state={live} aria-hidden>
+          <i />
+          <i />
+          <i />
+          <i />
+          <i />
+        </span>
+        <div className="min-w-0 flex-1" role="status" aria-live="polite">
+          <p className="text-sm font-semibold text-abi-text">{LIVE_TEXT[live]}</p>
+          <p className="truncate text-xs text-muted-foreground">
+            {caption || (live === "error" ? "Check the browser permission and try again." : "Voice becomes text, nothing is stored.")}
+          </p>
+        </div>
+        {live === "speaking" && (
+          <Button type="button" size="sm" variant="ghost" onClick={interruptLive}>
+            Skip
+          </Button>
+        )}
+        <Button type="button" size="icon" variant="secondary" onClick={() => abi.stopLive()} aria-label="End live conversation" title="End live conversation">
+          <X aria-hidden />
+        </Button>
+      </div>
+    </div>
+  );
+}
+
 function VoiceConsent() {
   return (
     <div className="space-y-2 rounded-2xl border border-abi/30 bg-abi-soft p-4 text-sm" role="dialog" aria-label="Microphone permission">
@@ -126,6 +170,7 @@ export function AbiChat({ layout = "panel" }: { layout?: "panel" | "page" }) {
   const [input, setInput] = useState("");
   const listening = useAbi((s) => s.listening);
   const caption = useAbi((s) => s.caption);
+  const live = useAbi((s) => s.live) !== "off";
   const needsConsent = useNeedsConsent();
   const jdMode = useAbi((s) => s.jdMode);
   const setJdMode = abi.setJdMode;
@@ -213,12 +258,15 @@ export function AbiChat({ layout = "panel" }: { layout?: "panel" | "page" }) {
         {needsConsent && <VoiceConsent />}
       </div>
 
-      {(listening || caption) && (
+      {!live && (listening || caption) && (
         <p className="border-t bg-abi-soft px-4 py-2 text-center text-sm text-abi-text" role="status" aria-live="assertive">
           {listening ? "Listening... release to send" : caption}
         </p>
       )}
 
+      {live ? (
+        <LiveBar />
+      ) : (
       <form
         onSubmit={(e) => {
           e.preventDefault();
@@ -259,13 +307,18 @@ export function AbiChat({ layout = "panel" }: { layout?: "panel" | "page" }) {
             <Button type="button" size="icon" variant="secondary" onClick={() => void stop()} aria-label="Stop ABI">
               <Square aria-hidden />
             </Button>
-          ) : (
+          ) : input.trim() || !voiceSupported() ? (
             <Button type="submit" size="icon" disabled={!input.trim()} aria-label="Send">
               <ArrowUp aria-hidden />
+            </Button>
+          ) : (
+            <Button type="button" size="icon" onClick={() => abi.startLive()} aria-label="Start live conversation" title="Live conversation: talk hands-free">
+              <AudioLines aria-hidden />
             </Button>
           )}
         </div>
       </form>
+      )}
     </div>
   );
 }

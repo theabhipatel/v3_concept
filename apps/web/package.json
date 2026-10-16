@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@ai-sdk/react": "^4.0.141",
+    "@ricky0123/vad-web": "^0.0.31",
     "ai": "^7.0.138",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",

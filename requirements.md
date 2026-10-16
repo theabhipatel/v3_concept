@@ -105,11 +105,28 @@ gives the full name. Show the full name in the UI (orb tooltip, `/abi` header, a
 - Push-to-talk pipeline: browser records -> Groq speech-to-text (Whisper) -> ABI -> browser
   Web Speech API speaks the answer. Live captions, and the visitor can interrupt ABI mid-answer.
 - Ask for mic permission with a short privacy note. Never store voice recordings.
+- **Two voice modes** in every ask box: the mic button = push-to-talk (speak once, transcribed,
+  sent); the waveform button (shown when the box is empty, the send arrow when text is typed) =
+  **live conversation**, a hands-free loop: Silero VAD (`@ricky0123/vad-web`, runs in the
+  browser; model and WASM from jsDelivr, pinned) detects when the visitor starts and stops
+  talking -> Whisper -> ABI acts -> ABI speaks -> listens again. The mic pauses while ABI thinks
+  and speaks (no self-echo); "Skip" cuts the spoken answer short; End or closing the panel
+  releases the mic. Code: `components/abi/live.ts`.
 - **Voice navigation** (typed works too): "open the projects page", "scroll a little / more / one
   page / to the top", "go back", "dark mode", "click on Recruiter", "open Secure Vault".
   - Clear commands are parsed in the browser (`components/abi/commands.ts`) and run instantly
     with no AI call. Everything else goes to the agent, which has `scroll_page` and `click_on`.
   - One page = the current screen height; scrolling is smooth (Lenis).
+  - Also: type into any field ("type ... in the message box"), "search for ...", fill the
+    contact form (agent: `fill_contact_form`; the visitor still presses Send), jump to a section,
+    ABI's panel (full screen, dock, float, wider, narrower, close), the site menu, forward/back,
+    zoom, read the visible page aloud, copy his email or the page link, stop, end live mode
+    (agent: `type_text`, `control`). External links open in a new tab, or ABI hands over the
+    link when the browser blocks it. Not possible by design: real mouse hover (browsers do not
+    allow faking it). Every clickable element has a text or aria name, so ABI can click it.
+  - Page tour: "show me this whole page, top to bottom" goes back to the top, then glides down
+    section by section, pausing on each heading with ABI's cursor. Scrolling, clicking, a key
+    press or "stop" ends it. Agent tool: `tour_page`.
   - Clicks find the visible button or link by its text. ABI's cursor glides there along a soft
     arc from its last position with a sparkle trail, then clicks with rings of light, a burst
     of sparks and a glow on the target.

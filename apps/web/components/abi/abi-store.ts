@@ -23,7 +23,12 @@ interface AbiState {
   caption: string;
   /** "Paste a job description" mode for the chat input. */
   jdMode: boolean;
+  /** Live conversation (hands-free voice loop) state. */
+  live: LiveState;
+  liveRequested: boolean;
 }
+
+export type LiveState = "off" | "starting" | "listening" | "hearing" | "thinking" | "speaking" | "error";
 
 const initial: AbiState = {
   open: false,
@@ -34,6 +39,8 @@ const initial: AbiState = {
   speaking: false,
   caption: "",
   jdMode: false,
+  live: "off",
+  liveRequested: false,
 };
 let state: AbiState = initial;
 const listeners = new Set<() => void>();
@@ -68,6 +75,12 @@ export const abi = {
   requestJd: () => set({ open: true, activated: true, jdMode: true }),
   setJdMode: (jdMode: boolean) => set({ jdMode }),
   requestListen: () => set({ open: true, activated: true, listenRequested: true }),
+  /** Start the hands-free live conversation (loads the voice detector on first use). */
+  startLive: () => set({ open: true, activated: true, liveRequested: true }),
+  clearLiveRequest: () => set({ liveRequested: false }),
+  setLive: (live: LiveState) => set({ live }),
+  /** End the live conversation; the live module tears down the microphone. */
+  stopLive: () => set({ live: "off", liveRequested: false }),
   clearListen: () => set({ listenRequested: false }),
   setVoice: (patch: Partial<Pick<AbiState, "listening" | "speaking" | "caption">>) => set(patch),
 };

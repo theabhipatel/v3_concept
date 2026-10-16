@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowUp, Briefcase, Mic } from "lucide-react";
+import { ArrowUp, AudioLines, Briefcase, Mic } from "lucide-react";
 import { useState } from "react";
 import { abi } from "@/components/abi/abi-store";
 import { useQueryParam } from "@/lib/use-query-param";
@@ -43,13 +43,25 @@ export function AskBox() {
         >
           <Mic className="size-5" aria-hidden />
         </button>
-        <button
-          type="submit"
-          className="grid size-12 shrink-0 place-items-center rounded-xl bg-primary text-primary-foreground transition-opacity hover:opacity-90"
-          aria-label="Send question to ABI"
-        >
-          <ArrowUp className="size-5" aria-hidden />
-        </button>
+        {value.trim() ? (
+          <button
+            type="submit"
+            className="grid size-12 shrink-0 place-items-center rounded-xl bg-primary text-primary-foreground transition-opacity hover:opacity-90"
+            aria-label="Send question to ABI"
+          >
+            <ArrowUp className="size-5" aria-hidden />
+          </button>
+        ) : (
+          <button
+            type="button"
+            onClick={() => abi.startLive()}
+            className="grid size-12 shrink-0 place-items-center rounded-xl bg-primary text-primary-foreground transition-opacity hover:opacity-90"
+            aria-label="Start live conversation with ABI"
+            title="Live conversation: talk hands-free"
+          >
+            <AudioLines className="size-5" aria-hidden />
+          </button>
+        )}
       </form>
       <div className="flex flex-wrap justify-center gap-2">
         {SUGGESTIONS[role].map((s) => (

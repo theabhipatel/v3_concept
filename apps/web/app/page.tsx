@@ -251,7 +251,7 @@ export default function Home() {
             {[
               ["Understand", "I rewrite your question so it stands on its own, even as a follow-up."],
               ["Search", "Hybrid search over his real data in Postgres: pgvector embeddings plus full-text, merged by rank fusion."],
-              ["Act", "A LangGraph agent with 16 tools. I can open pages, scroll, click, compare projects, show code or match a job description, even by voice."],
+              ["Act", "A LangGraph agent with 20 tools. I can open pages, scroll, click, type, compare projects, show code or match a job description, even by voice."],
               ["Answer", "I stream the answer with sources. Open “How I answered” to see every step."],
             ].map(([t, d], i) => (
               <li key={t} className="rounded-3xl border bg-card p-6">

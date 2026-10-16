@@ -38,6 +38,7 @@ export function OrbNav() {
   const panelOpen = useAbi((s) => s.open);
   const listening = useAbi((s) => s.listening);
   const speaking = useAbi((s) => s.speaking);
+  const hearing = useAbi((s) => s.live === "hearing");
   const firstItem = useRef<HTMLAnchorElement>(null);
   const active = panelOpen || listening || speaking;
 
@@ -200,7 +201,7 @@ export function OrbNav() {
           onClick={() => setMenuOpen((o) => !o)}
           className="abi-orb relative grid size-14 place-items-center"
         >
-          <AbiBot state={menuOpen ? "menu" : listening ? "listening" : speaking ? "speaking" : active ? "active" : "idle"} size={56} />
+          <AbiBot state={menuOpen ? "menu" : listening || hearing ? "listening" : speaking ? "speaking" : active ? "active" : "idle"} size={56} />
         </button>
       </div>
     </div>

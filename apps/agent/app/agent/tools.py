@@ -71,6 +71,44 @@ def scroll_page(direction: Literal["down", "up"] = "down", amount: Literal["litt
 
 
 @tool
+def tour_page() -> str:
+    """Walk the visitor through the whole current page from top to bottom: ABI scrolls slowly,
+    section by section, pausing on each heading. Use for "show me this whole page"."""
+    return _ui("tour")
+
+
+@tool
+def type_text(field: str, text: str) -> str:
+    """Type text into a visible field on the current page, letter by letter. field: the field's
+    label, e.g. "search", "name", "email", "subject" or "message"."""
+    return _ui("type", field=field.strip()[:60], text=text[:2000])
+
+
+@tool
+def fill_contact_form(name: str = "", email: str = "", subject: str = "", message: str = "") -> str:
+    """Open the contact page and type the visitor's details into the form. The visitor reviews it
+    and presses Send themselves (or asks you to click Send)."""
+    return _ui("fill-contact", name=name[:100], email=email[:200], subject=subject[:200], message=message[:2000])
+
+
+CONTROL_ACTIONS = Literal[
+    "section", "panel_full", "panel_dock", "panel_float", "panel_wider", "panel_narrower", "panel_close",
+    "open_menu", "close_menu", "forward", "back", "zoom_in", "zoom_out", "zoom_reset", "read_aloud",
+    "copy_email", "copy_link", "stop", "end_live",
+]
+
+
+@tool
+def control(action: CONTROL_ACTIONS, value: str = "") -> str:
+    """Control the page and ABI's own panel. section: scroll to the section named in value (e.g.
+    "experience"). panel_*: full screen, dock, float, wider, narrower or close ABI's panel.
+    open_menu/close_menu: the site menu. forward/back: browser history. zoom_*: page zoom.
+    read_aloud: read the visible part of the page. copy_email/copy_link: copy to clipboard.
+    stop: stop a tour or speech. end_live: end the live voice conversation."""
+    return _ui("control", action=action, value=value.strip()[:80])
+
+
+@tool
 def click_on(label: str) -> str:
     """Click a visible button, link, tab or card on the current page by its text, for example
     "Projects", "Recruiter", "Secure Vault" or "Contact form". The visitor watches ABI's cursor do it."""
@@ -249,7 +287,8 @@ async def tailored_resume(job_description: str) -> str:
 
 
 TOOLS = [
-    go_to, filter_projects, filter_skills, set_theme, scroll_page, click_on, show_projects, compare_projects, show_skills,
+    go_to, filter_projects, filter_skills, set_theme, scroll_page, tour_page, click_on, type_text,
+    fill_contact_form, control, show_projects, compare_projects, show_skills,
     show_timeline, book_call, draft_contact_message, github_stats, show_code, match_job_description,
     tailored_resume,
 ]

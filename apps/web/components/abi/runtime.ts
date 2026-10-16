@@ -4,8 +4,9 @@
 import { Chat } from "@ai-sdk/react";
 import { DefaultChatTransport, type UIMessage } from "ai";
 import { abi, getSessionId } from "./abi-store";
-import { clickLabel, navigateTo, runAction, scrollPage, themeTo, type UiAction } from "./actions";
+import { clickLabel, control, navigateTo, runAction, scrollPage, searchFor, themeTo, tourPage, typeInto, type UiAction } from "./actions";
 import { parseCommand, type Command } from "./commands";
+import { configureLive, startLive } from "./live";
 import { configureVoice, speak, startListening, stopSpeaking } from "./voice";
 
 export interface Source {
@@ -59,6 +60,7 @@ async function runCommand(cmd: Command, text: string, voice: boolean) {
       { id: id(), role: "user", parts: [{ type: "text", text }] },
       { id: id(), role: "assistant", parts: [{ type: "text", text: reply }] },
     ];
+    if (voice) speak(reply);
   };
   switch (cmd.kind) {
     case "navigate":
@@ -73,6 +75,22 @@ async function runCommand(cmd: Command, text: string, voice: boolean) {
       );
       await scrollPage(cmd.direction, cmd.amount);
       return;
+    case "tour":
+      note("Here is the whole page, top to bottom. Say stop anytime.");
+      void tourPage(); // not awaited, so live mode keeps listening for "stop"
+      return;
+    case "stop":
+      note(await control("stop"));
+      return;
+    case "control":
+      note(await control(cmd.action, cmd.value));
+      return;
+    case "type":
+      note((await typeInto(cmd.field, cmd.text)) ? `Typed into ${cmd.field}.` : `I couldn't find a "${cmd.field}" field on this page.`);
+      return;
+    case "search":
+      note((await searchFor(cmd.text)) ? `Searching for "${cmd.text}".` : "I couldn't open search.");
+      return;
     case "back":
       note("Going back.");
       window.history.back();
@@ -82,13 +100,10 @@ async function runCommand(cmd: Command, text: string, voice: boolean) {
       await themeTo(cmd.theme);
       return;
     case "click": {
-      if (await clickLabel(cmd.label)) {
-        note(`Clicking "${cmd.label}".`);
-        return;
-      }
-      const reply = `I couldn't find "${cmd.label}" on this page. Try the exact text on the button.`;
-      note(reply);
-      if (voice) speak(reply);
+      const result = await clickLabel(cmd.label);
+      if (result === "ok") note(`Clicking "${cmd.label}".`);
+      else if (result === "missing") note(`I couldn't find "${cmd.label}" on this page. Try the exact text on the button.`);
+      else note(`That opens another site, so your browser wants you to click it: [${cmd.label}](${result.external})`);
     }
   }
 }
@@ -104,6 +119,18 @@ export async function send(text: string, voice = false) {
   await chat.sendMessage({ text: clean });
 }
 
+configureLive((text) => send(text, true));
+
+// A link to another site that the browser would not let ABI open: hand it to the visitor.
+if (typeof window !== "undefined")
+  window.addEventListener("abi:external-link", (e) => {
+    const href = String((e as CustomEvent).detail);
+    chat.messages = [
+      ...chat.messages,
+      { id: crypto.randomUUID(), role: "assistant", parts: [{ type: "text", text: `Your browser wants you to open this one yourself: [${href}](${href})` }] },
+    ];
+  });
+
 configureVoice({
   onText: (text) => void send(text, true),
   onInterrupt: () => {
@@ -114,6 +141,10 @@ configureVoice({
 // Consume questions queued from anywhere on the site, and push-to-talk requests.
 function drain() {
   for (const req of abi.take()) void send(req.text, req.voice);
+  if (abi.get().liveRequested) {
+    abi.clearLiveRequest();
+    void startLive();
+  }
   if (abi.get().listenRequested) {
     abi.clearListen();
     void startListening();
