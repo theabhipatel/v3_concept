@@ -279,11 +279,10 @@ v3/
 - [x] **Phase 6 - Voice:** push-to-talk (hold Space or mic) + Groq Whisper + browser speech,
       captions, interrupt. Mic privacy note before first use.
 - [x] **Phase 7 - Safety and cost:** see section 11.
-- [ ] **Phase 8 - Polish and launch:** nudges, performance budget and accessibility are done
-      and checked locally (no console errors, LCP 0.2 s / CLS 0 unthrottled, AI and 3D code
-      lazy-loaded). Remaining: deploy to Vercel (needs Vercel login + Neon `DATABASE_URL`,
-      then run ingest against Neon), SMTP credentials for the contact form, a real-device
-      Lighthouse run.
+- [ ] **Phase 8 - Polish and launch:** nudges, performance budget and accessibility are done.
+      Deployed 2026-10-16 on Vercel (website `theabhipatel-v3`, agent `theabhipatel-v3-abi`)
+      with Neon; see DEPLOYMENT.md. Remaining: SMTP credentials for the contact form, a custom
+      domain, a real-device Lighthouse run.
 
 Run locally: Docker `abi_pg` (port 5434), then `uv run uvicorn app.main:app --port 8000` in
 `apps/agent` and `npm run build && npm start` in `apps/web` (http://localhost:3000).

@@ -1,101 +1,86 @@
 # Deployment
 
-Everything runs on free tiers:
+Live on free tiers:
 
-| Part | Host | Notes |
+| Part | Host | URL |
 | --- | --- | --- |
-| Website (`apps/web`) | Vercel (Hobby) | Next.js project |
-| Agent (`apps/agent`) | Vercel (Hobby) | FastAPI as a Python function |
-| Database | Neon (Free) | Postgres + pgvector |
+| Website (`apps/web`) | Vercel project `theabhipatel-v3` | https://theabhipatel-v3.vercel.app |
+| Agent (`apps/agent`) | Vercel project `theabhipatel-v3-abi` | https://theabhipatel-v3-abi.vercel.app/api/agent/health |
+| Database | Neon (Free), AWS US East | Postgres + pgvector |
 | Chat, voice, guard | Groq (Free) | API key |
 | Embeddings | Gemini (Free) | API key |
 
-The site calls the agent through the `/api/agent/*` rewrite in `apps/web/next.config.ts`, so
-visitors only ever see one domain.
+The website calls the agent through the `/api/agent/*` rewrite in `apps/web/next.config.ts`
+(`AGENT_URL`), so visitors only ever see the website's domain.
 
-## 1. Database (Neon)
+## How the two projects are set up
 
-1. Create a project at [neon.tech](https://neon.tech). Pick a region close to your Vercel region
-   (for example AWS `ap-south-1` Mumbai, or the US region Vercel uses).
-2. Copy the **pooled** connection string. It looks like:
-   `postgresql://user:pass@ep-xxx-pooler.region.aws.neon.tech/neondb?sslmode=require`
-3. Load ABI's knowledge base into it from your machine. This also creates the tables and turns
-   on pgvector:
+| | Website | Agent |
+| --- | --- | --- |
+| Root Directory | `apps/web` | repo root |
+| Config | `apps/web/vercel.json` (Next.js) | `vercel.json` at the repo root |
+| Code entry | Next.js | `api/index.py` (imports `apps/agent/app/main.py`) |
+| Packages | `apps/web/package.json` | `requirements.txt` at the repo root |
+| Env vars | `AGENT_URL`, optional `SMTP_*` | `GROQ_API_KEY`, `GEMINI_API_KEY`, `DATABASE_URL`, `ABI_CHAT_MODEL`, `ABI_FAST_MODEL`, `ABI_EMBED_MODEL`, `ABI_EMBED_DIM`, optional `BOOKING_URL`, `GITHUB_TOKEN` |
 
-   ```bash
-   cd apps/agent
-   DATABASE_URL="<neon pooled url>" uv run python -m app.rag.ingest
-   ```
+- Both projects read the shared `content/` folder ("Include files outside the root directory"
+  is on for the website; the agent bundles `content/**`).
+- Deployment Protection is **off** for both projects, so the site is public and the website
+  can reach the agent. New Vercel projects turn it on by default.
+- `.vercelignore` keeps `.env` files, `node_modules`, `.venv` and build output on your machine.
+- Region: Vercel functions run in `iad1` (US East), next to Neon and Groq.
 
-## 2. Agent (Vercel project 1)
+## Deploy from your machine (Vercel CLI)
 
-1. In Vercel, **Add New > Project**, import the repo, and set **Root Directory** to `apps/agent`.
-2. Framework preset: **FastAPI** (Vercel detects `app/main.py`). If it is not detected, add this
-   to `apps/agent/pyproject.toml` and redeploy:
+Run from the **repo root**. The CLI picks the project from these two variables:
 
-   ```toml
-   [project.scripts]
-   app = "app.main:app"
-   ```
+```bash
+export VERCEL_ORG_ID=team_liMFqMOLiKAxaIovPvcPF5vy
 
-3. Keep **"Include files outside the root directory"** turned on (Settings > Build and
-   Deployment). The agent reads the shared `content/` folder.
-4. Environment variables:
+# Agent
+VERCEL_PROJECT_ID=prj_sR2RpVJT9ae4FzN7hk8XreCc6w15 vercel deploy --prod --yes
 
-   | Name | Value |
-   | --- | --- |
-   | `GROQ_API_KEY` | your Groq key |
-   | `GEMINI_API_KEY` | your Gemini key |
-   | `DATABASE_URL` | the Neon pooled URL |
-   | `ABI_CHAT_MODEL` | `openai/gpt-oss-120b` |
-   | `ABI_FAST_MODEL` | `openai/gpt-oss-20b` |
-   | `BOOKING_URL` | optional, e.g. a Cal.com link |
-   | `GITHUB_TOKEN` | optional |
+# Website (its own vercel.json, so the root one, which is the agent's, is not used)
+VERCEL_PROJECT_ID=prj_kOKhcZlFx6sMkxYRi0WWTtHiFhM2 vercel deploy --prod --yes --local-config apps/web/vercel.json
+```
 
-5. Deploy, then check `https://<agent-project>.vercel.app/api/agent/health`. It should return
-   `{"status":"ok", ...}`.
+Change an env var with `vercel env add NAME production` (same two variables set), then redeploy
+that project.
 
-## 3. Website (Vercel project 2)
+## When things change
 
-1. **Add New > Project** again with the same repo, and set **Root Directory** to `apps/web`.
-   Framework preset: **Next.js**.
-2. Keep **"Include files outside the root directory"** turned on. The site imports `content/`.
-3. Environment variables:
+- **Content (`content/*.json`):** redeploy both, then refresh ABI's knowledge in Neon (only
+  changed chunks are embedded):
 
-   | Name | Value |
-   | --- | --- |
-   | `AGENT_URL` | `https://<agent-project>.vercel.app` (no trailing slash) |
-   | `SMTP_HOST` | `smtp.gmail.com` |
-   | `SMTP_PORT` | `465` |
-   | `SMTP_USER` | your Gmail address |
-   | `SMTP_PASS` | a Gmail [app password](https://myaccount.google.com/apppasswords) |
+  ```bash
+  cd apps/agent
+  DATABASE_URL="<Neon pooled URL>" uv run python -m app.rag.ingest
+  ```
 
-4. Deploy, then add your domain (`theabhipatel.com`) under **Settings > Domains** and point DNS
-   as Vercel shows.
+- **Agent Python packages:** after changing `apps/agent/pyproject.toml`, regenerate the root
+  `requirements.txt` (the command is in its header), then redeploy the agent.
+- **Models:** change `ABI_CHAT_MODEL` / `ABI_FAST_MODEL` in the agent's env and redeploy.
 
-## 4. Check it works
+## Still to do
 
-- Home page loads, and switching roles (Recruiter, Founder, Developer) works.
-- Ask ABI a question: the answer streams with sources and follow-up chips.
-- Hold the mic button and speak: the question is transcribed.
-- Send the contact form: the email arrives.
-- `https://<your-domain>/llms.txt`, `/sitemap.xml` and `/robots.txt` load.
-- Run Lighthouse on a real phone.
+- Contact form email: add `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS` (a Gmail app
+  password) to the website project. Until then the form asks visitors to email directly.
+- Custom domain: add it to the website project under Settings > Domains.
+- Optional: connect the GitHub repo to both projects for automatic deploys on push.
 
-## Updating later
+## Check it works
 
-- **Code:** push to `main`. Both Vercel projects redeploy automatically.
-- **Content (`content/*.json`):** push, then run the ingest command from step 1 again against
-  Neon so ABI learns the change. Only changed chunks are embedded.
-- **Models:** change `ABI_CHAT_MODEL` / `ABI_FAST_MODEL` in the agent's Vercel env and redeploy.
-  Never hardcode model IDs.
+- The home page loads, and switching roles works.
+- Ask ABI a question: the answer streams with sources.
+- Live conversation (waveform button): speak, and ABI answers and listens again.
+- `/llms.txt`, `/sitemap.xml` and `/robots.txt` load.
 
 ## Troubleshooting
 
 | Problem | Fix |
 | --- | --- |
+| Website shows 404 everywhere | It was deployed without `--local-config apps/web/vercel.json`. Redeploy with it. |
 | ABI says it is busy | Groq free limit (about 8K tokens/min per model). Wait a minute. |
-| ABI answers with no sources | Ingest was not run against Neon. Run step 1.3. |
-| `/api/agent/*` returns 404 | `AGENT_URL` is missing or has a trailing slash. Redeploy the web app after fixing it. |
-| Agent fails to start | Check `DATABASE_URL` uses the pooled Neon URL with `sslmode=require`. |
-| Contact form says "email directly" | `SMTP_USER` or `SMTP_PASS` is not set. |
+| ABI answers with no sources | Ingest was not run against Neon. Run the ingest command above. |
+| `/api/agent/*` returns 401 or 404 | Deployment Protection is on, or `AGENT_URL` is wrong. Fix it, then redeploy the website. |
+| Contact form says "email directly" | `SMTP_USER` or `SMTP_PASS` is not set on the website project. |

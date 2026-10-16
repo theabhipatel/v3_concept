@@ -1,0 +1,12 @@
+# Files the Vercel CLI must not upload (`vercel deploy` from the repo root, for both projects).
+# Vercel installs and builds everything itself; local secrets, build output and caches stay here.
+.git
+.vercel
+**/.env
+**/.env.*
+!**/.env.example
+**/node_modules
+**/.venv
+**/__pycache__
+**/.next
+**/*.tsbuildinfo
