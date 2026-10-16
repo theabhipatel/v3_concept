@@ -38,7 +38,7 @@ def _ui(kind: str, **data) -> str:
 def go_to(path: str, section: str = "") -> str:
     """Navigate the visitor to a page, optionally scrolling to and highlighting a section.
     path: one of /, /skills, /projects, /about, /contact, /abi, /lab, or /projects/<slug>.
-    section (optional): home: prompt|retrieve|reason|act|deliver; about: story|experience|education|values|services;
+    section (optional): home: for-you|projects|ai|experience|stack|contact; about: story|experience|education|values|services;
     contact: form|faq; skills: a category id like ai or devops."""
     if path not in PAGES and not re.fullmatch(r"/projects/[a-z0-9-]+", path):
         return json.dumps({"error": f"Unknown page {path}"})
@@ -61,6 +61,20 @@ def filter_skills(category: SKILL_CATEGORIES = "all") -> str:
 def set_theme(theme: Literal["light", "dark"]) -> str:
     """Switch the website between light and dark theme."""
     return _ui("theme", theme=theme)
+
+
+@tool
+def scroll_page(direction: Literal["down", "up"] = "down", amount: Literal["little", "more", "page", "end"] = "more") -> str:
+    """Scroll the current page smoothly. amount: little (a quarter screen), more (half a screen),
+    page (one full screen), end (to the top when direction is up, to the bottom when down)."""
+    return _ui("scroll", direction=direction, amount=amount)
+
+
+@tool
+def click_on(label: str) -> str:
+    """Click a visible button, link, tab or card on the current page by its text, for example
+    "Projects", "Recruiter", "Secure Vault" or "Contact form". The visitor watches ABI's cursor do it."""
+    return _ui("click", label=label.strip()[:80])
 
 
 @tool
@@ -235,7 +249,7 @@ async def tailored_resume(job_description: str) -> str:
 
 
 TOOLS = [
-    go_to, filter_projects, filter_skills, set_theme, show_projects, compare_projects, show_skills,
+    go_to, filter_projects, filter_skills, set_theme, scroll_page, click_on, show_projects, compare_projects, show_skills,
     show_timeline, book_call, draft_contact_message, github_stats, show_code, match_job_description,
     tailored_resume,
 ]

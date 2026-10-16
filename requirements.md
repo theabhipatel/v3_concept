@@ -105,6 +105,14 @@ gives the full name. Show the full name in the UI (orb tooltip, `/abi` header, a
 - Push-to-talk pipeline: browser records -> Groq speech-to-text (Whisper) -> ABI -> browser
   Web Speech API speaks the answer. Live captions, and the visitor can interrupt ABI mid-answer.
 - Ask for mic permission with a short privacy note. Never store voice recordings.
+- **Voice navigation** (typed works too): "open the projects page", "scroll a little / more / one
+  page / to the top", "go back", "dark mode", "click on Recruiter", "open Secure Vault".
+  - Clear commands are parsed in the browser (`components/abi/commands.ts`) and run instantly
+    with no AI call. Everything else goes to the agent, which has `scroll_page` and `click_on`.
+  - One page = the current screen height; scrolling is smooth (Lenis).
+  - Clicks find the visible button or link by its text. ABI's cursor glides there along a soft
+    arc from its last position with a sparkle trail, then clicks with rings of light, a burst
+    of sparks and a glow on the target.
 - Later (section 11): OpenAI Realtime speech-to-speech for owner mode.
 
 ## 6. Home page and design concept
