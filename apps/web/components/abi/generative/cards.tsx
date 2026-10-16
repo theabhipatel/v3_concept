@@ -66,7 +66,7 @@ export function CompareTable({ slugs }: { slugs: unknown }) {
       <table className="w-full min-w-[420px] text-left text-xs">
         <thead>
           <tr className="border-b bg-muted/60">
-            <th className="p-3 font-mono font-medium uppercase tracking-wider text-subtle-foreground">Compare</th>
+            <th className="p-3 font-medium text-subtle-foreground">Compare</th>
             {list.map((p) => (
               <th key={p.slug} className="p-3 text-sm font-semibold">{p.title}</th>
             ))}
@@ -75,7 +75,7 @@ export function CompareTable({ slugs }: { slugs: unknown }) {
         <tbody>
           {rows.map(([label, render]) => (
             <tr key={label} className="border-b last:border-0 align-top">
-              <th className="p-3 font-mono text-[11px] font-medium uppercase tracking-wider text-subtle-foreground">{label}</th>
+              <th className="p-3 text-xs font-medium text-subtle-foreground">{label}</th>
               {list.map((p) => (
                 <td key={p.slug} className="p-3 text-muted-foreground">{render(p)}</td>
               ))}
@@ -94,7 +94,7 @@ export function SkillsChart({ category }: { category: unknown }) {
   if (cat === "all") {
     return (
       <div className={cn(shell, "space-y-2.5")}>
-        <p className="font-mono text-[11px] uppercase tracking-widest text-subtle-foreground">Skills by area</p>
+        <p className="font-medium text-xs text-subtle-foreground">Skills by area</p>
         {skillCategories.map((c) => {
           const list = skills.filter((s) => s.category === c.id);
           const expert = list.filter((s) => s.level === "Expert").length;
@@ -102,7 +102,7 @@ export function SkillsChart({ category }: { category: unknown }) {
             <div key={c.id} className="grid grid-cols-[92px_1fr_auto] items-center gap-3 text-xs">
               <span className="font-medium">{c.label}</span>
               <span className="h-2 overflow-hidden rounded-full bg-muted">
-                <span className="block h-full rounded-full bg-(image:--gradient-brand)" style={{ width: `${(list.length / 14) * 100}%` }} />
+                <span className="block h-full rounded-full bg-brand" style={{ width: `${(list.length / 14) * 100}%` }} />
               </span>
               <span className="text-muted-foreground">{list.length} ({expert} expert)</span>
             </div>
@@ -114,14 +114,14 @@ export function SkillsChart({ category }: { category: unknown }) {
   const list = skills.filter((s) => s.category.toLowerCase() === cat.toLowerCase());
   return (
     <div className={cn(shell, "space-y-2.5")}>
-      <p className="font-mono text-[11px] uppercase tracking-widest text-subtle-foreground">
+      <p className="font-medium text-xs text-subtle-foreground">
         {skillCategories.find((c) => c.id.toLowerCase() === cat.toLowerCase())?.label ?? cat} skills
       </p>
       {list.map((s) => (
         <div key={s.slug} className="grid grid-cols-[120px_1fr_auto] items-center gap-3 text-xs">
           <span className="truncate font-medium">{s.name}</span>
           <span className="h-2 overflow-hidden rounded-full bg-muted">
-            <span className="block h-full rounded-full bg-(image:--gradient-brand)" style={{ width: `${LEVEL[s.level]}%` }} />
+            <span className="block h-full rounded-full bg-brand" style={{ width: `${LEVEL[s.level]}%` }} />
           </span>
           <span className="text-muted-foreground">{s.level}</span>
         </div>
@@ -136,7 +136,7 @@ export function Timeline() {
       {experience.map((e) => (
         <li key={e.slug} className="relative border-l-2 border-border pl-4">
           <span className={cn("absolute -left-[7px] top-1 size-3 rounded-full border-2 border-card", e.current ? "bg-abi" : "bg-brand")} />
-          <p className="font-mono text-[11px] uppercase tracking-wider text-subtle-foreground">{e.period}</p>
+          <p className="font-medium text-xs text-subtle-foreground">{e.period}</p>
           <p className="text-sm font-semibold">{e.role} <span className="font-normal text-muted-foreground">at {e.company}</span></p>
           <p className="mt-1 text-xs text-muted-foreground">{e.description}</p>
         </li>
@@ -274,7 +274,7 @@ export function ResumeCard({ data }: { data: ResumeData }) {
   };
   return (
     <div className={cn(shell, "space-y-3")}>
-      <p className="font-mono text-[11px] uppercase tracking-widest text-subtle-foreground">Tailored resume</p>
+      <p className="font-medium text-xs text-subtle-foreground">Tailored resume</p>
       <p className="font-display text-lg font-semibold">{data.headline}</p>
       <p className="text-xs text-muted-foreground">{data.summary}</p>
       <div className="flex flex-wrap gap-1.5">{data.skills?.slice(0, 10).map((s) => <Badge key={s}>{s}</Badge>)}</div>
@@ -304,7 +304,7 @@ export function ContactDraftCard({ data }: { data: { name: string; email: string
   const field = "w-full rounded-xl border bg-background px-3 py-2 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring";
   return (
     <form action={action} className={cn(shell, "space-y-2")}>
-      <p className="font-mono text-[11px] uppercase tracking-widest text-subtle-foreground">Review before sending</p>
+      <p className="font-medium text-xs text-subtle-foreground">Review before sending</p>
       <div className="grid gap-2 sm:grid-cols-2">
         <input name="name" defaultValue={data.name} placeholder="Your name" aria-label="Your name" className={field} required />
         <input name="email" type="email" defaultValue={data.email} placeholder="Your email" aria-label="Your email" className={field} required />

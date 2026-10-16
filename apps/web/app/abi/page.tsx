@@ -19,7 +19,6 @@ export default function AbiPage() {
       <section aria-labelledby="abi-title" className="flex min-h-[70dvh] flex-col overflow-hidden rounded-3xl border bg-card shadow-lg lg:h-[calc(100dvh-10rem)]">
         <header className="flex items-center gap-3 border-b px-5 py-4">
           <span className="abi-orb abi-orb--active relative size-9 shrink-0 rounded-full" aria-hidden>
-            <span className="abi-orb__ring" />
             <span className="abi-orb__core" />
           </span>
           <div>
@@ -32,7 +31,7 @@ export default function AbiPage() {
         </div>
       </section>
       <aside className="space-y-4">
-        <p className="font-mono text-xs uppercase tracking-[0.2em] text-brand-text">What ABI can do</p>
+        <p className="font-medium text-xs text-brand-text">What ABI can do</p>
         <ul className="space-y-3">
           {CAPABILITIES.map((c) => (
             <li key={c.title} className="flex gap-3 rounded-2xl border bg-card p-4">

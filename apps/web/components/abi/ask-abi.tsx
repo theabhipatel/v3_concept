@@ -23,7 +23,7 @@ export function AskAbi({
         abi.ask(prompt);
       }}
       className={cn(
-        "relative z-10 inline-flex items-center gap-1.5 rounded-full border border-abi/40 bg-abi-soft px-3 py-1 text-xs font-medium text-abi-text transition-[opacity,transform,box-shadow] duration-(--duration-base) ease-out-expo hover:shadow-glow-abi focus-visible:outline-2 focus-visible:outline-ring",
+        "relative z-10 inline-flex items-center gap-1.5 rounded-full border border-abi/40 bg-abi-soft px-3 py-1 text-xs font-medium text-abi-text transition-[opacity,transform,box-shadow] duration-(--duration-base) ease-out-expo focus-visible:outline-2 focus-visible:outline-ring",
         className,
       )}
       aria-label={`${label}: ${prompt}`}

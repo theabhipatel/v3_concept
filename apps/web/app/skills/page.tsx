@@ -10,7 +10,7 @@ export default function SkillsPage() {
   return (
     <>
       <PageHeader
-        label="03 / Reason - skills"
+        label="Skills"
         title="The toolkit behind the answers."
         description={`${skills.length} technologies across AI, full stack and DevOps, ${expert} of them at expert level. Hover any skill and ask ABI where it was used.`}
       />

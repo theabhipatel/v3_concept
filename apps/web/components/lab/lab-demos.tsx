@@ -79,7 +79,7 @@ export function RagInspector() {
               </div>
               <div className="mt-2 flex items-center gap-3">
                 <span className="h-1.5 flex-1 overflow-hidden rounded-full bg-muted">
-                  <span className="block h-full rounded-full bg-(image:--gradient-abi)" style={{ width: `${(h.score / max) * 100}%` }} />
+                  <span className="block h-full rounded-full bg-abi" style={{ width: `${(h.score / max) * 100}%` }} />
                 </span>
                 <span className="font-mono text-[11px] text-subtle-foreground">{h.score.toFixed(4)}</span>
               </div>

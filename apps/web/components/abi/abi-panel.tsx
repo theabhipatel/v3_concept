@@ -30,7 +30,6 @@ export function AbiPanel() {
     >
       <header className="flex items-center gap-3 border-b px-4 py-3">
         <span className="abi-orb abi-orb--active relative size-8 shrink-0 rounded-full" aria-hidden>
-          <span className="abi-orb__ring" />
           <span className="abi-orb__core" />
         </span>
         <div className="min-w-0 flex-1">

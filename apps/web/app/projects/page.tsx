@@ -22,7 +22,7 @@ export default function ProjectsPage() {
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={jsonLd(list)} />
       <PageHeader
-        label="04 / Act - projects"
+        label="Projects"
         title="Things I've shipped."
         description={`${projects.length} projects: agentic AI platforms, AI chatbots, full stack products, DevOps pipelines and mobile apps. Filter them, or ask ABI to compare any of them.`}
       />

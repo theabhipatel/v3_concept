@@ -157,7 +157,7 @@ export function OrbNav() {
           }}
           className={cn(
             "grid size-10 touch-none select-none place-items-center rounded-full border bg-popover/90 text-muted-foreground shadow-md backdrop-blur transition-[color,opacity] hover:text-foreground",
-            listening && "border-abi/60 bg-abi-soft text-abi-text shadow-glow-abi",
+            listening && "border-abi/60 bg-abi-soft text-abi-text",
             menuOpen && "pointer-events-none opacity-0",
           )}
         >
@@ -171,9 +171,8 @@ export function OrbNav() {
           onClick={() => setMenuOpen((o) => !o)}
           className={cn("abi-orb relative grid size-14 place-items-center rounded-full", active && "abi-orb--active")}
         >
-          <span className="abi-orb__ring" aria-hidden />
           <span className="abi-orb__core" aria-hidden />
-          {menuOpen && <X className="relative size-5 text-on-brand" aria-hidden />}
+          {menuOpen && <X className="relative size-5 text-primary-foreground" aria-hidden />}
         </button>
       </div>
     </div>

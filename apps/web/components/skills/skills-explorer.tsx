@@ -96,7 +96,7 @@ export function SkillsExplorer({
                   </p>
                   <div className="mt-2 flex gap-1" aria-label={`Proficiency: ${s.level}`} role="img">
                     {[1, 2, 3, 4].map((n) => (
-                      <span key={n} className={cn("h-1 flex-1 rounded-full", n <= LEVELS[s.level] ? "bg-(image:--gradient-brand)" : "bg-muted")} />
+                      <span key={n} className={cn("h-1 flex-1 rounded-full", n <= LEVELS[s.level] ? "bg-brand" : "bg-muted")} />
                     ))}
                   </div>
                 </div>

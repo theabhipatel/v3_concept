@@ -18,7 +18,7 @@ export function Footer() {
           </a>
         </div>
         <nav aria-label="Site">
-          <p className="mb-3 font-mono text-xs uppercase tracking-widest text-subtle-foreground">Pages</p>
+          <p className="font-medium mb-3 text-xs text-subtle-foreground">Pages</p>
           <ul className="grid grid-cols-2 gap-2 text-sm">
             {NAV_ITEMS.map((item) => (
               <li key={item.href}>
@@ -30,7 +30,7 @@ export function Footer() {
           </ul>
         </nav>
         <div>
-          <p className="mb-3 font-mono text-xs uppercase tracking-widest text-subtle-foreground">Elsewhere</p>
+          <p className="font-medium mb-3 text-xs text-subtle-foreground">Elsewhere</p>
           <ul className="flex flex-wrap gap-2">
             {profile.socials.map((s) => (
               <li key={s.name}>

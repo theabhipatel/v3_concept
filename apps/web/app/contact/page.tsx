@@ -17,7 +17,7 @@ export default function ContactPage() {
   return (
     <>
       <PageHeader
-        label="05 / Deliver - contact"
+        label="Contact"
         title="Let's build something together."
         description={`Open to ${contact.openTo.join(", ").toLowerCase()}. This form works even when the AI is offline.`}
       />
@@ -44,7 +44,7 @@ export default function ContactPage() {
             ))}
           </ul>
           <div>
-            <p className="mb-3 font-mono text-xs uppercase tracking-[0.2em] text-subtle-foreground">Availability (IST)</p>
+            <p className="font-medium mb-3 text-xs text-subtle-foreground">Availability (IST)</p>
             <ul className="divide-y rounded-2xl border bg-card text-sm">
               {contact.availability.map((a) => (
                 <li key={a.day} className="flex justify-between px-4 py-3">

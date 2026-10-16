@@ -58,15 +58,15 @@ export function ResumeView() {
           </p>
         </header>
         <section>
-          <h2 className="mb-2 font-mono text-xs uppercase tracking-widest text-subtle-foreground">Summary</h2>
+          <h2 className="font-medium mb-2 text-xs text-subtle-foreground">Summary</h2>
           <p>{d.summary}</p>
         </section>
         <section>
-          <h2 className="mb-2 font-mono text-xs uppercase tracking-widest text-subtle-foreground">Skills</h2>
+          <h2 className="font-medium mb-2 text-xs text-subtle-foreground">Skills</h2>
           <p>{d.skills?.join(" - ")}</p>
         </section>
         <section className="space-y-4">
-          <h2 className="font-mono text-xs uppercase tracking-widest text-subtle-foreground">Experience</h2>
+          <h2 className="font-medium text-xs text-subtle-foreground">Experience</h2>
           {roles.map(({ slug, bullets, role }) => (
             <div key={slug} className="break-inside-avoid">
               <p className="font-semibold">
@@ -79,7 +79,7 @@ export function ResumeView() {
           ))}
         </section>
         <section className="space-y-2">
-          <h2 className="font-mono text-xs uppercase tracking-widest text-subtle-foreground">Selected projects</h2>
+          <h2 className="font-medium text-xs text-subtle-foreground">Selected projects</h2>
           {(d.projects ?? []).map((slug) => {
             const p = getProject(slug);
             return p ? (
@@ -90,7 +90,7 @@ export function ResumeView() {
           })}
         </section>
         <section>
-          <h2 className="mb-2 font-mono text-xs uppercase tracking-widest text-subtle-foreground">Education</h2>
+          <h2 className="font-medium mb-2 text-xs text-subtle-foreground">Education</h2>
           {profile.education.map((e) => (
             <p key={e.degree}>{e.degree}, {e.institution} ({e.year})</p>
           ))}

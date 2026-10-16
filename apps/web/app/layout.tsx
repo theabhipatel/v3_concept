@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Bricolage_Grotesque, Geist, Geist_Mono } from "next/font/google";
+import { Geist_Mono, Plus_Jakarta_Sans } from "next/font/google";
 import "lenis/dist/lenis.css";
 import { AbiLoader } from "@/components/abi/abi-loader";
 import { Nudges } from "@/components/abi/nudges";
@@ -13,13 +13,8 @@ import { profile, seo } from "@/lib/content";
 import { jsonLd as ld } from "@/lib/seo";
 import "./globals.css";
 
-const geist = Geist({ variable: "--font-geist", subsets: ["latin"], display: "swap" });
+const jakarta = Plus_Jakarta_Sans({ variable: "--font-jakarta", subsets: ["latin"], display: "swap" });
 const geistMono = Geist_Mono({ variable: "--font-geist-mono", subsets: ["latin"], display: "swap" });
-const bricolage = Bricolage_Grotesque({
-  variable: "--font-bricolage",
-  subsets: ["latin"],
-  display: "swap",
-});
 
 const home = seo.pages.home;
 
@@ -59,8 +54,8 @@ export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#f8f8fc" },
-    { media: "(prefers-color-scheme: dark)", color: "#0b0c17" },
+    { media: "(prefers-color-scheme: light)", color: "#fcf9f4" },
+    { media: "(prefers-color-scheme: dark)", color: "#1a1612" },
   ],
 };
 
@@ -98,7 +93,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     <html
       lang="en"
       suppressHydrationWarning
-      className={`${geist.variable} ${geistMono.variable} ${bricolage.variable} h-full`}
+      className={`${jakarta.variable} ${geistMono.variable} h-full`}
     >
       <body className="min-h-full">
         <script

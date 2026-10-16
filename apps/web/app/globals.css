@@ -31,9 +31,10 @@
   }
 }
 
-/* ---------- ABI orb (the navbar) ---------- */
+/* ---------- ABI orb (the navbar): a calm solid button, amber ring when ABI is active ---------- */
 .abi-orb {
-  box-shadow: var(--elevation-glow);
+  background: var(--primary);
+  box-shadow: var(--elevation-md);
   transition: box-shadow var(--duration-base) var(--motion-ease-out-expo), transform var(--duration-fast);
 }
 .abi-orb:hover {
@@ -43,31 +44,34 @@
   outline: 2px solid var(--ring);
   outline-offset: 3px;
 }
-.abi-orb__ring {
-  position: absolute;
-  inset: 0;
-  border-radius: 9999px;
-  background: conic-gradient(from 0deg, var(--brand), var(--brand-2), var(--brand), var(--brand-2), var(--brand));
-  animation: abi-spin 6s linear infinite;
-}
 .abi-orb__core {
   position: absolute;
-  inset: 4px;
+  inset: 34%;
   border-radius: 9999px;
-  background:
-    radial-gradient(circle at 35% 30%, var(--orb-shine), transparent 45%),
-    radial-gradient(circle at 50% 60%, var(--brand) 0%, var(--orb-deep) 80%);
+  background: var(--abi);
+  transition: inset var(--duration-base) var(--motion-ease-out-expo);
 }
 .abi-orb--active {
-  box-shadow: var(--elevation-glow-abi);
+  box-shadow: 0 0 0 3px var(--background), 0 0 0 5px var(--abi), var(--elevation-md);
 }
-.abi-orb--active .abi-orb__ring {
-  background: conic-gradient(from 0deg, var(--abi), var(--brand-2), var(--abi), var(--brand), var(--abi));
-  animation-duration: 2.4s;
+.abi-orb--active .abi-orb__core {
+  inset: 28%;
 }
-@keyframes abi-spin {
+
+/* Answers stream in word by word (see StreamedText). Full text is in the HTML. */
+.stream-w {
+  animation: stream-in 0.45s var(--motion-ease-out-expo) both;
+  animation-delay: calc(var(--i) * 26ms);
+}
+.stream[data-state="idle"] .stream-w {
+  animation-play-state: paused;
+}
+@keyframes stream-in {
+  from {
+    opacity: 0;
+  }
   to {
-    transform: rotate(360deg);
+    opacity: 1;
   }
 }
 
@@ -79,19 +83,11 @@
 @keyframes abi-highlight {
   0%,
   60% {
-    box-shadow: 0 0 0 2px var(--abi), 0 0 40px -6px var(--glow-abi);
+    box-shadow: 0 0 0 2px var(--abi);
   }
   100% {
     box-shadow: 0 0 0 2px transparent, 0 0 0 0 transparent;
   }
-}
-
-/* Thin grid used behind page headers. */
-.bg-grid {
-  background-image:
-    linear-gradient(to right, var(--grid-line) 1px, transparent 1px),
-    linear-gradient(to bottom, var(--grid-line) 1px, transparent 1px);
-  background-size: 56px 56px;
 }
 
 /* Chat markdown */
@@ -147,8 +143,26 @@
   background: var(--muted);
 }
 
+/* Home: when the visitor picks a role, the page re-assembles step by step (see RoleSections). */
+.is-building .build-step {
+  animation: build-in 0.4s var(--motion-ease-out-expo) both;
+  animation-delay: calc(0.25s + var(--i) * 110ms);
+}
+.is-building .build-block {
+  animation: build-in 0.7s var(--motion-ease-out-expo) both;
+  animation-delay: calc(0.5s + var(--i) * 120ms);
+}
+@keyframes build-in {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
-  .abi-orb__ring {
+  .stream-w,
+  .is-building .build-step,
+  .is-building .build-block {
     animation: none;
   }
   .abi-highlight {

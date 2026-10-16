@@ -12,7 +12,7 @@ export const metadata = pageMetadata("about");
 function SectionTitle({ id, label, children }: { id: string; label: string; children: React.ReactNode }) {
   return (
     <div className="mb-8 space-y-2">
-      <p className="font-mono text-xs uppercase tracking-[0.2em] text-brand-text">{label}</p>
+      <p className="font-medium text-xs text-brand-text">{label}</p>
       <h2 id={`${id}-title`} className="text-3xl font-semibold sm:text-4xl">{children}</h2>
     </div>
   );
@@ -22,7 +22,7 @@ export default function AboutPage() {
   return (
     <>
       <PageHeader
-        label="02 / Retrieve - about"
+        label="About"
         title={<>Hi, I&apos;m {profile.name.split(" ")[0]}. I build AI that ships.</>}
         description={profile.bio}
       >
@@ -62,14 +62,14 @@ export default function AboutPage() {
                 <span
                   className={cn(
                     "absolute -left-[31px] top-7 size-3.5 rounded-full border-2 border-background sm:-left-[47px]",
-                    e.current ? "bg-abi shadow-glow-abi" : "bg-brand",
+                    e.current ? "bg-abi" : "bg-brand",
                   )}
                   aria-hidden
                 />
                 <article className="rounded-3xl border bg-card p-6 shadow-sm transition-colors hover:border-border-strong">
                   <div className="flex flex-wrap items-start justify-between gap-3">
                     <div>
-                      <p className="font-mono text-xs uppercase tracking-wider text-subtle-foreground">
+                      <p className="font-medium text-xs text-subtle-foreground">
                         {e.period} {e.current && <span className="text-abi-text">- current</span>}
                       </p>
                       <h3 className="mt-1 text-xl font-semibold">

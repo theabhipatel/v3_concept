@@ -13,7 +13,7 @@ export function Header() {
           className="group flex items-center gap-2.5 rounded-full font-display text-base font-semibold tracking-tight"
           aria-label={`${profile.brand} home`}
         >
-          <span className="relative grid size-7 place-items-center rounded-full bg-(image:--gradient-brand) shadow-glow">
+          <span className="relative grid size-7 place-items-center rounded-full bg-brand">
             <span className="size-2.5 rounded-full bg-background/90 transition-transform duration-(--duration-base) group-hover:scale-125" />
           </span>
           {profile.brand}

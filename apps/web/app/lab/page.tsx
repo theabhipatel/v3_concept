@@ -8,7 +8,7 @@ export default function LabPage() {
   return (
     <>
       <PageHeader
-        label="Lab - live AI demos"
+        label="AI Lab"
         title="Look inside the machine."
         description="Small live demos of the pieces that power ABI. Each one calls the same production agent backend."
       />

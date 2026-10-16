@@ -22,7 +22,7 @@ export function ProjectCard({ project, priority = false, className }: { project:
           fill
           priority={priority}
           sizes="(min-width: 1024px) 380px, (min-width: 640px) 50vw, 100vw"
-          className="object-cover transition-transform duration-(--duration-slow) ease-out-expo group-hover:scale-[1.04]"
+          className="object-cover"
         />
         <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-card/80 to-transparent" aria-hidden />
         <div className="absolute left-3 top-3 flex gap-1.5">

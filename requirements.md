@@ -109,17 +109,24 @@ gives the full name. Show the full name in the UI (orb tooltip, `/abi` header, a
 
 ## 6. Home page and design concept
 
-**Concept: the site is an AI pipeline.** Scrolling the home page follows a request through an
-AI system, so visitors want to reach the "answer" at the end:
+**Concept: "Ask first, built for you".** The home page is mostly one question box. ABI greets
+the visitor, and the visitor either asks anything or says who they are, and ABI arranges the
+page for them. Decided 2026-10-13; replaced "The Interview" (photo + scripted Q&A), which
+Abhishek rejected. No photo on the home page.
 
-**Prompt -> Retrieve -> Reason -> Act -> Deliver**
-(Hero -> About -> Skills -> Projects -> Contact/Footer)
-
-- **Hero:** no classic hero. A large command bar "Ask ABI anything about Abhishek..." with
-  sample questions typing themselves, in front of a 3D **neural core** that reacts to the pointer
-  and opens up as the user scrolls. The opening core is the hook to keep scrolling.
-- Each stage visibly "processes" and hands data to the next, driven by scroll.
-- Animations are unique to this portfolio, smooth, and optimized (section 9).
+- **Hero:** "Hi, I'm ABI" pill, the headline "Ask me anything about Abhishek Patel.", a one-line
+  bio, a large ask box (text, mic, role-tuned suggestion chips, "Paste a job description"), and
+  a "Who are you?" picker: Just looking / Recruiter / Founder or client / Developer.
+- **Role pages:** picking a role scrolls to "Built for {role}", shows a checklist of sections,
+  and re-assembles the page step by step. Orders:
+  - Just looking: shipped projects, how ABI works, experience, stack, contact.
+  - Recruiter: fit at a glance (resume + JD match), experience, projects, stack, contact.
+  - Founder or client: what he can build, client products, FAQs, contact.
+  - Developer: how ABI works, open-source projects with code links, stack, contact.
+- **Zero tokens to switch:** every role's sections are pre-built; only typed questions call the
+  model. The role lives in the URL (`?for=recruiter`) so tailored links can be shared.
+- Avoid generic AI tells: no glowing networks, gradient text, glows, grid backgrounds, numbered
+  mono labels, pulsing dots or fake typing cursors. Real screenshots instead.
 
 ### 6.1 Nudging visitors to try ABI
 - After about 20 seconds or 40% scroll, ABI comments on what the visitor is looking at
@@ -140,13 +147,13 @@ AI system, so visitors want to reach the "answer" at the end:
 
 ## 7. Theme
 
-- Related to v2 but not the same. v2 used a near-black navy (`hsl(222 47% 5%)`) with brand blue
-  (`hsl(217 91% 60%)`) and indigo (`hsl(243 75% 59%)`).
-- v3 direction: deeper ink background, electric indigo + cyan as brand colors, plus **one new
-  accent** (mint or soft amber) used **only** when ABI is active, so AI moments stand out.
-- New typography (not Inter + Orbitron like v2).
-- All tokens in **one file** (CSS variables, mapped into Tailwind `@theme`). Changing a token
-  there changes it everywhere, for both themes.
+- Palette: **orange** brand (warm, energetic) with **amber** as its partner, used for ABI moments,
+  on warm neutrals. Clean, readable, positive; no glows.
+- Light: warm cream paper, white cards, warm ink text. Dark: warm charcoal with bright orange.
+- Font: **Plus Jakarta Sans** for headings and body (clean and very readable), Geist Mono only
+  for code.
+- All tokens in **one file** (`apps/web/styles/tokens.css`, CSS variables mapped into Tailwind
+  `@theme`). Changing a token there changes it everywhere, for both themes.
 - Both themes meet WCAG AA contrast.
 
 ## 8. Tech stack
@@ -156,8 +163,7 @@ AI system, so visitors want to reach the "answer" at the end:
 | Web framework | Next.js (App Router), TypeScript, static/server rendering for SEO |
 | UI | Tailwind CSS v4 + shadcn/ui (Radix), customized so it looks unique |
 | Theming | CSS-variable tokens in one file + `next-themes` for light/dark |
-| Motion | GSAP ScrollTrigger + Lenis smooth scroll; Motion for small UI transitions |
-| 3D | React Three Fiber, one canvas only |
+| Motion | Lenis smooth scroll + CSS/IntersectionObserver reveals (GSAP and 3D removed with the old hero) |
 | AI in the browser | Vercel AI SDK (streaming, tool calls, generative UI) |
 | Agent backend | Python FastAPI + LangGraph |
 | Data / RAG | PostgreSQL + pgvector (Neon or Supabase free tier), free embeddings API (for example Gemini, decided in Phase 2) |
@@ -178,8 +184,7 @@ AI system, so visitors want to reach the "answer" at the end:
 
 v2 lagged on low/mid devices because of off-screen infinite animations, a never-sleeping WebGL
 loop and an always-running particles canvas. v3 must avoid all of that:
-- Pause every animation and the 3D canvas when off-screen or when the tab is hidden.
-- Only one WebGL canvas on the page. Lower its quality on weak devices.
+- Pause every animation when off-screen or when the tab is hidden. No WebGL on the site.
 - Respect `prefers-reduced-motion` with a calm, still-beautiful version.
 - Load the AI/voice code only when the visitor first interacts with ABI.
 - Targets on mobile Lighthouse: Performance 90+, LCP under 2.5s, CLS under 0.1, TBT under 200ms.
@@ -240,7 +245,8 @@ v3/
       for voice (Phase 6) and injection checks (Phase 7). Neon is used at deploy time.
 - [x] **Phase 3 - Pages:** all pages with real content and SEO, contact form. Per-page OG
       images, JSON-LD (Person, WebSite, ItemList, each project), sitemap, robots, llms.txt.
-- [x] **Phase 4 - Home experience:** pipeline scroll story, neural core, orb navigation.
+- [x] **Phase 4 - Home experience:** redone as "The Interview" (section 6) with the new theme
+      (section 7); orb navigation kept, restyled.
 - [x] **Phase 5 - Agent actions:** tools, agent cursor, generative UI, "How I answered".
 - [x] **Phase 6 - Voice:** push-to-talk (hold Space or mic) + Groq Whisper + browser speech,
       captions, interrupt. Mic privacy note before first use.

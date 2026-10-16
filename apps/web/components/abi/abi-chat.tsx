@@ -22,7 +22,7 @@ const STARTERS = [
   "Show me real code from Secure Vault",
 ];
 const JD_PREFIX = "Here is a job description. How well does Abhishek fit?\n\n";
-const STAGES = ["Prompt", "Retrieve", "Reason", "Act", "Deliver"];
+const STAGES = ["Reading your question", "Searching his work", "Thinking", "Using tools", "Writing"];
 
 function data<K extends keyof AbiData>(m: AbiMessage, key: K): AbiData[K] | undefined {
   const part = m.parts.find((p) => p.type === `data-${key}`) as { data: AbiData[K] } | undefined;
@@ -71,15 +71,10 @@ function stageOf(m: AbiMessage | undefined) {
 
 function Thinking({ stage }: { stage: number }) {
   return (
-    <div className="flex items-center gap-2 font-mono text-[11px] text-subtle-foreground" role="status">
-      <Loader2 className="size-3.5 animate-spin text-abi-text" aria-hidden />
-      {STAGES.map((s, i) => (
-        <span key={s} className={cn(i === stage ? "text-abi-text" : i < stage ? "text-muted-foreground" : "opacity-50")}>
-          {s}
-          {i < STAGES.length - 1 && <span className="ml-2 opacity-50">/</span>}
-        </span>
-      ))}
-    </div>
+    <p className="flex items-center gap-2 text-sm text-muted-foreground" role="status">
+      <Loader2 className="size-4 animate-spin text-abi-text" aria-hidden />
+      {STAGES[stage]}...
+    </p>
   );
 }
 
@@ -185,7 +180,7 @@ export function AbiChat({ layout = "panel" }: { layout?: "panel" | "page" }) {
                 setJdMode(true);
                 inputRef.current?.focus();
               }}
-              className="flex w-full items-center gap-3 rounded-2xl border border-abi/30 bg-abi-soft px-4 py-3 text-left text-sm shadow-glow-abi"
+              className="flex w-full items-center gap-3 rounded-2xl border border-abi/30 bg-abi-soft px-4 py-3 text-left text-sm"
             >
               <Briefcase className="size-5 shrink-0 text-abi-text" aria-hidden />
               <span>

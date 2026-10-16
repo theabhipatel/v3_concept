@@ -102,7 +102,7 @@ export function Nudges() {
       <button type="button" onClick={() => setActive(null)} className="absolute right-2 top-2 grid size-7 place-items-center rounded-full text-subtle-foreground hover:text-foreground" aria-label="Dismiss">
         <X className="size-3.5" aria-hidden />
       </button>
-      <p className="mb-1 flex items-center gap-1.5 font-mono text-[11px] uppercase tracking-widest text-abi-text">
+      <p className="font-medium mb-1 flex items-center gap-1.5 text-xs text-abi-text">
         <Sparkles className="size-3.5" aria-hidden /> ABI
       </p>
       <p className="pr-4 text-sm">{active.text}</p>

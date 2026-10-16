@@ -71,7 +71,7 @@ export default async function ProjectPage({ params }: PageProps<"/projects/[slug
         </Link>
         <header className="grid gap-10 lg:grid-cols-[1.1fr_1fr] lg:items-end">
           <div className="space-y-5">
-            <p className="font-mono text-xs uppercase tracking-[0.2em] text-brand-text">
+            <p className="font-medium text-xs text-brand-text">
               {p.type === "client" ? "Client work" : "Personal project"}
             </p>
             <h1 className="text-4xl font-semibold leading-[1.05] sm:text-6xl">{p.title}</h1>
@@ -110,7 +110,7 @@ export default async function ProjectPage({ params }: PageProps<"/projects/[slug
           </section>
           <aside className="space-y-8">
             <section aria-labelledby="stack-title" className="space-y-3">
-              <h2 id="stack-title" className="font-mono text-xs uppercase tracking-[0.2em] text-subtle-foreground">Tech stack</h2>
+              <h2 id="stack-title" className="font-medium text-xs text-subtle-foreground">Tech stack</h2>
               <ul className="flex flex-wrap gap-2">
                 {p.tags.map((t) => (
                   <li key={t} className="rounded-full border bg-card px-3 py-1 text-sm">{t}</li>
@@ -118,7 +118,7 @@ export default async function ProjectPage({ params }: PageProps<"/projects/[slug
               </ul>
             </section>
             <section aria-labelledby="ask-title" className="space-y-3 rounded-3xl border border-abi/30 bg-abi-soft/60 p-5">
-              <h2 id="ask-title" className="font-mono text-xs uppercase tracking-[0.2em] text-abi-text">Ask ABI about this</h2>
+              <h2 id="ask-title" className="font-medium text-xs text-abi-text">Ask ABI about this</h2>
               <ul className="space-y-2">
                 {questions.map((q) => (
                   <li key={q}>
