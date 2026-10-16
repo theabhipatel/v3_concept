@@ -68,7 +68,7 @@ export function ProjectsExplorer({ projects, children }: { projects: Project[]; 
               data-abi-target={`projects-type-${t.id}`}
               onClick={() => setType(t.id)}
               className={cn(
-                "rounded-full px-3 py-1.5 text-xs font-medium transition-colors",
+                "min-h-9 rounded-full px-3.5 py-2 text-xs font-medium transition-colors",
                 type === t.id ? "bg-secondary text-secondary-foreground" : "text-muted-foreground hover:text-foreground",
               )}
             >

@@ -22,7 +22,7 @@ export default function AbiPage() {
           <AbiBot state="active" size={40} />
           <div>
             <h1 id="abi-title" className="text-lg font-semibold">ABI (Abhi&apos;s Brain Interface)</h1>
-            <p className="text-xs text-muted-foreground">Abhishek&apos;s AI agent. Ask, paste a job description, or hold Space to talk.</p>
+            <p className="text-xs text-muted-foreground">Abhishek&apos;s AI agent. Ask, paste a job description, or talk to it.</p>
           </div>
         </header>
         <div className="min-h-0 flex-1">

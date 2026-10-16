@@ -341,7 +341,7 @@ export default function Home() {
               return (
                 <div key={c.id} className="grid gap-2 py-4 sm:grid-cols-[140px_1fr]">
                   <dt className="font-semibold">
-                    <Link href={`/skills?category=${c.id.toLowerCase()}`} className="hover:underline">
+                    <Link href={`/skills?category=${c.id.toLowerCase()}`} className="inline-flex min-h-8 items-center hover:underline">
                       {c.label}
                     </Link>
                   </dt>
@@ -417,7 +417,7 @@ export default function Home() {
 
   return (
     <>
-      <section aria-labelledby="hero-title" className="pb-20 pt-32 sm:pb-24 sm:pt-40">
+      <section aria-labelledby="hero-title" className="pb-16 pt-24 sm:pb-24 sm:pt-40">
         <div className="mx-auto max-w-4xl px-4 text-center sm:px-8">
           <p className="inline-flex items-center gap-2.5 rounded-full border bg-card py-1.5 pl-1.5 pr-4 text-sm text-muted-foreground">
             <span className="grid size-6 place-items-center rounded-full bg-primary" aria-hidden>
@@ -427,17 +427,17 @@ export default function Home() {
               Hi, I&apos;m <strong className="font-semibold text-foreground">ABI</strong>, Abhishek&apos;s AI agent
             </span>
           </p>
-          <h1 id="hero-title" className="mt-8 text-balance text-[2.6rem] font-bold leading-[1.06] tracking-[-0.025em] sm:text-6xl md:text-7xl">
+          <h1 id="hero-title" className="mt-6 text-balance sm:mt-8 text-[2.6rem] font-bold leading-[1.06] tracking-[-0.025em] sm:text-6xl md:text-7xl">
             Ask me anything about <span className="text-brand-text">Abhishek Patel</span>.
           </h1>
           <p className="mx-auto mt-6 max-w-2xl text-lg leading-relaxed text-muted-foreground sm:text-xl">
             He is a {profile.title} in {profile.location.city} who builds AI agents, the products around them and the cloud they
             run on.
           </p>
-          <div className="mx-auto mt-10 max-w-3xl text-left">
+          <div className="mx-auto mt-8 max-w-3xl text-left sm:mt-10">
             <AskBox />
           </div>
-          <div className="mt-14">
+          <div className="mt-10 sm:mt-14">
             <p className="font-medium text-muted-foreground">Or tell me who you are, and I&apos;ll arrange this page for you.</p>
             <div className="mt-4">
               <RolePicker />

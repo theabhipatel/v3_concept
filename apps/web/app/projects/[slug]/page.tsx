@@ -66,7 +66,7 @@ export default async function ProjectPage({ params }: PageProps<"/projects/[slug
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={jsonLd(schema)} />
       <article className="mx-auto max-w-6xl px-4 pb-24 pt-28 sm:px-8 sm:pt-36">
-        <Link href="/projects" className="mb-8 inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground">
+        <Link href="/projects" className="mb-8 inline-flex min-h-9 items-center gap-2 text-sm text-muted-foreground hover:text-foreground">
           <ArrowLeft className="size-4" aria-hidden /> All projects
         </Link>
         <header className="grid gap-10 lg:grid-cols-[1.1fr_1fr] lg:items-end">

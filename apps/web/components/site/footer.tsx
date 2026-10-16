@@ -50,7 +50,9 @@ export function Footer() {
       </div>
       <div className="border-t">
         <p className="mx-auto max-w-6xl px-4 py-5 font-mono text-xs text-subtle-foreground sm:px-8">
-          (c) {profile.brand}. Press Ctrl/Cmd + K to search, or hold Space to talk to ABI.
+          (c) {profile.brand}.{" "}
+          <span className="hidden sm:inline">Press Ctrl/Cmd + K to search, or hold Space to talk to ABI.</span>
+          <span className="sm:hidden">Tap the robot to explore or talk to ABI.</span>
         </p>
       </div>
     </footer>

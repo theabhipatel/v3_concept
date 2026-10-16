@@ -16,7 +16,7 @@ const INNER = 3;
 function position(i: number) {
   const inner = i < INNER;
   const t = inner ? i / (INNER - 1) : (i - INNER) / (ITEMS.length - INNER - 1);
-  const radius = inner ? 118 : 232;
+  const radius = inner ? 130 : 250;
   const start = Math.PI * (193 / 180); // just above horizontal, so bottom labels stay on screen
   const angle = start + t * (Math.PI * 1.5 - start); // -> 270deg (up)
   return { x: Math.round(Math.cos(angle) * radius), y: Math.round(Math.sin(angle) * radius) };
@@ -186,7 +186,7 @@ export function OrbNav() {
             else abi.requestListen();
           }}
           className={cn(
-            "grid size-10 touch-none select-none place-items-center rounded-full border bg-popover/90 text-muted-foreground shadow-md backdrop-blur transition-[color,opacity] hover:text-foreground",
+            "hidden size-10 touch-none select-none place-items-center rounded-full border bg-popover/90 sm:grid text-muted-foreground shadow-md backdrop-blur transition-[color,opacity] hover:text-foreground",
             listening && "border-abi/60 bg-abi-soft text-abi-text",
             menuOpen && "pointer-events-none opacity-0",
           )}
