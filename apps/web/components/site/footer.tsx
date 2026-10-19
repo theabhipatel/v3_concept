@@ -34,7 +34,7 @@ function Commit({ slug, title, type }: { slug: string; title: string; type: stri
         <span className="mt-0.5 block whitespace-nowrap text-sm font-medium">
           <span className="text-brand-text">ship:</span> {title}
         </span>
-        <span className="block text-[11px] text-muted-foreground">{type === "client" ? "client product" : "own build"}</span>
+        <span className="block text-[11px] text-muted-foreground">{type === "client" ? "professional" : "built for fun"}</span>
       </span>
     </Link>
   );

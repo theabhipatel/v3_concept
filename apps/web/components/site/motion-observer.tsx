@@ -9,22 +9,18 @@ import { useEffect } from "react";
  *   (`data-reveal="scale"` grows in instead; `--d` staggers siblings).
  * - `data-motion` elements get `data-inview` while on screen. CSS pauses every animation inside
  *   them otherwise, so looping illustrations never run off screen or in a hidden tab.
- * - `data-count` numbers count up from zero the first time they are seen.
  * Without JavaScript or with reduced motion, everything is simply shown (see site.css).
  */
 export function MotionObserver() {
   const pathname = usePathname();
 
   useEffect(() => {
-    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-
     const reveal = new IntersectionObserver(
       (entries) => {
         for (const e of entries) {
           if (!e.isIntersecting) continue;
           const el = e.target as HTMLElement;
           el.dataset.shown = "";
-          if (el.dataset.count !== undefined && !reduced) countUp(el);
           reveal.unobserve(el);
         }
       },
@@ -38,7 +34,7 @@ export function MotionObserver() {
     );
 
     const scan = () => {
-      document.querySelectorAll<HTMLElement>("[data-reveal]:not([data-shown]), [data-count]:not([data-shown])").forEach((el) => reveal.observe(el));
+      document.querySelectorAll<HTMLElement>("[data-reveal]:not([data-shown])").forEach((el) => reveal.observe(el));
       document.querySelectorAll<HTMLElement>("[data-motion]").forEach((el) => motion.observe(el));
     };
     // After hydration has settled (attributes added earlier would not match the server HTML),
@@ -55,21 +51,4 @@ export function MotionObserver() {
   }, [pathname]);
 
   return null;
-}
-
-/** "20+" counts 0, 1, 2 ... 20 and keeps its suffix. */
-function countUp(el: HTMLElement) {
-  const match = (el.dataset.count || el.textContent || "").match(/^(\D*)(\d+)(.*)$/);
-  if (!match) return;
-  const [, before, digits, after] = match;
-  const target = Number(digits);
-  const start = performance.now();
-  const duration = 1200;
-  const frame = (now: number) => {
-    const t = Math.min(1, (now - start) / duration);
-    const eased = 1 - Math.pow(1 - t, 3);
-    el.textContent = `${before}${Math.round(target * eased)}${after}`;
-    if (t < 1) requestAnimationFrame(frame);
-  };
-  requestAnimationFrame(frame);
 }

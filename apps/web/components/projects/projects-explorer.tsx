@@ -1,92 +1,73 @@
 "use client";
 
-import { useMemo } from "react";
+import { Bot, Briefcase, Layers, LayoutGrid, Monitor, Server, Smartphone, Sparkles } from "lucide-react";
+import { useDeferredValue, useMemo } from "react";
 import type { Project, ProjectCategory, ProjectType } from "@/lib/content";
 import { useQueryParam } from "@/lib/use-query-param";
-import { cn } from "@/lib/utils";
+import { SlidingTabs, type Tab } from "./sliding-tabs";
 
 type Category = "all" | ProjectCategory;
 type TypeFilter = "all" | ProjectType;
 
-const CATEGORIES: Category[] = ["all", "AI", "Full Stack", "DevOps", "Frontend", "React Native"];
-const TYPES: { id: TypeFilter; label: string }[] = [
-  { id: "all", label: "All work" },
-  { id: "client", label: "Client work" },
-  { id: "personal", label: "Personal" },
+const CATEGORIES: { id: Category; label: string; icon: Tab<Category>["icon"] }[] = [
+  { id: "all", label: "All", icon: LayoutGrid },
+  { id: "AI", label: "AI", icon: Bot },
+  { id: "Full Stack", label: "Full Stack", icon: Layers },
+  { id: "DevOps", label: "DevOps", icon: Server },
+  { id: "Frontend", label: "Frontend", icon: Monitor },
+  { id: "React Native", label: "Mobile", icon: Smartphone },
 ];
+const TYPES: { id: TypeFilter; label: string; icon: Tab<TypeFilter>["icon"] }[] = [
+  { id: "all", label: "All work", icon: LayoutGrid },
+  { id: "personal", label: "Built for fun", icon: Sparkles },
+  { id: "client", label: "Professional work", icon: Briefcase },
+];
+const CATEGORY_IDS = CATEGORIES.map((c) => c.id);
 const TYPE_IDS = TYPES.map((t) => t.id);
 
-function Chip({ active, children, ...props }: React.ComponentProps<"button"> & { active: boolean }) {
-  return (
-    <button
-      type="button"
-      aria-pressed={active}
-      className={cn(
-        "rounded-full border px-4 py-2 text-sm font-medium transition-colors duration-(--duration-fast)",
-        active ? "border-transparent bg-foreground text-background" : "bg-card text-muted-foreground hover:text-foreground",
-      )}
-      {...props}
-    >
-      {children}
-    </button>
-  );
-}
+const matches = (p: Project, c: string, t: string) => (c === "all" || p.categories.includes(c as ProjectCategory)) && (t === "all" || p.type === t);
 
 /**
- * Filters a server-rendered grid. All cards are in the HTML (good for SEO); filtering hides them.
+ * Filters a server-rendered grid of banners. Every banner is in the HTML (good for SEO).
+ * The filtered list renders from a deferred value, so React runs it as a transition and the
+ * banners' view transitions animate it: leaving ones fade out, staying ones glide into place.
  * Filters sync with ?category= and ?type= so ABI and shared links can open a filtered view.
  */
 export function ProjectsExplorer({ projects, children }: { projects: Project[]; children: React.ReactNode[] }) {
-  const [category, setCategory] = useQueryParam<Category>("category", "all", CATEGORIES);
+  const [category, setCategory] = useQueryParam<Category>("category", "all", CATEGORY_IDS);
   const [type, setType] = useQueryParam<TypeFilter>("type", "all", TYPE_IDS);
+  const filter = useDeferredValue(`${category}|${type}`);
 
-  const visible = useMemo(
-    () =>
-      projects.map(
-        (p) => (category === "all" || p.categories.includes(category)) && (type === "all" || p.type === type),
-      ),
-    [projects, category, type],
-  );
+  const visible = useMemo(() => {
+    const [c, t] = filter.split("|");
+    return projects.map((p) => matches(p, c, t));
+  }, [projects, filter]);
   const count = visible.filter(Boolean).length;
+
+  const typeTabs = TYPES.map((t) => ({ ...t, count: projects.filter((p) => matches(p, category, t.id)).length }));
+  const categoryTabs = CATEGORIES.map((c) => ({ ...c, count: projects.filter((p) => matches(p, c.id, type)).length }));
 
   return (
     <div className="space-y-8">
-      <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-        <div className="flex flex-wrap gap-2" role="group" aria-label="Filter by category">
-          {CATEGORIES.map((c) => (
-            <Chip key={c} active={category === c} onClick={() => setCategory(c)} data-abi-target={`projects-category-${c}`}>
-              {c === "all" ? "All" : c}
-            </Chip>
-          ))}
+      <div className="space-y-3">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <SlidingTabs tabs={typeTabs} value={type} onChange={setType} label="Filter by type" target="projects-type" variant="brand" />
+          <p className="text-sm text-subtle-foreground" aria-live="polite">
+            Showing {count} {count === 1 ? "project" : "projects"}
+          </p>
         </div>
-        <div className="flex gap-1 rounded-full border bg-card p-1" role="group" aria-label="Filter by type">
-          {TYPES.map((t) => (
-            <button
-              key={t.id}
-              type="button"
-              aria-pressed={type === t.id}
-              data-abi-target={`projects-type-${t.id}`}
-              onClick={() => setType(t.id)}
-              className={cn(
-                "min-h-9 rounded-full px-3.5 py-2 text-xs font-medium transition-colors",
-                type === t.id ? "bg-secondary text-secondary-foreground" : "text-muted-foreground hover:text-foreground",
-              )}
-            >
-              {t.label}
-            </button>
-          ))}
-        </div>
+        <SlidingTabs tabs={categoryTabs} value={category} onChange={setCategory} label="Filter by category" target="projects-category" />
       </div>
-      <p className="font-mono text-xs text-subtle-foreground" aria-live="polite">
-        {count} {count === 1 ? "project" : "projects"}
-      </p>
-      <ul className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-        {children.map((child, i) => (
-          <li key={projects[i].slug} hidden={!visible[i]} className="flex">
-            {child}
-          </li>
-        ))}
+      <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        {children.map((child, i) =>
+          visible[i] ? (
+            <li key={projects[i].slug} className="flex *:w-full">
+              {child}
+            </li>
+          ) : null,
+        )}
       </ul>
+      {count === 0 && <p className="py-16 text-center text-muted-foreground">Nothing here yet. Try another filter, or ask ABI.</p>}
     </div>
   );
 }

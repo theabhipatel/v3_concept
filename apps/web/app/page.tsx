@@ -10,6 +10,7 @@ import { StackMarquee } from "@/components/home/stack-marquee";
 import { ProjectBanner } from "@/components/projects/project-banner";
 import { Button } from "@/components/ui/button";
 import { contact, experience, getProject, profile, projects, skills, type Project } from "@/lib/content";
+import { CountUp } from "@/components/site/count-up";
 import { pageMetadata } from "@/lib/seo";
 
 export const metadata = pageMetadata("home");
@@ -183,7 +184,7 @@ export default function Home() {
               id="work-title"
               eyebrow="Built for fun"
               title="From zero-knowledge vaults to WhatsApp bot builders."
-              note={`${hobby} projects I built on my own time, just to build them. Client work lives on the projects page.`}
+              note={`${hobby} projects I built on my own time, just to build them. Professional work lives on the projects page.`}
             />
             <Button asChild variant="outline" size="lg" data-reveal>
               <Link href="/projects">
@@ -222,7 +223,7 @@ export default function Home() {
               {[stat("yearsExperience"), stat("projectsCompleted"), stat("technologies"), stat("companies")].map((s, i) => (
                 <div key={s.key} data-reveal style={{ "--d": i } as React.CSSProperties} className="bg-card p-6">
                   <dd className="font-display text-4xl font-bold tracking-tight sm:text-5xl">
-                    <span data-count={s.value}>{s.value}</span>
+                    <CountUp value={s.value} />
                   </dd>
                   <dt className="mt-1 text-sm text-muted-foreground">{s.label}</dt>
                 </div>

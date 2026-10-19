@@ -1,0 +1,195 @@
+{
+  "secure-vault": {
+    "problem": "Teams need one place for their docs and secrets where sensitive values like API keys and .env files stay unreadable even to the server that stores them.",
+    "summary": "I built Secure Vault, a self-hosted team vault where a team works in workspaces and projects and keeps both normal documents and secure documents. Secure documents, including .env files, are encrypted and decrypted only in the browser with keys unlocked by a vault password, so the server only ever stores ciphertext. It also has a free public demo that runs on Vercel with a Neon database.",
+    "features": [
+      "Workspaces and teams with Owner, Admin, Manager, Member and custom roles",
+      "Fine-grained permissions for who can see, edit or open secure documents",
+      "End-to-end encrypted .env editor with reveal, copy and download",
+      "Version history for every document, with restore",
+      "Automatic key sharing for new teammates and key rotation when access is removed",
+      "Append-only audit log of sign-ins, views, edits and access changes"
+    ],
+    "howItWorks": [
+      "React 19 and TypeScript frontend; a FastAPI (Python 3.12) backend with PostgreSQL",
+      "Encryption runs in the browser: Argon2id, X25519 sealed boxes and AES-256-GCM",
+      "Site, app and API are served from one address so cookies stay first-party",
+      "Self-hosted with Docker Compose (Postgres, API, nginx), or as a demo on Vercel and Neon"
+    ],
+    "stackNotes": "libsodium and WebCrypto for cryptography, SQLAlchemy 2 with Alembic, Tailwind CSS v4 and shadcn/ui, a typed API client generated from OpenAPI.",
+    "year": "2026",
+    "source": "https://github.com/theabhipatel/vault"
+  },
+  "setu-chat-app": {
+    "problem": "People need a real-time chat app for private and group conversations that can also be self-hosted.",
+    "summary": "Setu is a real-time chat application built with Next.js, Supabase and TypeScript. Supabase provides auth, realtime, storage and the PostgreSQL database, and the repo also contains a Tauri desktop build and an Expo mobile app. Production runs on Docker behind Traefik with a self-hosted Supabase.",
+    "features": [
+      "Real-time private chats and group chats with member roles",
+      "Message reactions, forwarding, pinned chats and message reporting",
+      "File uploads and shared files per conversation",
+      "Email sign-up with verification, Google sign-in and two-factor login (TOTP)",
+      "Push notifications and active session management",
+      "Admin area with analytics, reports, audit and developer API keys and webhooks"
+    ],
+    "howItWorks": [
+      "Next.js 14 frontend with Tailwind CSS and Radix UI",
+      "Supabase handles auth, realtime messaging, file storage and PostgreSQL",
+      "Desktop app built with Tauri; mobile app built with Expo in the mobile folder",
+      "Deployed with Docker and Traefik with Let's Encrypt SSL and self-hosted Supabase"
+    ],
+    "stackNotes": "Zustand for state, Sentry for error tracking, web-push for notifications, MCP server support via mcp-handler.",
+    "year": "2026",
+    "source": "https://github.com/theabhipatel/setu_chat_app"
+  },
+  "whatsapp-flowbuilder": {
+    "problem": "Building WhatsApp chatbots usually takes code, so this gives a visual way to design, test and deploy chatbot conversations.",
+    "summary": "I built WA Flow Builder, a full-stack WhatsApp chatbot builder with a visual drag-and-drop flow editor. Users design conversation flows, connect them to the WhatsApp Cloud API and deploy them from a web interface. It uses React and TypeScript on the frontend and Node.js, Express and MongoDB on the backend.",
+    "features": [
+      "Drag-and-drop flow canvas with 11 node types, from messages to API calls and loops",
+      "In-browser simulator to test flows without sending real WhatsApp messages",
+      "AI Reply node supporting OpenAI, Gemini, Groq, Mistral and OpenRouter",
+      "Draft and production versions with history and rollback",
+      "Live conversation viewer for connected WhatsApp numbers",
+      "Dashboard, admin panel, dark mode and responsive UI"
+    ],
+    "howItWorks": [
+      "React 19 frontend with React Flow for the canvas and Redux Toolkit for state",
+      "Node.js and Express API with MongoDB, plus a webhook for incoming WhatsApp messages",
+      "JWT auth, bcrypt password hashing, AES-encrypted API keys and rate limiting",
+      "Runs on Docker or an Ubuntu VPS; Vercel is used as a limited showcase"
+    ],
+    "stackNotes": "@xyflow/react (React Flow), Mongoose, node-cron for delay nodes, Helmet and express-rate-limit.",
+    "year": "2026",
+    "source": "https://github.com/theabhipatel/wa_flow_builder"
+  },
+  "blinkit-clone": {
+    "problem": "A clone of the Blinkit quick commerce shopping experience, built with React and TypeScript.",
+    "summary": "This repo is the frontend of a Blinkit clone e-commerce platform built with React and TypeScript. It covers browsing by category, product pages, search, a cart, saved addresses and checkout with a PhonePe payment call to the backend.",
+    "features": [
+      "Home page with category sliders and promotional posters",
+      "Category pages, product pages and search with filters",
+      "Cart with add-to-cart controls and delivery time display",
+      "Phone login with OTP verification",
+      "Account area with orders, saved addresses and wallet",
+      "Checkout with PhonePe payment and a payment success page"
+    ],
+    "howItWorks": [
+      "React and TypeScript single-page app built with Vite and styled with Tailwind CSS",
+      "Redux Toolkit stores auth, cart and user state",
+      "Talks to a separate backend API through Axios, including a PhonePe payment endpoint"
+    ],
+    "stackNotes": "Redux Toolkit, React Router, Formik with Yup for forms, react-helmet-async.",
+    "year": "2023",
+    "source": "https://github.com/theabhipatel/blinkit_clone_fe"
+  },
+  "developers-blog": {
+    "problem": "Developers need a place to write and share technical blog posts with other developers.",
+    "summary": "Developers Blog is a blog website for developers, by developers. This repo is the Next.js frontend, where users sign in, write posts in Markdown and read, like and comment on posts from others.",
+    "features": [
+      "Sign in with email and password, Google or GitHub",
+      "Markdown editor with code highlighting and math (KaTeX) support",
+      "Blog listing, search and a most-read section on the home page",
+      "Likes, comments and a read-later list",
+      "User profiles with their blogs, liked blogs and a follow button",
+      "Light and dark themes"
+    ],
+    "howItWorks": [
+      "Next.js frontend with NextAuth for authentication",
+      "Connects to a separate backend API through Axios",
+      "UI built with Tailwind CSS and Radix UI components"
+    ],
+    "stackNotes": "next-auth, @uiw/react-md-editor, react-markdown with remark-gfm and rehype-katex, react-hook-form with Zod.",
+    "year": "2024",
+    "source": "https://github.com/theabhipatel/developers_blog_fe"
+  },
+  "react-dashboard": {
+    "problem": "A dashboard application for viewing business data like activity, customers, products and finances in one place.",
+    "summary": "This is a dashboard application built with React and TypeScript. It has a sidebar layout with pages for an overview, analytics, finance, reports and settings, with charts and KPI boxes on the home screen.",
+    "features": [
+      "Dashboard home with KPI boxes and a net profit summary",
+      "Activity bar chart and top products list",
+      "Customer table",
+      "Analytics, finance, report and settings pages",
+      "Sidebar and top bar navigation"
+    ],
+    "howItWorks": [
+      "React and TypeScript app built with Vite and styled with Tailwind CSS",
+      "Charts drawn with Recharts and circular progress bars"
+    ],
+    "stackNotes": "Recharts, react-circular-progressbar, React Router.",
+    "year": "2024",
+    "source": "https://github.com/theabhipatel/react_dashboard"
+  },
+  "theabhipatel-v0": {
+    "problem": "A personal portfolio site to introduce Abhishek and show his work.",
+    "summary": "This was my first portfolio site, built with Next.js and TypeScript and split into section components. It has sections for an intro, about, technologies, projects and contact.",
+    "features": [
+      "Hero section and about section",
+      "Technologies section",
+      "Projects section",
+      "Contact section with social icons",
+      "Smooth scrolling between sections"
+    ],
+    "howItWorks": [
+      "Next.js and TypeScript site styled with Tailwind CSS"
+    ],
+    "stackNotes": "react-scroll, react-icons.",
+    "year": "2023",
+    "source": "https://github.com/theabhipatel/v0.theabhipatel.com"
+  },
+  "whatsapp-clone": {
+    "problem": "A WhatsApp-style mobile chat app for messaging and sharing status updates.",
+    "summary": "WhatChat is a React Native and TypeScript clone of WhatsApp. It uses Firebase for sign-in, data and file storage, with screens for chats, status updates, calls and profile.",
+    "features": [
+      "Login with Google sign-in",
+      "One-to-one chat with image sharing from camera or gallery",
+      "Status updates: upload, view, and seen or unseen lists",
+      "Calls tab and profile screen",
+      "Splash screen and top tab navigation"
+    ],
+    "howItWorks": [
+      "React Native app written in TypeScript",
+      "Firebase Auth, Firestore and Storage handle accounts, messages and media"
+    ],
+    "stackNotes": "@react-native-firebase, react-native-gifted-chat, Google Sign-In, react-native-image-picker.",
+    "year": "2023",
+    "source": "https://github.com/theabhipatel/rn_what_chat"
+  },
+  "instagram-clone": {
+    "problem": "An Instagram-style mobile app for sharing posts, reels and stories.",
+    "summary": "This is a React Native and TypeScript clone of Instagram that uses Firebase for sign-in, data and media storage. It has screens for the home feed, stories, reels, search, notifications, adding posts and profiles.",
+    "features": [
+      "Home feed with posts and stories",
+      "Reels feed with video playback and adding reels",
+      "Add new posts from the gallery",
+      "Profile with post, reels and tagged grids, plus edit profile",
+      "Search and notifications screens",
+      "Login with Google sign-in"
+    ],
+    "howItWorks": [
+      "React Native app written in TypeScript with bottom tab and stack navigation",
+      "Firebase Auth, Firestore and Storage handle accounts, posts and media"
+    ],
+    "stackNotes": "@react-native-firebase, Google Sign-In, react-native-video, @gorhom/bottom-sheet, @shopify/restyle.",
+    "year": "2023",
+    "source": "https://github.com/codingwithcod/rn_instagram"
+  },
+  "pdf-reader": {
+    "problem": "A simple Android app for opening and reading PDF files on the phone.",
+    "summary": "This is a PDF viewer app for Android built with React Native and TypeScript. Users pick PDF files from the device and read them, with tabs for recent and favorite files.",
+    "features": [
+      "Open PDF files from the device with a document picker",
+      "Built-in PDF viewer",
+      "Recent files list",
+      "Favorite files list",
+      "Splash screen and tab navigation"
+    ],
+    "howItWorks": [
+      "React Native app written in TypeScript",
+      "Reads files from device storage and saves app data locally with AsyncStorage"
+    ],
+    "stackNotes": "react-native-pdf, react-native-document-picker, react-native-fs, react-native-blob-util, @shopify/restyle.",
+    "year": "2023",
+    "source": "https://github.com/theabhipatel/rn_pdf_reader"
+  }
+}

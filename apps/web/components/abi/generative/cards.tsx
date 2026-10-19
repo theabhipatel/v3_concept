@@ -49,7 +49,7 @@ export function CompareTable({ slugs }: { slugs: unknown }) {
   const list = known(slugs);
   if (list.length < 2) return <ProjectCards slugs={slugs} />;
   const rows: [string, (p: Project) => React.ReactNode][] = [
-    ["Type", (p) => (p.type === "client" ? "Client work" : "Personal")],
+    ["Type", (p) => (p.type === "client" ? "Professional" : "Built for fun")],
     ["Focus", (p) => p.categories.join(", ")],
     ["Stack", (p) => p.tags.join(", ")],
     ["Summary", (p) => p.description.split(". ")[0] + "."],

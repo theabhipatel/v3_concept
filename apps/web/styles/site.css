@@ -267,6 +267,65 @@
   color: oklch(0.15 0.02 50);
 }
 
+/* The project page hero: the banner, grown up. */
+.banner--hero {
+  min-height: 30rem;
+  padding: 2rem;
+}
+@media (min-width: 40rem) {
+  .banner--hero {
+    padding: 3rem;
+  }
+}
+.banner--hero:hover {
+  transform: none;
+  box-shadow: none;
+}
+.banner--hero .banner__pattern {
+  opacity: 0.7;
+}
+.banner--hero .banner__initial {
+  font-size: 26rem;
+}
+.feature {
+  transition: border-color 0.3s;
+}
+.feature:hover {
+  border-color: color-mix(in oklch, var(--tone) 50%, var(--border));
+}
+.feature__check {
+  background: color-mix(in oklch, var(--tone) 22%, var(--card));
+  color: var(--foreground);
+}
+
+/* ---------- Filter tabs: one rail, a lit indicator that glides to the active tab ---------- */
+.tabs {
+  box-shadow: inset 0 1px 0 color-mix(in oklch, var(--foreground) 5%, transparent);
+}
+.tabs::-webkit-scrollbar {
+  display: none;
+}
+.tabs__glow {
+  background: color-mix(in oklch, var(--brand) 14%, var(--card));
+  box-shadow:
+    inset 0 0 0 1px color-mix(in oklch, var(--brand) 40%, transparent),
+    0 8px 24px -12px color-mix(in oklch, var(--brand) 70%, transparent);
+}
+.tabs--brand .tabs__glow {
+  background: linear-gradient(135deg, var(--brand), color-mix(in oklch, var(--brand) 70%, var(--brand-2)));
+  box-shadow:
+    inset 0 1px 0 color-mix(in oklch, white 30%, transparent),
+    0 10px 30px -10px var(--brand);
+}
+.tabs__glow--move {
+  transition:
+    transform 0.55s var(--motion-ease-out-expo),
+    width 0.55s var(--motion-ease-out-expo);
+}
+.tabs__tab:not([aria-pressed="true"]):hover {
+  background: color-mix(in oklch, var(--foreground) 4%, transparent);
+}
+
 /* ---------- Toolbox marquee ---------- */
 .marquee-mask {
   -webkit-mask-image: linear-gradient(90deg, transparent, black 8%, black 92%, transparent);
@@ -897,6 +956,52 @@
   }
 }
 
+/* ---------- Page transitions (React <ViewTransition>) ---------- */
+/* Clicks during a transition reach the live page. */
+::view-transition {
+  pointer-events: none;
+}
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 280ms;
+}
+/* A banner grows into the project page (and back), softened mid-flight. */
+::view-transition-group(.morph) {
+  animation-duration: 560ms;
+  animation-timing-function: var(--motion-ease-out-expo);
+}
+::view-transition-image-pair(.morph) {
+  animation-name: via-blur;
+}
+@keyframes via-blur {
+  35% {
+    filter: blur(4px);
+  }
+}
+/* Filtering: banners that leave shrink away, new ones rise in, the rest glide into place. */
+::view-transition-group(.banner-move) {
+  animation-duration: 520ms;
+  animation-timing-function: var(--motion-ease-out-expo);
+}
+::view-transition-new(.banner-in):only-child {
+  animation: banner-in 480ms var(--motion-ease-out-expo) both;
+}
+::view-transition-old(.banner-out):only-child {
+  animation: banner-out 240ms ease-in both;
+}
+@keyframes banner-in {
+  from {
+    opacity: 0;
+    transform: translateY(16px) scale(0.96);
+  }
+}
+@keyframes banner-out {
+  to {
+    opacity: 0;
+    transform: scale(0.94);
+  }
+}
+
 /* ---------- Reduced motion: the finished, still picture ---------- */
 @media (prefers-reduced-motion: reduce) {
   .hero__wash::before,
@@ -927,5 +1032,11 @@
   }
   .abi-flow__bar {
     display: none;
+  }
+  ::view-transition-old(*),
+  ::view-transition-new(*),
+  ::view-transition-group(*) {
+    animation-duration: 0s !important;
+    animation-delay: 0s !important;
   }
 }

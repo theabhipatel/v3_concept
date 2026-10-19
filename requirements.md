@@ -181,9 +181,17 @@ a "portfolio". Replaced "Ask first, built for you" (roles picker, removed). No p
 - **Motion rules:** one `MotionObserver` (reveals via `data-reveal`, count-ups via `data-count`,
   `data-motion` loops paused off screen). The hero intro is CSS only (fast LCP). Reduced motion
   shows the finished, still picture. Styles: `styles/site.css`.
-- **Next (planned, not built):** Projects page with banners and animated filter; project page
-  opening from its banner with a shared-element animation and GitHub details; About as a scroll
-  story; Skills as an animated map; Lab, Contact and Resume in the new reveal style.
+- **Home shows only hobby projects** (`type: "personal"`), also in the footer. Client work is
+  shown only on `/projects`.
+- **Projects (built):** header with counting facts, category chips with counts, a sliding
+  "All work / Built for fun / Professional work" switch (hobby projects listed first), and a grid of banners. Filtering animates
+  with React `<ViewTransition>` (leaving banners shrink away, the rest glide into place).
+- **Project page (built):** the clicked banner grows into the page hero (shared `ViewTransition`
+  name `banner-<slug>`), then facts, the story, features, how it works (self-drawing steps), a
+  framed screenshot, stack, Ask ABI and "Up next" banners. Extra details come from
+  `content/project-details.json`, written from each project's GitHub README.
+- **Next (planned, not built):** About as a scroll story; Skills as an animated map; Lab,
+  Contact and Resume in the new reveal style.
 
 ### 6.1 Nudging visitors to try ABI
 - After about 20 seconds or 40% scroll, ABI comments on what the visitor is looking at
