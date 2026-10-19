@@ -23,7 +23,7 @@ const STARTERS = [
   "Show me real code from Secure Vault",
 ];
 const JD_PREFIX = "Here is a job description. How well does Abhishek fit?\n\n";
-const STAGES = ["Reading your question", "Searching his work", "Thinking", "Using tools", "Writing"];
+const STAGES = ["Reading your question", "Working on it", "Thinking", "Taking action", "Writing"];
 
 function data<K extends keyof AbiData>(m: AbiMessage, key: K): AbiData[K] | undefined {
   const part = m.parts.find((p) => p.type === `data-${key}`) as { data: AbiData[K] } | undefined;
