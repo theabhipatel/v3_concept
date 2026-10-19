@@ -146,6 +146,7 @@ export function ContactForm() {
           aria-describedby={e.message ? "message-error" : undefined}
         />
       </Field>
+      <input type="hidden" name="intent" value={INTENTS.find((x) => x.id === intent)?.label ?? ""} />
       {/* Honeypot for bots. Hidden from people and screen readers. */}
       <div className="hidden" aria-hidden>
         <label htmlFor="website">Website</label>

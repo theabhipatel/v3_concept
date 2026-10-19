@@ -105,6 +105,10 @@
 
 /* ---------- Theme-independent: type, shape, motion ---------- */
 :root {
+  /* Dark "console" panels (AI Lab output, terminals) look the same in both themes. */
+  --console: oklch(0.13 0.012 45);
+  --console-foreground: oklch(0.96 0.008 80);
+
   /* Tints for project banners and small illustrations (mixed into the surface, never as text). */
   --tone-1: oklch(0.7 0.18 45);
   --tone-2: oklch(0.79 0.15 78);
@@ -171,6 +175,8 @@
   --color-destructive-foreground: var(--destructive-foreground);
   --color-success: var(--success);
   --color-on-brand: var(--on-brand);
+  --color-console: var(--console);
+  --color-console-foreground: var(--console-foreground);
   --color-tone-1: var(--tone-1);
   --color-tone-2: var(--tone-2);
   --color-tone-3: var(--tone-3);

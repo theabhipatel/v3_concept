@@ -3,6 +3,7 @@
 import { headers } from "next/headers";
 import nodemailer from "nodemailer";
 import { z } from "zod";
+import { contactEmailHtml, contactEmailText, describeDevice } from "@/lib/contact-email";
 import { profile } from "@/lib/content";
 
 export interface ContactState {
@@ -18,6 +19,7 @@ const schema = z.object({
   email: z.email("Please enter a valid email").max(200),
   subject: z.string().trim().max(150).optional().default(""),
   message: z.string().trim().min(10, "Please write at least a few words").max(5000),
+  intent: z.string().trim().max(60).optional().default(""),
   website: z.string().max(0).optional(), // honeypot: real visitors leave it empty
 });
 
@@ -52,10 +54,12 @@ async function send(form: FormData): Promise<ContactState> {
     return { ok: false, message: "Please fix the highlighted fields.", errors };
   }
 
-  const ip = (await headers()).get("x-forwarded-for")?.split(",")[0].trim() || "local";
+  const h = await headers();
+  const ip = h.get("x-forwarded-for")?.split(",")[0].trim() || h.get("x-real-ip") || "local";
   if (limited(ip)) return { ok: false, message: "You've sent a few messages already. Please try again later." };
 
-  const { name, email, subject, message } = parsed.data;
+  const { name, email, subject, message, intent } = parsed.data;
+  const device = describeDevice(h.get("user-agent") ?? "");
   const { SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS } = process.env;
   if (!SMTP_HOST || !SMTP_USER || !SMTP_PASS) {
     return { ok: false, message: `Email isn't configured yet. Please write to ${profile.email} directly.` };
@@ -69,11 +73,12 @@ async function send(form: FormData): Promise<ContactState> {
       auth: { user: SMTP_USER, pass: SMTP_PASS },
     });
     await transport.sendMail({
-      from: `"${profile.brand} Portfolio" <${SMTP_USER}>`,
+      from: `"${profile.brand} Website" <${SMTP_USER}>`,
       to: profile.email,
       replyTo: `"${name}" <${email}>`,
       subject: `[Portfolio v3] ${subject || "New message"} - from ${name}`,
-      text: `${message}\n\n- ${name} <${email}>`,
+      text: contactEmailText({ name, email, subject, message, intent, ip, device }),
+      html: contactEmailHtml({ name, email, subject, message, intent, ip, device }),
     });
     return { ok: true, message: "Thanks! Your message is on its way. Abhishek usually replies within 24 hours." };
   } catch {

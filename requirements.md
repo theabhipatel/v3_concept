@@ -206,7 +206,13 @@ a "portfolio". Replaced "Ask first, built for you" (roles picker, removed). No p
   counter, a send button whose plane takes off, an animated success check, and typed values kept
   after a failed send (ids stay name/email/subject/message for ABI); direct contact cards; a week
   chart with a "now" marker; "Draft it with ABI"; FAQ that opens smoothly.
-- **Next (planned, not built):** Lab and Resume in the new reveal style.
+- **AI Lab (built):** "Take ABI apart": an x-ray of the pipeline (question, guard, retrieve,
+  agent, answer) with a travelling packet and a scan line; three stations, each with controls
+  and a dark output console: 01 "Try to trick ABI" (attack and safe presets, a risk gauge with
+  a swinging needle, blocked/safe verdict), 02 "See what ABI reads" (preset queries, fused-rank
+  hits that slide in with growing score bars), 03 "Match a job description" (sample role, steps
+  that light up, hands off to ABI); then the free-tier stack ABI runs on.
+- **Next (planned, not built):** Resume, Talk to ABI and the 404 page in the new style.
 
 ### 6.1 Nudging visitors to try ABI
 - After about 20 seconds or 40% scroll, ABI comments on what the visitor is looking at
