@@ -541,6 +541,61 @@ body {
   }
 }
 
+/* QR code of the page (ABI: "show a QR code"). */
+.abi-qr {
+  position: fixed;
+  inset: 0;
+  z-index: 70;
+  display: grid;
+  place-items: center;
+  padding: 16px;
+  background: color-mix(in oklch, black 55%, transparent);
+  backdrop-filter: blur(6px);
+  cursor: pointer;
+  animation: abi-qr-in 0.35s var(--motion-ease-out-expo) both;
+  transition: opacity 0.3s;
+}
+.abi-qr--out {
+  opacity: 0;
+}
+.abi-qr__card {
+  width: min(320px, 100%);
+  padding: 20px;
+  border-radius: var(--radius-xl);
+  background: var(--card, var(--background));
+  color: var(--foreground);
+  text-align: center;
+  box-shadow:
+    0 0 0 2px var(--abi),
+    0 0 40px 4px color-mix(in oklch, var(--abi) 40%, transparent);
+}
+.abi-qr__code {
+  padding: 10px;
+  border-radius: var(--radius-lg, 12px);
+  background: #fff;
+}
+.abi-qr__code svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+.abi-qr__title {
+  margin-top: 14px;
+  font-weight: 600;
+}
+.abi-qr__url {
+  margin-top: 4px;
+  font-size: 0.8rem;
+  opacity: 0.7;
+  word-break: break-all;
+}
+@keyframes abi-qr-in {
+  from {
+    opacity: 0;
+    transform: scale(1.06);
+  }
+}
+
 /* Calm mode (ABI: "reduce motion"): everything settles instantly, nothing loops. */
 html[data-calm="on"] *,
 html[data-calm="on"] *::before,

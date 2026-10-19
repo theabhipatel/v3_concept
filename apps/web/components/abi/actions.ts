@@ -243,6 +243,7 @@ export type ControlAction =
   | "copy_email"
   | "copy_link"
   | "share"
+  | "qr"
   | "print"
   | "reduce_motion"
   | "restore_motion"
@@ -430,6 +431,31 @@ async function share(): Promise<string> {
   return copy(url, "the page link");
 }
 
+/** A QR code of this page, to open it on a phone (the live site when running locally). Tap or Escape closes it. */
+async function showQr(): Promise<string> {
+  const local = /^(localhost|127\.|192\.168\.|10\.)/.test(window.location.hostname);
+  const url = (local ? profile.site : window.location.origin) + window.location.pathname + window.location.search;
+  const { toString } = await import("qrcode");
+  const svg = await toString(url, { type: "svg", margin: 1, errorCorrectionLevel: "M", color: { dark: "#0b0706", light: "#ffffff" } });
+  document.querySelector(".abi-qr")?.remove();
+  const box = document.createElement("div");
+  box.className = "abi-qr";
+  box.setAttribute("role", "dialog");
+  box.setAttribute("aria-label", "QR code for this page");
+  box.innerHTML = `<div class="abi-qr__card"><div class="abi-qr__code">${svg}</div><p class="abi-qr__title">Scan to open on your phone</p><p class="abi-qr__url"></p></div>`;
+  box.querySelector(".abi-qr__url")!.textContent = url.replace("https://", "");
+  document.body.appendChild(box);
+  const close = () => {
+    box.classList.add("abi-qr--out");
+    window.setTimeout(() => box.remove(), 300);
+    window.removeEventListener("keydown", onKey);
+  };
+  const onKey = (e: KeyboardEvent) => e.key === "Escape" && close();
+  box.addEventListener("click", close);
+  window.addEventListener("keydown", onKey);
+  return "Here is a QR code for this page. Scan it with your phone camera.";
+}
+
 const CALM_KEY = "abi-calm";
 
 /** Calm mode: animations and transitions stop (on top of the device's reduced-motion setting). */
@@ -547,6 +573,8 @@ export async function control(action: ControlAction, value = ""): Promise<string
       return copy(window.location.href, "the page link");
     case "share":
       return share();
+    case "qr":
+      return showQr();
     case "print":
       stepAside();
       window.setTimeout(() => window.print(), 300);

@@ -40,6 +40,7 @@ const CONTROLS: [RegExp, ControlAction][] = [
   [/^copy (his |the |your )?(email|e-mail|email address|mail)$/, "copy_email"],
   [/^copy (the |this )?(link|url|page link|page url|address)$/, "copy_link"],
   [/^share( this| the)?( page| link| site)?( with someone)?$/, "share"],
+  [/^((show|give|share|make|generate)( me)?( a| the)? )?(qr|qr code|qr-code)( code)?( (for|of) (this|the) (page|site|link|url))?$/, "qr"],
   [/^(print|print (this|the) page|save (this |the )?(page )?(as )?(a )?pdf|download (this |the )?page( as (a )?pdf)?)$/, "print"],
   [/^((reduce|calm|stop|turn off|disable|less|pause)( the| all)? (motion|animations?)( down)?|calm (it )?down|too much (motion|animation))$/, "reduce_motion"],
   [/^((restore|turn on|enable|bring back|resume)( the)? (motion|animations?)( back)?|animations? (back )?on|(turn|switch|put) (the )?(motion|animations?) (back )?on)$/, "restore_motion"],
