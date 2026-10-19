@@ -16,6 +16,10 @@ class Settings(BaseSettings):
     abi_chat_model: str = ""
     abi_fast_model: str = ""  # small model: query rewrite, follow-ups, JD match, resume
     abi_stt_model: str = "whisper-large-v3-turbo"
+    # Groq text-to-speech (free tier is small: about 100 requests a day, 200 characters each).
+    # When it fails or runs out, the browser falls back to its own free speech.
+    abi_tts_model: str = "canopylabs/orpheus-v1-english"
+    abi_tts_voice: str = "troy"
     abi_guard_model: str = "meta-llama/llama-prompt-guard-2-86m"
     abi_guard_threshold: float = 0.9
 

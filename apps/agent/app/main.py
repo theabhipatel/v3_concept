@@ -15,7 +15,7 @@ from typing import AsyncIterator
 
 import httpx
 from fastapi import APIRouter, FastAPI, File, HTTPException, Request, UploadFile
-from fastapi.responses import StreamingResponse
+from fastapi.responses import Response, StreamingResponse
 from groq import APIStatusError, RateLimitError
 from langchain_core.messages import AIMessage, ToolMessage
 from langchain_groq import ChatGroq
@@ -253,6 +253,56 @@ async def transcribe(request: Request, audio: UploadFile = File(...)) -> dict:
         logger.warning("transcribe failed: %s", e)
         raise HTTPException(503, "Voice is resting right now. Please type your question.") from e
     return {"text": clean(res.json().get("text", "").strip())}
+
+
+# When Groq speech fails (terms not accepted, daily limit reached), skip it for a while so the
+# browser falls back to its own voice immediately instead of waiting on a doomed request.
+_tts_off_until = 0.0
+TTS_COOLDOWN_S = 600
+
+
+@router.get("/speak")
+async def speak(request: Request, text: str = "") -> Response:
+    """ABI's voice: Groq Orpheus text-to-speech, one sentence group (max 200 characters) per call.
+
+    Identical phrases are cached by the CDN for a month, which saves the small free quota. Any
+    failure returns 503 quickly and the browser speaks with its own free voice instead.
+    """
+    global _tts_off_until
+    s = get_settings()
+    text = " ".join(text.split())
+    if not 1 <= len(text) <= 200:
+        raise HTTPException(422, "Text must be 1 to 200 characters")
+    no_store = {"Cache-Control": "no-store"}
+    if time.time() < _tts_off_until:
+        return Response(status_code=503, headers=no_store)
+    await _limit(request, "speak")  # own bucket: one spoken answer is several parts
+    try:
+        async with httpx.AsyncClient(timeout=20) as client:
+            res = await client.post(
+                "https://api.groq.com/openai/v1/audio/speech",
+                headers={"Authorization": f"Bearer {s.groq_api_key}"},
+                json={"model": s.abi_tts_model, "voice": s.abi_tts_voice, "input": text, "response_format": "wav"},
+            )
+    except httpx.HTTPError as e:
+        logger.warning("speak failed: %s", e)
+        return Response(status_code=503, headers=no_store)
+    if res.status_code != 200:
+        # Terms not accepted, daily/minute limit, or an outage: let the browser voice take over.
+        if res.status_code in (400, 401, 403, 429) or res.status_code >= 500:
+            # The daily quota refills gradually, so a rate limit only waits as long as Groq asks.
+            try:
+                wait = min(TTS_COOLDOWN_S, max(15.0, float(res.headers.get("retry-after", ""))))
+            except ValueError:
+                wait = TTS_COOLDOWN_S
+            _tts_off_until = time.time() + wait
+        logger.warning("speak failed: %s %s", res.status_code, res.text[:200])
+        return Response(status_code=503, headers=no_store)
+    return Response(
+        content=res.content,
+        media_type="audio/wav",
+        headers={"Cache-Control": "public, max-age=86400, s-maxage=2592000"},
+    )
 
 
 class SearchBody(BaseModel):

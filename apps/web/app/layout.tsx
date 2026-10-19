@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Geist_Mono, Plus_Jakarta_Sans } from "next/font/google";
 import "lenis/dist/lenis.css";
 import { AbiLoader } from "@/components/abi/abi-loader";
+import { VadPrefetch } from "@/components/abi/vad-prefetch";
 import { Nudges } from "@/components/abi/nudges";
 import { CommandPalette } from "@/components/site/command-palette";
 import { Footer } from "@/components/site/footer";
@@ -116,6 +117,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           <CommandPalette />
           <Nudges />
           <AbiLoader />
+          <VadPrefetch />
           <SmoothScroll />
         </ThemeProvider>
       </body>

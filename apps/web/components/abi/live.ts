@@ -6,15 +6,26 @@
 // listens again. Audio never leaves the browser except that one transcription request.
 import type { MicVAD } from "@ricky0123/vad-web";
 import { abi } from "./abi-store";
-import { stopSpeaking } from "./voice";
+import { VAD_ASSET_PATH } from "./vad-assets";
+import { currentVoice, stopSpeaking } from "./voice";
 
-// Model, worklet and WASM files come from the CDN, pinned to the installed versions.
-const VAD_ASSETS = "https://cdn.jsdelivr.net/npm/@ricky0123/vad-web@0.0.31/dist/";
-const ORT_WASM = "https://cdn.jsdelivr.net/npm/onnxruntime-web@1.30.0/dist/";
+// Model and WASM files are self-hosted in public/vad/ (see scripts/copy-vad-assets.mjs),
+// versioned and cached for a year, and warmed in the background on page load (VadPrefetch).
+const VAD_ASSETS = VAD_ASSET_PATH;
+const ORT_WASM = VAD_ASSET_PATH;
 const SAMPLE_RATE = 16000;
 
 let vad: MicVAD | null = null;
 let starting = false;
+/** Each heard sentence starts a new turn; an older turn that is still finishing steps aside. */
+let turn = 0;
+/** True while ABI speaks with the mic still open, so the visitor can cut in. */
+let bargeIn = false;
+
+// Normal listening, and a stricter setting while ABI talks (only clear, sustained speech
+// interrupts it, not leftover echo or a cough).
+const LISTEN = { positiveSpeechThreshold: 0.6, negativeSpeechThreshold: 0.45, minSpeechMs: 300 };
+const WHILE_SPEAKING = { positiveSpeechThreshold: 0.85, negativeSpeechThreshold: 0.6, minSpeechMs: 450 };
 let onText: (text: string) => Promise<void> = async () => {};
 
 export function configureLive(handler: (text: string) => Promise<void>) {
@@ -56,38 +67,55 @@ async function transcribe(samples: Float32Array) {
 }
 
 /** Wait until ABI has finished speaking (speech starts a moment after the answer arrives). */
-async function untilQuiet() {
+async function untilQuiet(id: number) {
   await sleep(400);
   const start = performance.now();
-  while (isLive() && performance.now() - start < 90_000) {
-    if (!window.speechSynthesis?.speaking && !abi.get().speaking) return;
-    await sleep(150);
+  let listening = false;
+  while (isLive() && id === turn && performance.now() - start < 120_000) {
+    if (!window.speechSynthesis?.speaking && !abi.get().speaking) break;
+    // Groq's voice plays in the page, so echo cancellation keeps it out of the mic: listen for
+    // the visitor cutting in. The browser's own voice would be heard as the visitor, so not then.
+    if (!listening && vad && currentVoice() === "groq") {
+      listening = true;
+      bargeIn = true;
+      vad.setOptions(WHILE_SPEAKING);
+      await vad.start();
+    }
+    await sleep(120);
   }
+  bargeIn = false;
+  vad?.setOptions(LISTEN);
 }
 
 async function resumeListening() {
   if (!vad || !isLive()) return;
   abi.setVoice({ caption: "" });
-  abi.setLive("listening");
+  if (abi.get().live !== "hearing") abi.setLive("listening"); // the visitor may already be talking
   await vad.start();
 }
 
 async function onUtterance(samples: Float32Array) {
   if (!vad || !isLive()) return;
-  await vad.pause(); // ABI does not listen to itself while it thinks and speaks
+  const id = ++turn;
+  bargeIn = false;
+  stopSpeaking(); // the visitor spoke: anything ABI was still saying is over
+  await vad.pause(); // no listening while ABI thinks; it reopens while ABI speaks
+  vad.setOptions(LISTEN);
   abi.setLive("thinking");
   try {
     const text = await transcribe(samples);
+    if (id !== turn) return;
     if (!text || !isLive()) return void (await resumeListening());
     await onText(text);
-    if (!isLive()) return;
+    if (!isLive() || id !== turn) return;
     abi.setLive("speaking");
-    await untilQuiet();
+    await untilQuiet(id);
   } catch {
+    if (id !== turn) return;
     abi.setVoice({ caption: "I didn't catch that. Try again." });
     await sleep(1200);
   }
-  await resumeListening();
+  if (id === turn) await resumeListening();
 }
 
 export async function startLive() {
@@ -101,19 +129,26 @@ export async function startLive() {
       model: "v5",
       baseAssetPath: VAD_ASSETS,
       onnxWASMBasePath: ORT_WASM,
-      positiveSpeechThreshold: 0.6,
-      negativeSpeechThreshold: 0.45,
       redemptionMs: 900, // pause length that ends a sentence
-      minSpeechMs: 300,
       preSpeechPadMs: 300,
       startOnLoad: false,
       getStream: () =>
         navigator.mediaDevices.getUserMedia({
           audio: { channelCount: 1, echoCancellation: true, noiseSuppression: true, autoGainControl: true },
         }),
-      onSpeechStart: () => abi.setLive("hearing"),
+      ...LISTEN,
+      onSpeechStart: () => {
+        if (!bargeIn) abi.setLive("hearing");
+      },
+      // Sustained speech while ABI talks: stop talking and hear the visitor out.
+      onSpeechRealStart: () => {
+        if (!bargeIn) return;
+        bargeIn = false;
+        stopSpeaking();
+        abi.setLive("hearing");
+      },
       onVADMisfire: () => {
-        if (isLive()) abi.setLive("listening");
+        if (isLive() && !bargeIn && abi.get().live === "hearing") abi.setLive("listening");
       },
       onSpeechEnd: (audio) => void onUtterance(audio),
     });

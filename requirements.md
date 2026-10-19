@@ -102,15 +102,24 @@ gives the full name. Show the full name in the UI (orb tooltip, `/abi` header, a
 - Suggested follow-up questions after each answer. Session memory within a visit.
 
 ### 5.5 Voice (speech in, speech out)
-- Push-to-talk pipeline: browser records -> Groq speech-to-text (Whisper) -> ABI -> browser
-  Web Speech API speaks the answer. Live captions, and the visitor can interrupt ABI mid-answer.
+- Push-to-talk pipeline: browser records -> Groq speech-to-text (Whisper) -> ABI -> spoken
+  answer. Voice: Groq Orpheus TTS (`canopylabs/orpheus-v1-english`, voice "troy", free tier:
+  about 100 requests/day, 1,200 characters/min, 200 characters per request) via
+  `GET /api/agent/speak`, played in-page, split into <=190-character parts fetched ahead,
+  identical phrases cached by the CDN for 30 days. Any failure (limit, outage) switches to the
+  free browser Web Speech voice for 10 minutes, mid-answer if needed. Live captions, and the visitor can interrupt ABI mid-answer.
 - Ask for mic permission with a short privacy note. Never store voice recordings.
 - **Two voice modes** in every ask box: the mic button = push-to-talk (speak once, transcribed,
   sent); the waveform button (shown when the box is empty, the send arrow when text is typed) =
   **live conversation**, a hands-free loop: Silero VAD (`@ricky0123/vad-web`, runs in the
-  browser; model and WASM from jsDelivr, pinned) detects when the visitor starts and stops
-  talking -> Whisper -> ABI acts -> ABI speaks -> listens again. The mic pauses while ABI thinks
-  and speaks (no self-echo); "Skip" cuts the spoken answer short; End or closing the panel
+  browser; model and WASM self-hosted in `public/vad/<versions>/` by
+  `scripts/copy-vad-assets.mjs`, cached for a year, warmed in the background after page load
+  unless data saver or a slow connection) detects when the visitor starts and stops
+  talking -> Whisper -> ABI acts -> ABI speaks -> listens again. The mic pauses while ABI thinks.
+  While ABI speaks with the Groq voice (played in-page, so echo cancellation removes it) the mic
+  stays open with a stricter VAD setting, and clear speech from the visitor stops ABI
+  (barge-in). With the browser fallback voice the mic stays paused (it would hear itself).
+  Groq free voice limit is about 3,600 characters a day. "Skip" cuts the spoken answer short; End or closing the panel
   releases the mic. Code: `components/abi/live.ts`.
 - **Voice navigation** (typed works too): "open the projects page", "scroll a little / more / one
   page / to the top", "go back", "dark mode", "click on Recruiter", "open Secure Vault".
