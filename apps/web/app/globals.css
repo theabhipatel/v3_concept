@@ -80,8 +80,8 @@ body {
   inset: 0;
   overflow: hidden;
   opacity: 0;
-  background: oklch(0.08 0.005 50 / 0.84);
-  backdrop-filter: blur(6px);
+  background: oklch(0.08 0.005 50 / 0.5);
+  backdrop-filter: blur(2px);
   transition: opacity 0.45s var(--motion-ease-out-expo);
 }
 @media (min-width: 40rem) {

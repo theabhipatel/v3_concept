@@ -121,7 +121,7 @@ def fill_contact_form(name: str = "", email: str = "", subject: str = "", messag
 CONTROL_ACTIONS = Literal[
     "section", "panel_full", "panel_dock", "panel_float", "panel_wider", "panel_narrower", "panel_close",
     "open_menu", "close_menu", "forward", "back", "zoom_in", "zoom_out", "zoom_reset", "read_aloud",
-    "copy_email", "copy_link", "share", "qr", "print", "reduce_motion", "restore_motion", "find_next",
+    "copy_email", "copy_link", "share", "qr", "close_qr", "print", "reduce_motion", "restore_motion", "find_next",
     "clear_chat", "stop", "end_live",
 ]
 
@@ -133,7 +133,7 @@ def control(action: CONTROL_ACTIONS, value: str = "") -> str:
     open_menu/close_menu: the site menu. forward/back: browser history. zoom_*: page zoom.
     read_aloud: read the visible part of the page. copy_email/copy_link: copy to clipboard.
     share: share this page (phone share sheet, or copy the link). qr: show a QR code of this page
-    to scan with a phone. print: print or save the page as
+    to scan with a phone; close_qr closes it. print: print or save the page as
     PDF. zoom_in/zoom_out also make text bigger or smaller. reduce_motion/restore_motion: calm or
     restore the site's animations. find_next: next match of the last find_on_page. clear_chat:
     start a fresh conversation. stop: stop a tour or speech. end_live: end the live voice conversation."""

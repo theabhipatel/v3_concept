@@ -244,6 +244,7 @@ export type ControlAction =
   | "copy_link"
   | "share"
   | "qr"
+  | "close_qr"
   | "print"
   | "reduce_motion"
   | "restore_motion"
@@ -431,13 +432,15 @@ async function share(): Promise<string> {
   return copy(url, "the page link");
 }
 
-/** A QR code of this page, to open it on a phone (the live site when running locally). Tap or Escape closes it. */
+let closeQr: (() => void) | null = null;
+
+/** A QR code of this page, to open it on a phone (the live site when running locally). Tap, Escape or "close it" closes it. */
 async function showQr(): Promise<string> {
   const local = /^(localhost|127\.|192\.168\.|10\.)/.test(window.location.hostname);
   const url = (local ? profile.site : window.location.origin) + window.location.pathname + window.location.search;
   const { toString } = await import("qrcode");
   const svg = await toString(url, { type: "svg", margin: 1, errorCorrectionLevel: "M", color: { dark: "#0b0706", light: "#ffffff" } });
-  document.querySelector(".abi-qr")?.remove();
+  closeQr?.();
   const box = document.createElement("div");
   box.className = "abi-qr";
   box.setAttribute("role", "dialog");
@@ -445,15 +448,22 @@ async function showQr(): Promise<string> {
   box.innerHTML = `<div class="abi-qr__card"><div class="abi-qr__code">${svg}</div><p class="abi-qr__title">Scan to open on your phone</p><p class="abi-qr__url"></p></div>`;
   box.querySelector(".abi-qr__url")!.textContent = url.replace("https://", "");
   document.body.appendChild(box);
-  const close = () => {
+  const onKey = (e: KeyboardEvent) => e.key === "Escape" && closeQr?.();
+  closeQr = () => {
+    closeQr = null;
     box.classList.add("abi-qr--out");
     window.setTimeout(() => box.remove(), 300);
     window.removeEventListener("keydown", onKey);
   };
-  const onKey = (e: KeyboardEvent) => e.key === "Escape" && close();
-  box.addEventListener("click", close);
+  box.addEventListener("click", () => closeQr?.());
   window.addEventListener("keydown", onKey);
   return "Here is a QR code for this page. Scan it with your phone camera.";
+}
+
+function hideQr(): string {
+  if (!closeQr) return "There is no QR code open.";
+  closeQr();
+  return "Closed the QR code.";
 }
 
 const CALM_KEY = "abi-calm";
@@ -540,6 +550,7 @@ export async function control(action: ControlAction, value = ""): Promise<string
       abiLayout.set({ mode: "dock", width: clampWidth(layout.width + (action === "panel_wider" ? 160 : -160)) });
       return action === "panel_wider" ? "Made the panel wider." : "Made the panel narrower.";
     case "panel_close":
+      if (closeQr) return hideQr(); // "close it" while the QR code is up means the QR code
       abi.close();
       return "Closed the panel. Click the robot to bring me back.";
     case "open_menu":
@@ -575,6 +586,8 @@ export async function control(action: ControlAction, value = ""): Promise<string
       return share();
     case "qr":
       return showQr();
+    case "close_qr":
+      return hideQr();
     case "print":
       stepAside();
       window.setTimeout(() => window.print(), 300);

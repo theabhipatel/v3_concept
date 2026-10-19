@@ -56,13 +56,13 @@ export const REALTIME_TOOLS = [
   tool(
     "control",
     "Page and panel controls. section = scroll to the section named in value. panel_* = ABI's chat panel. " +
-      "zoom_* = page zoom (bigger or smaller text). copy_email / copy_link = clipboard. share = share sheet or copy link. qr = show a QR code of this page to scan with a phone. " +
+      "zoom_* = page zoom (bigger or smaller text). copy_email / copy_link = clipboard. share = share sheet or copy link. qr = show a QR code of this page to scan with a phone, close_qr = close it. " +
       "print = print or save as PDF. reduce_motion / restore_motion = calm or restore animations. find_next = next find match. " +
       "clear_chat = start a fresh chat. stop = stop a tour.",
     {
       action: oneOf([
         "section", "panel_full", "panel_dock", "panel_float", "panel_close", "open_menu", "close_menu",
-        "forward", "back", "zoom_in", "zoom_out", "zoom_reset", "copy_email", "copy_link", "share", "qr", "print",
+        "forward", "back", "zoom_in", "zoom_out", "zoom_reset", "copy_email", "copy_link", "share", "qr", "close_qr", "print",
         "reduce_motion", "restore_motion", "find_next", "clear_chat", "stop",
       ]),
       value: str("Section name for action=section, else empty"),

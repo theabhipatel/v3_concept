@@ -6,6 +6,7 @@
 // listens again. Audio never leaves the browser except that one transcription request.
 import type { MicVAD } from "@ricky0123/vad-web";
 import { abi } from "./abi-store";
+import { chimeEnd, chimeStart } from "./chime";
 import { VAD_ASSET_PATH } from "./vad-assets";
 import { isPowered } from "@/components/power/power-store";
 import { currentVoice, stopSpeaking, transcribeUrl } from "./voice";
@@ -190,4 +191,17 @@ async function teardown() {
 // Ending live mode from anywhere (the End button, closing the panel) releases the microphone.
 abi.subscribe(() => {
   if (abi.get().live === "off" && vad) void teardown();
+});
+
+// A chime when the conversation is ready to listen (normal or realtime voice), and one when it ends.
+let inSession = false;
+abi.subscribe(() => {
+  const live = abi.get().live;
+  if (live === "listening" && !inSession) {
+    inSession = true;
+    chimeStart();
+  } else if ((live === "off" || live === "error") && inSession) {
+    inSession = false;
+    chimeEnd();
+  }
 });
