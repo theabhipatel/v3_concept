@@ -588,7 +588,8 @@ export function SettingsView() {
     void powerStore.load(true).then(() => setChecked(true));
   }, []);
   useEffect(() => {
-    if (checked && ready && !user) router.replace("/signin");
+    // A failed confirmation link lands here with ?error=...; the sign-in page explains it.
+    if (checked && ready && !user) router.replace(`/signin${window.location.search}`);
   }, [checked, ready, user, router]);
 
   if (!checked || !user || !power)

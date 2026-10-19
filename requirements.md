@@ -163,6 +163,13 @@ only that user's ABI runs on it.
   is set), tables in the same Postgres. `npm run db:migrate` creates them (plus `abi_power`,
   `abi_conversation`). Normal visitors never call the server for this: `/api/me` is only asked
   once this browser has signed in.
+- **Email accounts must confirm their email** (built 2026-10-19): sign-up sends a "Confirm your
+  email" message through the contact form's SMTP (`lib/server/mailer.ts`, template
+  `lib/server/auth-email.ts`); signing in unconfirmed sends a fresh link; the link (1 hour) signs
+  the user in and opens `/settings`. Google accounts are already confirmed.
+- **Forgot password:** "Forgot password?" on `/signin` sends a one-hour reset link (same reply for
+  unknown emails, so accounts can't be discovered) to `/reset-password` (new password typed
+  twice). A reset signs the user out on every device (no session cookie cache).
 - **Sign in button** top right of the header: pressing it charges the button and throws a small
   spark of lightning before `/signin` opens. Signed in, it becomes the user's chip with a bolt
   (lit while power is on), linking to `/settings`.
@@ -362,7 +369,7 @@ the contact form. Built:
   "owner mode" idea. Each user pays for their own usage; set a budget on the OpenAI project.
 
 Ideas parked for later (not decided):
-- Bot protection (Cloudflare Turnstile or Vercel BotID), email verification and password reset.
+- Bot protection (Cloudflare Turnstile or Vercel BotID).
 
 ## 12. Repo layout
 

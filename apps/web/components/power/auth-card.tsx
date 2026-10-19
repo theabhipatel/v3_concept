@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowRight, Eye, EyeOff, Loader2, Zap } from "lucide-react";
+import { ArrowLeft, ArrowRight, Eye, EyeOff, KeyRound, Loader2, MailCheck, RotateCw, Zap } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { authClient } from "@/lib/auth-client";
@@ -9,6 +9,115 @@ import { powerStore, usePower } from "./power-store";
 import { centerOf, surge } from "./surge";
 
 type Mode = "signin" | "signup";
+
+const LINK_ERRORS: Record<string, string> = {
+  token_expired: "That confirmation link has expired. Sign in and we'll send you a fresh one.",
+  invalid_token: "That confirmation link isn't valid anymore. Sign in and we'll send you a fresh one.",
+};
+
+/**
+ * After sign-up (or signing in before confirming): the email is on its way. A charged envelope,
+ * the address, a resend button with a short cooldown and a way back.
+ */
+type Sent = { error?: { message?: string } | null };
+type Inbox = { email: string; note: string; kind: "verify" | "reset" };
+
+const resendFor = (kind: Inbox["kind"], email: string): Promise<Sent> =>
+  kind === "verify"
+    ? authClient.sendVerificationEmail({ email, callbackURL: "/settings" })
+    : authClient.requestPasswordReset({ email, redirectTo: "/reset-password" });
+
+function CheckInbox({ email, note, kind, onBack }: Inbox & { onBack: () => void }) {
+  const [wait, setWait] = useState(30);
+  const [sent, setSent] = useState("");
+
+  useEffect(() => {
+    if (wait <= 0) return;
+    const id = window.setTimeout(() => setWait((s) => s - 1), 1000);
+    return () => window.clearTimeout(id);
+  }, [wait]);
+
+  async function resend() {
+    setWait(30);
+    const res = await resendFor(kind, email);
+    setSent(res.error ? (res.error.message ?? "Couldn't send it. Try again in a minute.") : "Sent. Check your inbox again.");
+  }
+
+  return (
+    <div className="inbox text-center" role="status" aria-live="polite">
+      <span className="inbox__icon relative mx-auto grid size-20 place-items-center rounded-full">
+        <span className="inbox__ring" aria-hidden />
+        <MailCheck className="relative size-8" aria-hidden />
+      </span>
+      <h2 className="mt-6 text-2xl font-bold tracking-tight">Check your inbox.</h2>
+      <p className="mt-2 text-sm text-muted-foreground">{note}</p>
+      <p className="mt-4 inline-block max-w-full truncate rounded-full border bg-background/60 px-4 py-2 font-mono text-sm font-semibold">{email}</p>
+      <p className="mt-4 text-xs text-subtle-foreground">The link works for 1 hour. Not there? Check spam or promotions.</p>
+      <div className="mt-6 flex flex-wrap justify-center gap-2">
+        <button
+          type="button"
+          onClick={resend}
+          disabled={wait > 0}
+          className="inline-flex h-11 items-center gap-2 rounded-full border px-5 text-sm font-semibold transition-colors hover:border-brand/50 disabled:opacity-60"
+        >
+          <RotateCw className="size-4" aria-hidden /> {wait > 0 ? `Resend in ${wait}s` : "Resend link"}
+        </button>
+        <button type="button" onClick={onBack} className="inline-flex h-11 items-center gap-2 rounded-full px-4 text-sm font-semibold text-muted-foreground hover:text-foreground">
+          <ArrowLeft className="size-4" aria-hidden /> Back
+        </button>
+      </div>
+      {sent && <p className="mt-3 text-sm font-semibold text-success">{sent}</p>}
+    </div>
+  );
+}
+
+/** Forgot password: ask for the email and send a one-hour reset link. */
+function ForgotPassword({ onSent, onBack }: { onSent: (email: string) => void; onBack: () => void }) {
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState("");
+
+  async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    const email = String(new FormData(e.currentTarget).get("email") ?? "").trim();
+    setBusy(true);
+    setError("");
+    const res = await resendFor("reset", email);
+    setBusy(false);
+    if (res.error) setError(res.error.message ?? "Couldn't send the link. Try again in a minute.");
+    else onSent(email);
+  }
+
+  return (
+    <div className="inbox">
+      <span className="inbox__icon relative grid size-14 place-items-center rounded-2xl">
+        <KeyRound className="relative size-6" aria-hidden />
+      </span>
+      <h2 className="mt-5 text-2xl font-bold tracking-tight">Forgot your password?</h2>
+      <p className="mt-1 text-sm text-muted-foreground">Enter your account email and we&apos;ll send you a link to choose a new one.</p>
+      <form onSubmit={onSubmit} className="mt-6 space-y-4">
+        <div className="field">
+          <input id="forgot-email" name="email" type="email" required autoComplete="email" placeholder=" " className="field__input" />
+          <label htmlFor="forgot-email" className="field__label">
+            Email
+          </label>
+          <span className="field__glow" aria-hidden />
+        </div>
+        {error && (
+          <p role="alert" className="rounded-2xl border border-destructive/30 bg-destructive/10 px-4 py-2.5 text-sm text-destructive">
+            {error}
+          </p>
+        )}
+        <button type="submit" disabled={busy} className="send group relative inline-flex h-12 w-full items-center justify-center gap-2 overflow-hidden rounded-full text-sm font-semibold disabled:opacity-80">
+          {busy ? <Loader2 className="relative size-4 animate-spin" aria-hidden /> : <MailCheck className="relative size-4" aria-hidden />}
+          <span className="relative">Send reset link</span>
+        </button>
+      </form>
+      <button type="button" onClick={onBack} className="mt-4 inline-flex h-10 items-center gap-2 text-sm font-semibold text-muted-foreground hover:text-foreground">
+        <ArrowLeft className="size-4" aria-hidden /> Back to sign in
+      </button>
+    </div>
+  );
+}
 
 function GoogleIcon() {
   return (
@@ -28,7 +137,9 @@ export function AuthCard() {
   const [mode, setMode] = useState<Mode>(params.get("mode") === "signup" ? "signup" : "signin");
   const [show, setShow] = useState(false);
   const [busy, setBusy] = useState<"" | "email" | "google">("");
-  const [error, setError] = useState("");
+  const [error, setError] = useState(() => LINK_ERRORS[params.get("error")?.toLowerCase() ?? ""] ?? "");
+  const [inbox, setInbox] = useState<Inbox | null>(null);
+  const [forgot, setForgot] = useState(params.get("mode") === "forgot");
   const submit = useRef<HTMLButtonElement>(null);
   const googleEnabled = usePower((s) => s.googleEnabled);
   const user = usePower((s) => s.user);
@@ -50,8 +161,13 @@ export function AuthCard() {
     setBusy("email");
     const res =
       mode === "signup"
-        ? await authClient.signUp.email({ email, password, name: name || email.split("@")[0] })
-        : await authClient.signIn.email({ email, password });
+        ? await authClient.signUp.email({ email, password, name: name || email.split("@")[0], callbackURL: "/settings" })
+        : await authClient.signIn.email({ email, password, callbackURL: "/settings" });
+    if (res.error?.code === "EMAIL_NOT_VERIFIED") {
+      setBusy("");
+      setInbox({ email, kind: "verify", note: "Confirm your email before signing in. We just sent you a fresh link." });
+      return;
+    }
     if (res.error) {
       setBusy("");
       setError(
@@ -59,6 +175,12 @@ export function AuthCard() {
           ? "That email and password don't match. Try again."
           : (res.error.message ?? "Something went wrong. Please try again."),
       );
+      return;
+    }
+    // New email accounts confirm first; the link signs them in and opens settings.
+    if (mode === "signup" && !res.data?.token) {
+      setBusy("");
+      setInbox({ email, kind: "verify", note: "We sent a confirmation link to your email. Click it to finish creating your account." });
       return;
     }
     if (submit.current) surge(...centerOf(submit.current), "spark");
@@ -75,6 +197,28 @@ export function AuthCard() {
       setError(res.error.message ?? "Google sign-in is not available right now.");
     }
   }
+
+  if (inbox || forgot)
+    return (
+      <div className="auth-card relative rounded-[1.75rem] border bg-card/90 p-6 shadow-2xl backdrop-blur sm:p-8">
+        <span className="auth-card__edge" aria-hidden />
+        {inbox ? (
+          <CheckInbox
+            {...inbox}
+            onBack={() => {
+              setInbox(null);
+              setForgot(false);
+              setMode("signin");
+            }}
+          />
+        ) : (
+          <ForgotPassword
+            onSent={(email) => setInbox({ email, kind: "reset", note: "If an account exists for this email, a link to choose a new password is on its way." })}
+            onBack={() => setForgot(false)}
+          />
+        )}
+      </div>
+    );
 
   return (
     <div className="auth-card relative rounded-[1.75rem] border bg-card/90 p-6 shadow-2xl backdrop-blur sm:p-8">
@@ -100,7 +244,7 @@ export function AuthCard() {
 
       <h2 className="mt-7 text-2xl font-bold tracking-tight">{mode === "signin" ? "Welcome back." : "Become a power user."}</h2>
       <p className="mt-1 text-sm text-muted-foreground">
-        {mode === "signin" ? "Pick up where you left off with ABI." : "Free account. Bring your own OpenAI key when you're ready."}
+        {mode === "signin" ? "Pick up where you left off with ABI." : "Free account. We'll email you a link to confirm it's you."}
       </p>
 
       {googleEnabled && (
@@ -161,6 +305,21 @@ export function AuthCard() {
             {show ? <EyeOff className="size-4" aria-hidden /> : <Eye className="size-4" aria-hidden />}
           </button>
         </div>
+
+        {mode === "signin" && (
+          <p className="-mt-1 text-right">
+            <button
+              type="button"
+              onClick={() => {
+                setForgot(true);
+                setError("");
+              }}
+              className="text-sm font-semibold text-brand-text hover:underline"
+            >
+              Forgot password?
+            </button>
+          </p>
+        )}
 
         {error && (
           <p role="alert" className="rounded-2xl border border-destructive/30 bg-destructive/10 px-4 py-2.5 text-sm text-destructive">

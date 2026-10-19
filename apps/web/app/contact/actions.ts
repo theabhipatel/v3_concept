@@ -1,10 +1,10 @@
 "use server";
 
 import { headers } from "next/headers";
-import nodemailer from "nodemailer";
 import { z } from "zod";
 import { contactEmailHtml, contactEmailText, describeDevice } from "@/lib/contact-email";
 import { profile } from "@/lib/content";
+import { sendMail, smtpReady } from "@/lib/server/mailer";
 
 export interface ContactState {
   ok: boolean;
@@ -60,20 +60,12 @@ async function send(form: FormData): Promise<ContactState> {
 
   const { name, email, subject, message, intent } = parsed.data;
   const device = describeDevice(h.get("user-agent") ?? "");
-  const { SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS } = process.env;
-  if (!SMTP_HOST || !SMTP_USER || !SMTP_PASS) {
+  if (!smtpReady()) {
     return { ok: false, message: `Email isn't configured yet. Please write to ${profile.email} directly.` };
   }
 
   try {
-    const transport = nodemailer.createTransport({
-      host: SMTP_HOST,
-      port: Number(SMTP_PORT || 465),
-      secure: Number(SMTP_PORT || 465) === 465,
-      auth: { user: SMTP_USER, pass: SMTP_PASS },
-    });
-    await transport.sendMail({
-      from: `"${profile.brand} Website" <${SMTP_USER}>`,
+    await sendMail({
       to: profile.email,
       replyTo: `"${name}" <${email}>`,
       subject: `[Portfolio v3] ${subject || "New message"} - from ${name}`,

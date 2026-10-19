@@ -67,6 +67,8 @@ that project.
   (locally `npm run db:migrate` reads `.env.local`).
 - `BETTER_AUTH_URL` is the site's public URL. `ABI_KEY_SECRET` must never change once users have
   saved keys (they would have to add them again). `ABI_POWER_SECRET` must match on both projects.
+- Account emails (confirm email, reset password) use the same `SMTP_*` variables as the contact
+  form, so they are required once accounts are live.
 - Google sign-in: OAuth client in Google Cloud console, authorized redirect URI
   `<site>/api/auth/callback/google`. Without the two variables the Google button is hidden.
 
