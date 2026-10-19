@@ -171,7 +171,10 @@ only that user's ABI runs on it.
   `sk-...abcd`). "Delete key" removes it from the row and turns power off.
 - **Power switch** (`/settings`): flips ABI to OpenAI. Turning it on plays the surge
   (`components/power/surge.ts`): lightning forks from the button to every edge, a shockwave, a
-  thunderclap shake, edge glow and fire spreading along the bottom. While on, ABI's orb carries a
+  thunderclap shake and edge glow; then copper circuit traces route out of the button to chips
+  and pads, and two buses power a GPU (cores wake in a wave, HBM fills, clock/TFLOPS/memory
+  count up) and a CPU (16 cores, cache, boost clock); everything fades out after about 4 seconds.
+  No flames (decided 2026-10-19). While on, ABI's orb carries a
   ring of current.
 - **What moves to OpenAI:** chat, rewrite, follow-ups, JD match and resume (main model, default
   `gpt-6-luna`, via the agent with the key forwarded server to server behind

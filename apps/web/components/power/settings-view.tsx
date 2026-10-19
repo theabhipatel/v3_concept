@@ -67,7 +67,10 @@ function PowerSwitch({ power }: { power: PowerSettings }) {
     setNote("");
     try {
       const { power: next } = await api<{ power: PowerSettings }>("/api/me/settings", { method: "PATCH", body: JSON.stringify({ enabled: !on }) });
-      if (btn.current) surge(...centerOf(btn.current), next.enabled ? "surge" : "down");
+      if (btn.current) {
+        const [x, y] = centerOf(btn.current);
+        surge(x, y, next.enabled ? "surge" : "down", btn.current.offsetWidth / 2);
+      }
       powerStore.setPower(next);
     } catch (e) {
       setNote((e as Error).message);
