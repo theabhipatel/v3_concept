@@ -7,6 +7,7 @@ import { Nudges } from "@/components/abi/nudges";
 import { CommandPalette } from "@/components/site/command-palette";
 import { Footer } from "@/components/site/footer";
 import { Header } from "@/components/site/header";
+import { MotionObserver } from "@/components/site/motion-observer";
 import { OrbNav } from "@/components/site/orb-nav";
 import { SmoothScroll } from "@/components/site/smooth-scroll";
 import { ThemeProvider } from "@/components/theme-provider";
@@ -56,7 +57,7 @@ export const viewport: Viewport = {
   initialScale: 1,
   themeColor: [
     { media: "(prefers-color-scheme: light)", color: "#fcf9f4" },
-    { media: "(prefers-color-scheme: dark)", color: "#0c0a09" },
+    { media: "(prefers-color-scheme: dark)", color: "#040202" },
   ],
 };
 
@@ -119,6 +120,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           <AbiLoader />
           <VadPrefetch />
           <SmoothScroll />
+          <MotionObserver />
         </ThemeProvider>
       </body>
     </html>

@@ -91,6 +91,19 @@ gives the full name. Show the full name in the UI (orb tooltip, `/abi` header, a
   message the visitor reviews and sends (never sent without a click).
 - Switch light/dark theme.
 
+**Most awaited (next ABI tools, agreed 2026-10-19, not built yet).** All run in the browser with
+almost no tokens. Top picks marked with *.
+- [ ] *System theme (light / dark / system).
+- [ ] *Find on page: search the current page, scroll to and highlight the word.
+- [ ] *Summarize this page (whatever page the visitor is on).
+- [ ] Share: copy a project or section link, or open the phone's share sheet.
+- [ ] Contact shortcuts: open LinkedIn or GitHub; WhatsApp only when asked for a number.
+- [ ] Reading comfort: bigger or smaller text, reduced motion.
+- [ ] *Voice settings: mute or unmute ABI's voice, speaking speed.
+- [ ] Print or save as PDF of the current page.
+- [ ] Clear chat (start fresh) by voice.
+- [ ] *Highlight: point at and spotlight an element without clicking it.
+
 ### 5.3 Operating the portfolio
 - Visitors can say or type "show me your AI projects" and watch ABI do it.
 - A visible **agent cursor** shows what ABI is clicking/scrolling, so actions are transparent.
@@ -143,24 +156,34 @@ gives the full name. Show the full name in the UI (orb tooltip, `/abi` header, a
 
 ## 6. Home page and design concept
 
-**Concept: "Ask first, built for you".** The home page is mostly one question box. ABI greets
-the visitor, and the visitor either asks anything or says who they are, and ABI arranges the
-page for them. Decided 2026-10-13; replaced "The Interview" (photo + scripted Q&A), which
-Abhishek rejected. No photo on the home page.
+**Not a portfolio.** Decided 2026-10-19: v3 is an animated website that introduces Abhishek and
+shows his work happening, instead of listing it. The presentation idea (not the design) comes
+from github.com/theabhipatel/dockwell: a hero that tells the story as a live loop, a small
+animated scene per section, and a footer with its own metaphor. Never call the site or its copy
+a "portfolio". Replaced "Ask first, built for you" (roles picker, removed). No photo on the home page.
 
-- **Hero:** "Hi, I'm ABI" pill, the headline "Ask me anything about Abhishek Patel.", a one-line
-  bio, a large ask box (text, mic, role-tuned suggestion chips, "Paste a job description"), and
-  a "Who are you?" picker: Just looking / Recruiter / Founder or client / Developer.
-- **Role pages:** picking a role scrolls to "Built for {role}", shows a checklist of sections,
-  and re-assembles the page step by step. Orders:
-  - Just looking: shipped projects, how ABI works, experience, stack, contact.
-  - Recruiter: fit at a glance (resume + JD match), experience, projects, stack, contact.
-  - Founder or client: what he can build, client products, FAQs, contact.
-  - Developer: how ABI works, open-source projects with code links, stack, contact.
-- **Zero tokens to switch:** every role's sections are pre-built; only typed questions call the
-  model. The role lives in the URL (`?for=recruiter`) so tailored links can be shared.
-- Avoid generic AI tells: no glowing networks, gradient text, glows, grid backgrounds, numbered
-  mono labels, pulsing dots or fake typing cursors. Real screenshots instead.
+- **Hero:** name pill, headline "I turn ideas into AI products that ship.", ABI's ask box (text,
+  mic, live voice, suggestion chips, "Paste a job description"), then the **Build loop**: one
+  real project per loop goes Brief (request types itself) > Plan (architecture blocks light up)
+  > Build (code streams, checks pass) > Ship (address types in, product goes live), with a step
+  rail. Phones show only the current step. Code: `components/home/build-loop.tsx`.
+- **Sections:** toolbox marquee (two rows, opposite directions) > What I do (three cards, each
+  with its own looping CSS scene: agent, product dashboard, ship pipeline) > Things I have
+  shipped (designed name banners, `components/projects/project-banner.tsx`) > The road so far
+  (count-up numbers, self-drawing timeline) > Meet ABI (four steps lighting up in turn) > call
+  to action.
+- **Project banners, not screenshots:** each project has a stable tint (`--tone-1..6`) and
+  pattern from its slug, its name set large, a giant outlined initial, tags and a hover lift.
+- **Footer "Workshop":** a lane of every project as a commit gliding past, a build receipt
+  (who, where, open to, replies, copyable email, "Online and building", activity grid), link
+  groups as branches (main / work / connect), "Now" and "Latest ship" cards, Ask ABI card,
+  back to top.
+- **Motion rules:** one `MotionObserver` (reveals via `data-reveal`, count-ups via `data-count`,
+  `data-motion` loops paused off screen). The hero intro is CSS only (fast LCP). Reduced motion
+  shows the finished, still picture. Styles: `styles/site.css`.
+- **Next (planned, not built):** Projects page with banners and animated filter; project page
+  opening from its banner with a shared-element animation and GitHub details; About as a scroll
+  story; Skills as an animated map; Lab, Contact and Resume in the new reveal style.
 
 ### 6.1 Nudging visitors to try ABI
 - After about 20 seconds or 40% scroll, ABI comments on what the visitor is looking at
@@ -185,8 +208,8 @@ Abhishek rejected. No photo on the home page.
 ## 7. Theme
 
 - Palette: **orange** brand (warm, energetic) with **amber** as its partner, used for ABI moments,
-  on warm neutrals. Clean, readable, positive; no glows.
-- Light: warm cream paper, white cards, warm ink text. Dark: near black with a faint orange tint, so orange accents pop.
+  on warm neutrals. Clean and readable; soft brand glows only for live or active moments.
+- Light: warm cream paper, white cards, warm ink text. Dark: almost pure black (`oklch(0.095 0.008 45)`, about #040202) with a faint dark-orange tint, so orange accents pop.
 - Font: **Plus Jakarta Sans** for headings and body (clean and very readable), Geist Mono only
   for code.
 - All tokens in **one file** (`apps/web/styles/tokens.css`, CSS variables mapped into Tailwind

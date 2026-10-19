@@ -4,7 +4,7 @@
  * never raw colors. Light and dark are tuned separately, not inverted.
  *
  * Palette: warm orange brand with amber as its partner (ABI), on warm neutrals.
- * Clean and calm: no glows, no gradient text. Text tokens (*-text) meet WCAG AA.
+ * Text tokens (*-text) meet WCAG AA.
  */
 
 /* ---------- Light: warm cream paper, warm ink text, orange brand ---------- */
@@ -55,29 +55,29 @@
   --elevation-lg: 0 24px 48px -20px oklch(0.3 0.05 45 / 0.22), 0 2px 6px oklch(0.22 0.02 50 / 0.06);
 }
 
-/* ---------- Dark: near black with a faint orange tint, so the orange pops ---------- */
+/* ---------- Dark: almost pure black with a faint dark-orange tint, so the orange pops ---------- */
 .dark {
   color-scheme: dark;
 
-  --background: oklch(0.125 0.006 50);
-  --background-deep: oklch(0.105 0.005 50);
+  --background: oklch(0.095 0.008 45);
+  --background-deep: oklch(0.075 0.007 45);
   --foreground: oklch(0.96 0.008 80);
   --muted-foreground: oklch(0.74 0.012 60);
   --subtle-foreground: oklch(0.62 0.012 58);
 
-  --card: oklch(0.16 0.008 50);
+  --card: oklch(0.135 0.01 47);
   --card-foreground: var(--foreground);
-  --popover: oklch(0.18 0.009 50);
+  --popover: oklch(0.155 0.011 47);
   --popover-foreground: var(--foreground);
-  --muted: oklch(0.2 0.009 50);
-  --secondary: oklch(0.22 0.035 48);
+  --muted: oklch(0.175 0.011 47);
+  --secondary: oklch(0.2 0.035 48);
   --secondary-foreground: oklch(0.9 0.05 65);
-  --accent: oklch(0.22 0.04 48);
+  --accent: oklch(0.2 0.04 48);
   --accent-foreground: oklch(0.94 0.04 70);
 
-  --border: oklch(0.24 0.01 50);
-  --border-strong: oklch(0.32 0.014 50);
-  --input: oklch(0.27 0.011 50);
+  --border: oklch(0.215 0.013 48);
+  --border-strong: oklch(0.3 0.016 48);
+  --input: oklch(0.25 0.013 48);
   --ring: oklch(0.74 0.17 52);
 
   --primary: oklch(0.74 0.17 52);
@@ -91,7 +91,7 @@
   --abi: oklch(0.83 0.15 80);
   --abi-text: oklch(0.86 0.13 82);
   --abi-foreground: oklch(0.2 0.04 60);
-  --abi-soft: oklch(0.2 0.04 62);
+  --abi-soft: oklch(0.18 0.04 62);
   --aura: oklch(0.45 0.1 60);
 
   --destructive: oklch(0.66 0.19 27);
@@ -105,6 +105,14 @@
 
 /* ---------- Theme-independent: type, shape, motion ---------- */
 :root {
+  /* Tints for project banners and small illustrations (mixed into the surface, never as text). */
+  --tone-1: oklch(0.7 0.18 45);
+  --tone-2: oklch(0.79 0.15 78);
+  --tone-3: oklch(0.67 0.18 22);
+  --tone-4: oklch(0.7 0.12 185);
+  --tone-5: oklch(0.65 0.16 295);
+  --tone-6: oklch(0.75 0.15 135);
+
   --on-brand: oklch(0.99 0.003 80);
 
   --font-body: var(--font-jakarta), ui-sans-serif, system-ui, sans-serif;
@@ -163,6 +171,12 @@
   --color-destructive-foreground: var(--destructive-foreground);
   --color-success: var(--success);
   --color-on-brand: var(--on-brand);
+  --color-tone-1: var(--tone-1);
+  --color-tone-2: var(--tone-2);
+  --color-tone-3: var(--tone-3);
+  --color-tone-4: var(--tone-4);
+  --color-tone-5: var(--tone-5);
+  --color-tone-6: var(--tone-6);
 
   --font-sans: var(--font-body);
   --font-display: var(--font-heading);

@@ -1,6 +1,7 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "../styles/tokens.css";
+@import "../styles/site.css";
 
 @custom-variant dark (&:where(.dark, .dark *));
 
@@ -477,23 +478,6 @@ body {
   }
 }
 
-/* Answers stream in word by word (see StreamedText). Full text is in the HTML. */
-.stream-w {
-  animation: stream-in 0.45s var(--motion-ease-out-expo) both;
-  animation-delay: calc(var(--i) * 26ms);
-}
-.stream[data-state="idle"] .stream-w {
-  animation-play-state: paused;
-}
-@keyframes stream-in {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-
 /* ABI highlights the section it scrolled to. */
 .abi-highlight {
   border-radius: var(--radius-xl);
@@ -562,22 +546,6 @@ body {
   background: var(--muted);
 }
 
-/* Home: when the visitor picks a role, the page re-assembles step by step (see RoleSections). */
-.is-building .build-step {
-  animation: build-in 0.4s var(--motion-ease-out-expo) both;
-  animation-delay: calc(0.25s + var(--i) * 110ms);
-}
-.is-building .build-block {
-  animation: build-in 0.7s var(--motion-ease-out-expo) both;
-  animation-delay: calc(0.5s + var(--i) * 120ms);
-}
-@keyframes build-in {
-  from {
-    opacity: 0;
-    transform: translateY(14px);
-  }
-}
-
 @media (prefers-reduced-motion: reduce) {
   .live-wave i,
   .orb-backdrop *,
@@ -585,11 +553,6 @@ body {
   .abi-bot *::before,
   .abi-bot *::after {
     animation: none !important;
-  }
-  .stream-w,
-  .is-building .build-step,
-  .is-building .build-block {
-    animation: none;
   }
   .abi-highlight {
     animation: none;

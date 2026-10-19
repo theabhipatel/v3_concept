@@ -3,13 +3,12 @@
 import { ArrowUp, AudioLines, Briefcase, Mic } from "lucide-react";
 import { useState } from "react";
 import { abi } from "@/components/abi/abi-store";
-import { useQueryParam } from "@/lib/use-query-param";
-import { ROLE_IDS, ROLE_PARAM, SUGGESTIONS, type Role } from "./roles";
 
-/** The heart of the home page: ask ABI anything, talk, or paste a job description. */
+const SUGGESTIONS = ["Show me his AI projects", "What does he do at IBR Infotech?", "Compare his top projects"];
+
+/** Ask ABI anything, talk, or paste a job description. */
 export function AskBox() {
   const [value, setValue] = useState("");
-  const [role] = useQueryParam<Role>(ROLE_PARAM, "everyone", ROLE_IDS);
 
   return (
     <div className="space-y-4">
@@ -64,7 +63,7 @@ export function AskBox() {
         )}
       </form>
       <div className="flex flex-wrap justify-center gap-2">
-        {SUGGESTIONS[role].map((s) => (
+        {SUGGESTIONS.map((s) => (
           <button
             key={s}
             type="button"
@@ -74,15 +73,13 @@ export function AskBox() {
             {s}
           </button>
         ))}
-        {(role === "everyone" || role === "recruiter") && (
-          <button
-            type="button"
-            onClick={() => abi.requestJd()}
-            className="inline-flex items-center gap-1.5 rounded-full border border-abi/50 bg-abi-soft px-3.5 py-1.5 text-sm font-medium text-abi-text transition-colors hover:border-abi"
-          >
-            <Briefcase className="size-4" aria-hidden /> Hiring? Paste a job description
-          </button>
-        )}
+        <button
+          type="button"
+          onClick={() => abi.requestJd()}
+          className="inline-flex items-center gap-1.5 rounded-full border border-abi/50 bg-abi-soft px-3.5 py-1.5 text-sm font-medium text-abi-text transition-colors hover:border-abi"
+        >
+          <Briefcase className="size-4" aria-hidden /> Hiring? Paste a job description
+        </button>
       </div>
     </div>
   );

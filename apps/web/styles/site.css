@@ -1,0 +1,931 @@
+/*
+ * Site motion and illustrations (home, banners, footer). Colors come from tokens.css only.
+ * Every loop lives inside a `data-motion` element and is paused while it is off screen
+ * (MotionObserver sets `data-inview`). Reduced motion gets the calm, finished picture.
+ */
+
+/* ---------- Scroll reveals (only when scripting is on, so no-JS still shows everything) ---------- */
+@media (scripting: enabled) and (prefers-reduced-motion: no-preference) {
+  [data-reveal]:not([data-reveal="line"]) {
+    opacity: 0;
+    transform: translateY(18px);
+    transition:
+      opacity 0.8s var(--motion-ease-out-expo),
+      transform 0.8s var(--motion-ease-out-expo);
+    transition-delay: calc(var(--d, 0) * 90ms);
+  }
+  [data-reveal="scale"] {
+    transform: translateY(24px) scale(0.97);
+  }
+  [data-reveal][data-shown] {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* The hero plays its intro with CSS alone, so it never waits for JavaScript (fast LCP). */
+@media (prefers-reduced-motion: no-preference) {
+  [data-intro] {
+    animation: intro 0.9s var(--motion-ease-out-expo) both;
+    animation-delay: calc(80ms + var(--d, 0) * 100ms);
+  }
+  [data-intro="scale"] {
+    animation-name: intro-scale;
+  }
+}
+@keyframes intro {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+}
+@keyframes intro-scale {
+  from {
+    opacity: 0;
+    transform: translateY(28px) scale(0.97);
+  }
+}
+
+/* ---------- Pause loops off screen ---------- */
+[data-motion]:not([data-inview]),
+[data-motion]:not([data-inview]) *,
+[data-motion]:not([data-inview]) *::before,
+[data-motion]:not([data-inview]) *::after {
+  animation-play-state: paused !important;
+}
+
+/* ---------- Hero ---------- */
+.hero__wash::before,
+.hero__wash::after {
+  content: "";
+  position: absolute;
+  width: 46rem;
+  height: 46rem;
+  border-radius: 9999px;
+  opacity: 0.55;
+  will-change: transform;
+}
+.hero__wash::before {
+  top: -22rem;
+  left: 50%;
+  margin-left: -38rem;
+  background: radial-gradient(closest-side, color-mix(in oklch, var(--brand) 22%, transparent), transparent);
+  animation: wash-drift 22s ease-in-out infinite alternate;
+}
+.hero__wash::after {
+  top: -16rem;
+  left: 50%;
+  margin-left: -6rem;
+  background: radial-gradient(closest-side, color-mix(in oklch, var(--brand-2) 18%, transparent), transparent);
+  animation: wash-drift 26s ease-in-out infinite alternate-reverse;
+}
+@keyframes wash-drift {
+  to {
+    transform: translate3d(6rem, 3rem, 0) scale(1.1);
+  }
+}
+
+/* Build loop */
+.loop-node--active {
+  border-color: color-mix(in oklch, var(--brand) 55%, var(--border));
+  box-shadow:
+    0 0 0 4px color-mix(in oklch, var(--brand) 12%, transparent),
+    0 24px 50px -28px var(--brand);
+}
+.loop-caret {
+  display: inline-block;
+  width: 2px;
+  height: 0.95em;
+  margin-left: 1px;
+  vertical-align: -0.12em;
+  background: var(--brand);
+  animation: caret 0.9s steps(1) infinite;
+}
+@keyframes caret {
+  50% {
+    opacity: 0;
+  }
+}
+.loop-link__fill {
+  background: var(--brand);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.7s var(--motion-ease-out-expo);
+}
+.loop-link[data-on] .loop-link__fill {
+  transform: scaleX(1);
+}
+.loop-link__spark {
+  left: 0;
+  box-shadow: 0 0 10px 2px var(--brand);
+  animation: spark 0.9s var(--motion-ease-out-expo) forwards;
+}
+@keyframes spark {
+  to {
+    left: calc(100% - 6px);
+    opacity: 0;
+  }
+}
+.loop-block--on {
+  border-color: color-mix(in oklch, var(--brand) 45%, var(--border));
+  background: color-mix(in oklch, var(--brand) 9%, var(--card));
+  animation: block-on 0.5s var(--motion-ease-out-expo);
+}
+@keyframes block-on {
+  from {
+    transform: scale(0.94);
+  }
+}
+.loop-ship {
+  background: color-mix(in oklch, var(--tone) 16%, var(--card));
+}
+.loop-ship__glow {
+  background: radial-gradient(circle at 85% 0%, color-mix(in oklch, var(--tone) 45%, transparent), transparent 60%);
+  opacity: 0;
+  transition: opacity 0.6s;
+}
+.loop-ship--live .loop-ship__glow {
+  opacity: 1;
+}
+.loop-ship--live > span:not(.loop-ship__glow) {
+  animation: ship-in 0.6s var(--motion-ease-out-expo) both;
+}
+@keyframes ship-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+}
+
+/* ---------- Project banners ---------- */
+.banner {
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  flex-direction: column;
+  min-height: 17rem;
+  overflow: hidden;
+  border-radius: calc(var(--radius) + 12px);
+  border: 1px solid color-mix(in oklch, var(--tone) 28%, var(--border));
+  background: color-mix(in oklch, var(--tone) 9%, var(--card));
+  padding: 1.5rem;
+  transition:
+    transform 0.5s var(--motion-ease-out-expo),
+    border-color 0.3s,
+    box-shadow 0.5s var(--motion-ease-out-expo);
+}
+.banner--lg {
+  min-height: 22rem;
+  padding: 2rem;
+}
+.banner:hover {
+  transform: translateY(-4px);
+  border-color: color-mix(in oklch, var(--tone) 60%, var(--border));
+  box-shadow: 0 28px 60px -32px color-mix(in oklch, var(--tone) 70%, transparent);
+}
+.banner:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 3px;
+}
+.banner__pattern {
+  position: absolute;
+  inset: -20%;
+  z-index: -1;
+  opacity: 0.5;
+  transition: transform 1.2s var(--motion-ease-out-expo);
+  -webkit-mask-image: radial-gradient(circle at 100% 0%, black, transparent 65%);
+  mask-image: radial-gradient(circle at 100% 0%, black, transparent 65%);
+}
+.banner:hover .banner__pattern {
+  transform: translate3d(-3%, 3%, 0) rotate(-3deg);
+}
+.banner__pattern--rings {
+  background: repeating-radial-gradient(circle at 100% 0%, transparent 0 22px, color-mix(in oklch, var(--tone) 40%, transparent) 22px 23px);
+}
+.banner__pattern--stripes {
+  background: repeating-linear-gradient(-45deg, transparent 0 14px, color-mix(in oklch, var(--tone) 30%, transparent) 14px 15px);
+}
+.banner__pattern--dots {
+  background: radial-gradient(color-mix(in oklch, var(--tone) 55%, transparent) 1.2px, transparent 1.6px) 0 0 / 16px 16px;
+}
+.banner__pattern--arcs {
+  background:
+    radial-gradient(circle at 100% 0%, transparent 0 30%, color-mix(in oklch, var(--tone) 35%, transparent) 30% 30.4%, transparent 30.6%),
+    radial-gradient(circle at 100% 0%, transparent 0 45%, color-mix(in oklch, var(--tone) 30%, transparent) 45% 45.3%, transparent 45.5%),
+    radial-gradient(circle at 100% 0%, transparent 0 60%, color-mix(in oklch, var(--tone) 25%, transparent) 60% 60.25%, transparent 60.4%);
+}
+.banner__initial {
+  position: absolute;
+  right: -0.06em;
+  bottom: -0.28em;
+  z-index: -1;
+  font-family: var(--font-heading);
+  font-size: 13rem;
+  font-weight: 800;
+  line-height: 1;
+  color: transparent;
+  -webkit-text-stroke: 1.5px color-mix(in oklch, var(--tone) 45%, transparent);
+  transition: transform 0.8s var(--motion-ease-out-expo);
+  user-select: none;
+}
+.banner--lg .banner__initial {
+  font-size: 18rem;
+}
+.banner:hover .banner__initial {
+  transform: translate3d(-0.08em, -0.04em, 0) scale(1.04);
+}
+.banner__tag {
+  flex-shrink: 0;
+  white-space: nowrap;
+  border-radius: 9999px;
+  padding: 0.2rem 0.6rem;
+  background: color-mix(in oklch, var(--tone) 22%, var(--card));
+  color: var(--foreground);
+}
+.banner__chip {
+  border-radius: 9999px;
+  border: 1px solid var(--border);
+  background: color-mix(in oklch, var(--card) 75%, transparent);
+  padding: 0.15rem 0.55rem;
+  font-size: 0.75rem;
+  color: var(--muted-foreground);
+}
+.banner__go {
+  display: grid;
+  flex-shrink: 0;
+  width: 2.5rem;
+  height: 2.5rem;
+  place-items: center;
+  border-radius: 9999px;
+  background: var(--foreground);
+  color: var(--background);
+  transition: transform 0.5s var(--motion-ease-out-expo), background-color 0.3s;
+}
+.banner:hover .banner__go {
+  transform: rotate(45deg);
+  background: var(--tone);
+  color: oklch(0.15 0.02 50);
+}
+
+/* ---------- Toolbox marquee ---------- */
+.marquee-mask {
+  -webkit-mask-image: linear-gradient(90deg, transparent, black 8%, black 92%, transparent);
+  mask-image: linear-gradient(90deg, transparent, black 8%, black 92%, transparent);
+}
+.marquee__track {
+  display: flex;
+  flex-shrink: 0;
+  gap: 0.75rem;
+  padding-right: 0.75rem;
+  animation: marquee 70s linear infinite;
+}
+.marquee__track--reverse {
+  animation-direction: reverse;
+}
+.marquee:hover .marquee__track {
+  animation-play-state: paused;
+}
+@keyframes marquee {
+  to {
+    transform: translate3d(-100%, 0, 0);
+  }
+}
+
+/* ---------- What I do: small looping scenes ---------- */
+.craft-scene {
+  position: relative;
+  height: 11rem;
+  overflow: hidden;
+  border-bottom: 1px solid var(--border);
+  background: var(--background-deep);
+  padding: 1.25rem;
+  font-size: 0.75rem;
+}
+
+/* An agent: the ask, two tool calls, then the answer streams in. 7s loop. */
+.craft-agent > * {
+  opacity: 0;
+  animation: 7s var(--motion-ease-out-expo) infinite;
+}
+.craft-agent__ask {
+  margin-left: auto;
+  width: fit-content;
+  max-width: 85%;
+  border-radius: 1rem 1rem 0.25rem 1rem;
+  background: var(--brand);
+  color: var(--on-brand);
+  padding: 0.4rem 0.7rem;
+  font-weight: 500;
+  animation-name: agent-ask;
+}
+.craft-agent__tool {
+  display: flex;
+  width: fit-content;
+  align-items: center;
+  gap: 0.35rem;
+  margin-top: 0.6rem;
+  border-radius: 9999px;
+  border: 1px solid var(--border);
+  background: var(--card);
+  padding: 0.2rem 0.6rem;
+  font-family: var(--font-code);
+  font-size: 0.6875rem;
+  color: var(--muted-foreground);
+  animation-name: agent-tool-1;
+}
+.craft-agent__tool--2 {
+  color: var(--success);
+  animation-name: agent-tool-2;
+}
+.craft-agent__reply {
+  margin-top: 0.6rem;
+  width: 78%;
+  border-radius: 1rem 1rem 1rem 0.25rem;
+  border: 1px solid var(--border);
+  background: var(--card);
+  padding: 0.55rem 0.7rem;
+  animation-name: agent-reply;
+}
+.craft-agent__reply i {
+  display: block;
+  height: 0.35rem;
+  border-radius: 9999px;
+  background: var(--muted);
+  transform-origin: left;
+  animation: agent-line 7s var(--motion-ease-out-expo) infinite;
+}
+.craft-agent__reply i + i {
+  margin-top: 0.35rem;
+}
+.craft-agent__reply i:nth-child(2) {
+  width: 80%;
+  animation-delay: 0.15s;
+}
+.craft-agent__reply i:nth-child(3) {
+  width: 55%;
+  animation-delay: 0.3s;
+}
+@keyframes agent-ask {
+  0% {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  6%,
+  90% {
+    opacity: 1;
+    transform: none;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+@keyframes agent-tool-1 {
+  0%,
+  16% {
+    opacity: 0;
+    transform: translateX(-8px);
+  }
+  22%,
+  90% {
+    opacity: 1;
+    transform: none;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+@keyframes agent-tool-2 {
+  0%,
+  30% {
+    opacity: 0;
+    transform: translateX(-8px);
+  }
+  36%,
+  90% {
+    opacity: 1;
+    transform: none;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+@keyframes agent-reply {
+  0%,
+  44% {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  50%,
+  90% {
+    opacity: 1;
+    transform: none;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+@keyframes agent-line {
+  0%,
+  50% {
+    transform: scaleX(0);
+  }
+  64%,
+  100% {
+    transform: scaleX(1);
+  }
+}
+
+/* A product: a dashboard whose bars grow and whose line draws itself. 6s loop. */
+.craft-product {
+  display: flex;
+  gap: 0.75rem;
+}
+.craft-product__side {
+  display: flex;
+  width: 2.25rem;
+  flex-direction: column;
+  gap: 0.45rem;
+  border-radius: 0.75rem;
+  background: var(--card);
+  border: 1px solid var(--border);
+  padding: 0.5rem;
+}
+.craft-product__side i {
+  height: 0.4rem;
+  border-radius: 9999px;
+  background: var(--muted);
+}
+.craft-product__side i:first-child {
+  background: var(--brand);
+}
+.craft-product__main {
+  display: flex;
+  min-width: 0;
+  flex: 1;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+.craft-product__kpis {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.5rem;
+}
+.craft-product__kpis span {
+  height: 2rem;
+  border-radius: 0.6rem;
+  border: 1px solid var(--border);
+  background: var(--card);
+  position: relative;
+  overflow: hidden;
+}
+.craft-product__kpis span::after {
+  content: "";
+  position: absolute;
+  left: 0.45rem;
+  bottom: 0.45rem;
+  width: 45%;
+  height: 0.4rem;
+  border-radius: 9999px;
+  background: var(--tone-2);
+  opacity: 0.7;
+}
+.craft-product__kpis span:nth-child(2)::after {
+  background: var(--tone-4);
+  width: 60%;
+}
+.craft-product__kpis span:nth-child(3)::after {
+  background: var(--brand);
+  width: 35%;
+}
+.craft-product__chart {
+  position: relative;
+  display: flex;
+  flex: 1;
+  align-items: flex-end;
+  gap: 0.4rem;
+  border-radius: 0.75rem;
+  border: 1px solid var(--border);
+  background: var(--card);
+  padding: 0.5rem;
+}
+.craft-product__chart i {
+  flex: 1;
+  height: var(--h);
+  border-radius: 0.25rem 0.25rem 0 0;
+  background: color-mix(in oklch, var(--brand) 30%, var(--muted));
+  transform-origin: bottom;
+  animation: bar-grow 6s var(--motion-ease-out-expo) infinite;
+  animation-delay: calc(var(--i) * 70ms);
+}
+.craft-product__line {
+  position: absolute;
+  inset: 0.5rem;
+  width: calc(100% - 1rem);
+  height: calc(100% - 1rem);
+  overflow: visible;
+}
+.craft-product__line path {
+  fill: none;
+  stroke: var(--brand);
+  stroke-width: 2;
+  vector-effect: non-scaling-stroke;
+  stroke-linejoin: round;
+  stroke-dasharray: 1;
+  animation: line-draw 6s var(--motion-ease-out-expo) infinite;
+}
+@keyframes bar-grow {
+  0% {
+    transform: scaleY(0.05);
+  }
+  25%,
+  85% {
+    transform: scaleY(1);
+  }
+  100% {
+    transform: scaleY(0.05);
+  }
+}
+@keyframes line-draw {
+  0%,
+  20% {
+    stroke-dashoffset: 1;
+  }
+  50%,
+  85% {
+    stroke-dashoffset: 0;
+  }
+  100% {
+    stroke-dashoffset: 1;
+  }
+}
+
+/* Shipping: a change runs through the pipeline, then the pods come up. 6s loop. */
+.craft-ship__stages {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.4rem;
+}
+.craft-ship__stages::before {
+  content: "";
+  position: absolute;
+  top: 0.75rem;
+  left: 12%;
+  right: 12%;
+  height: 1px;
+  background: var(--border-strong);
+}
+.craft-ship__stages li {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.35rem;
+  color: var(--muted-foreground);
+  font-weight: 500;
+}
+.craft-ship__stages li span {
+  display: grid;
+  width: 1.5rem;
+  height: 1.5rem;
+  place-items: center;
+  border-radius: 9999px;
+  border: 1px solid var(--border-strong);
+  background: var(--card);
+  color: transparent;
+  animation: stage-pass 6s var(--motion-ease-out-expo) infinite;
+  animation-delay: calc(var(--i) * 0.55s);
+}
+.craft-ship__runner {
+  position: absolute;
+  top: calc(0.75rem - 3px);
+  left: 12%;
+  width: 6px;
+  height: 6px;
+  border-radius: 9999px;
+  background: var(--brand);
+  box-shadow: 0 0 10px 2px color-mix(in oklch, var(--brand) 60%, transparent);
+  animation: runner 6s linear infinite;
+}
+.craft-ship__pods {
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  gap: 0.4rem;
+  margin-top: 1.4rem;
+}
+.craft-ship__pods i {
+  aspect-ratio: 1;
+  border-radius: 0.4rem;
+  border: 1px solid var(--border);
+  background: var(--card);
+  animation: pod-up 6s var(--motion-ease-out-expo) infinite;
+  animation-delay: calc(2.4s + var(--i) * 0.12s);
+}
+@keyframes stage-pass {
+  0%,
+  8% {
+    background: var(--card);
+    color: transparent;
+    border-color: var(--border-strong);
+  }
+  12%,
+  88% {
+    background: var(--success);
+    color: var(--background);
+    border-color: var(--success);
+  }
+  100% {
+    background: var(--card);
+    color: transparent;
+  }
+}
+@keyframes runner {
+  0% {
+    left: 12%;
+    opacity: 1;
+  }
+  38% {
+    left: calc(88% - 6px);
+    opacity: 1;
+  }
+  42%,
+  100% {
+    left: calc(88% - 6px);
+    opacity: 0;
+  }
+}
+@keyframes pod-up {
+  0% {
+    background: var(--card);
+    transform: scale(0.85);
+  }
+  10%,
+  70% {
+    background: color-mix(in oklch, var(--tone-4) 45%, var(--card));
+    border-color: color-mix(in oklch, var(--tone-4) 60%, var(--border));
+    transform: none;
+  }
+  85%,
+  100% {
+    background: var(--card);
+    transform: scale(0.85);
+  }
+}
+
+/* ---------- Timeline: the line draws down as it scrolls in ---------- */
+.timeline::before {
+  content: "";
+  position: absolute;
+  left: 0.4rem;
+  top: 0.4rem;
+  bottom: 0.4rem;
+  width: 2px;
+  border-radius: 9999px;
+  background: linear-gradient(var(--brand), var(--border));
+  transform-origin: top;
+}
+@media (scripting: enabled) and (prefers-reduced-motion: no-preference) {
+  .timeline::before {
+    transform: scaleY(0);
+    transition: transform 1.6s var(--motion-ease-out-expo) 0.2s;
+  }
+  .timeline[data-shown]::before {
+    transform: none;
+  }
+}
+.timeline__dot {
+  position: absolute;
+  left: calc(-2rem + 0.4rem - 5px);
+  top: 0.3rem;
+  width: 12px;
+  height: 12px;
+  border-radius: 9999px;
+  border: 2px solid var(--brand);
+  background: var(--background-deep);
+}
+.timeline__dot--now {
+  background: var(--brand);
+  box-shadow: 0 0 0 5px color-mix(in oklch, var(--brand) 22%, transparent);
+}
+
+/* ---------- ABI flow: each step lights up in turn (8s loop) ---------- */
+.abi-flow__step {
+  transition: border-color 0.4s;
+}
+.abi-flow__step,
+.abi-flow__icon,
+.abi-flow__bar {
+  animation: 8s var(--motion-ease-out-expo) infinite;
+  animation-delay: calc(var(--i) * 2s);
+}
+.abi-flow__step {
+  animation-name: flow-step;
+}
+.abi-flow__icon {
+  animation-name: flow-icon;
+}
+.abi-flow__bar {
+  background: var(--brand);
+  transform: scaleX(0);
+  transform-origin: left;
+  animation-name: flow-bar;
+  animation-timing-function: linear;
+}
+@keyframes flow-step {
+  0%,
+  25% {
+    border-color: color-mix(in oklch, var(--brand) 50%, var(--border));
+  }
+  30%,
+  100% {
+    border-color: var(--border);
+  }
+}
+@keyframes flow-icon {
+  0%,
+  25% {
+    background: var(--brand);
+    color: var(--on-brand);
+  }
+  30%,
+  100% {
+    background: var(--muted);
+    color: var(--muted-foreground);
+  }
+}
+@keyframes flow-bar {
+  0% {
+    transform: scaleX(0);
+    opacity: 1;
+  }
+  25% {
+    transform: scaleX(1);
+    opacity: 1;
+  }
+  30%,
+  100% {
+    transform: scaleX(1);
+    opacity: 0;
+  }
+}
+
+/* ---------- Call to action: soft rings breathing out from the center ---------- */
+.cta__rings::before,
+.cta__rings::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 60rem;
+  height: 60rem;
+  margin: -30rem 0 0 -30rem;
+  border-radius: 9999px;
+  background: repeating-radial-gradient(circle, transparent 0 46px, color-mix(in oklch, var(--brand) 14%, transparent) 46px 47px);
+  -webkit-mask-image: radial-gradient(closest-side, black, transparent);
+  mask-image: radial-gradient(closest-side, black, transparent);
+  animation: rings 9s linear infinite;
+}
+.cta__rings::after {
+  background: radial-gradient(closest-side, color-mix(in oklch, var(--brand) 12%, transparent), transparent 70%);
+  animation: none;
+}
+@keyframes rings {
+  from {
+    transform: scale(1);
+  }
+  to {
+    transform: scale(1.1);
+  }
+}
+
+/* ---------- Footer ---------- */
+.commit-lane {
+  -webkit-mask-image: linear-gradient(90deg, transparent, black 6%, black 94%, transparent);
+  mask-image: linear-gradient(90deg, transparent, black 6%, black 94%, transparent);
+}
+.commit-lane__line {
+  height: 2px;
+  background: linear-gradient(90deg, var(--border), color-mix(in oklch, var(--brand) 50%, var(--border)), var(--border));
+}
+.commit-lane__track {
+  animation: marquee-half 90s linear infinite;
+}
+.commit-lane:hover .commit-lane__track {
+  animation-play-state: paused;
+}
+@keyframes marquee-half {
+  to {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+.commit__dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 9999px;
+  border: 2px solid var(--tone);
+  background: var(--background-deep);
+  transition: background-color 0.3s, transform 0.3s;
+}
+.commit:hover .commit__dot {
+  background: var(--tone);
+  transform: translateY(-50%) scale(1.3);
+}
+.commit::before {
+  content: "";
+  position: absolute;
+  left: calc(1rem + 5px);
+  top: 6px;
+  width: 2px;
+  height: 1.1rem;
+  background: var(--border);
+}
+.receipt__cut::before,
+.receipt__cut::after {
+  content: "";
+  position: absolute;
+  top: -10px;
+  width: 20px;
+  height: 20px;
+  border-radius: 9999px;
+  background: var(--background-deep);
+  border: 1px solid var(--border);
+}
+.receipt__cut::before {
+  left: calc(-1.25rem - 10px);
+  clip-path: inset(0 0 0 50%);
+}
+.receipt__cut::after {
+  right: calc(-1.25rem - 10px);
+  clip-path: inset(0 50% 0 0);
+}
+.activity i {
+  width: 6px;
+  height: 6px;
+  border-radius: 1.5px;
+  background: color-mix(in oklch, var(--success) calc(var(--v) * 85%), var(--muted));
+  animation: activity 5s ease-in-out infinite;
+  animation-delay: calc(var(--i) * 0.12s);
+}
+@keyframes activity {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.45;
+  }
+}
+.footer-abi-eyes {
+  display: flex;
+  gap: 5px;
+}
+.footer-abi-eyes i {
+  width: 6px;
+  height: 9px;
+  border-radius: 9999px;
+  background: var(--on-brand);
+  animation: footer-blink 4.5s infinite;
+}
+@keyframes footer-blink {
+  0%,
+  92%,
+  100% {
+    transform: none;
+  }
+  95% {
+    transform: scaleY(0.15);
+  }
+}
+
+/* ---------- Reduced motion: the finished, still picture ---------- */
+@media (prefers-reduced-motion: reduce) {
+  .hero__wash::before,
+  .hero__wash::after,
+  .marquee__track,
+  .commit-lane__track,
+  .activity i,
+  .footer-abi-eyes i,
+  .cta__rings::before,
+  .loop-caret,
+  .loop-link__spark,
+  .loop-block--on,
+  .loop-ship--live > span {
+    animation: none !important;
+  }
+  .marquee-mask,
+  .commit-lane {
+    overflow-x: auto;
+  }
+  .craft-scene *,
+  .abi-flow *,
+  .abi-flow__step {
+    animation: none !important;
+    opacity: 1 !important;
+  }
+  .craft-product__line path {
+    stroke-dashoffset: 0;
+  }
+  .abi-flow__bar {
+    display: none;
+  }
+}
