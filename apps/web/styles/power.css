@@ -1,0 +1,610 @@
+/* ==========================================================================
+   Power users: sign in, ABI settings and the power effects.
+   The canvas effects live in components/power/surge.ts.
+   ========================================================================== */
+
+@property --spin {
+  syntax: "<angle>";
+  inherits: false;
+  initial-value: 0deg;
+}
+
+.power-canvas {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  z-index: 200;
+}
+
+/* Reduced motion: one soft glow from the button instead of lightning. */
+.power-glow {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 200;
+  background: radial-gradient(circle at var(--x) var(--y), color-mix(in oklch, var(--brand) 35%, transparent), transparent 45%);
+  animation: power-glow 0.9s ease-out both;
+}
+@keyframes power-glow {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+/* The thunderclap: the page jolts once. */
+.power-shake {
+  animation: power-shake 0.5s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+}
+@keyframes power-shake {
+  10%,
+  90% {
+    transform: translate3d(-1px, 0, 0);
+  }
+  20%,
+  80% {
+    transform: translate3d(3px, -1px, 0);
+  }
+  30%,
+  50%,
+  70% {
+    transform: translate3d(-5px, 1px, 0);
+  }
+  40%,
+  60% {
+    transform: translate3d(5px, 0, 0);
+  }
+}
+
+/* While power mode is on, ABI's orb carries a ring of current. */
+html[data-power="on"] .abi-orb::after {
+  content: "";
+  position: absolute;
+  inset: -5px;
+  border-radius: 9999px;
+  padding: 2px;
+  background: conic-gradient(from var(--spin), transparent 0 55%, var(--brand-2) 70%, white 75%, var(--brand) 80%, transparent 95%);
+  mask:
+    linear-gradient(#000 0 0) content-box exclude,
+    linear-gradient(#000 0 0);
+  animation: spin-var 1.6s linear infinite;
+  filter: drop-shadow(0 0 6px var(--brand));
+  pointer-events: none;
+}
+@keyframes spin-var {
+  to {
+    --spin: 360deg;
+  }
+}
+
+/* ---------- Header: Sign in ---------- */
+
+.signin-btn {
+  color: var(--primary-foreground);
+  background: var(--primary);
+  box-shadow:
+    0 0 0 1px color-mix(in oklch, var(--brand) 50%, transparent),
+    0 10px 26px -12px var(--brand);
+  transition:
+    transform 0.3s var(--motion-ease-out-expo),
+    box-shadow 0.3s;
+}
+.signin-btn:hover {
+  transform: translateY(-1px);
+  box-shadow:
+    0 0 0 1px var(--brand),
+    0 0 22px -4px var(--brand),
+    0 14px 30px -12px var(--brand);
+}
+/* A spark of current runs along the edge on hover; it races and fills the button when pressed. */
+.signin-btn__charge {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1.5px;
+  background: conic-gradient(from var(--spin), transparent 0 70%, white 82%, var(--brand-2) 88%, transparent 100%);
+  mask:
+    linear-gradient(#000 0 0) content-box exclude,
+    linear-gradient(#000 0 0);
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+.signin-btn:hover .signin-btn__charge {
+  opacity: 1;
+  animation: spin-var 1.4s linear infinite;
+}
+.signin-btn:hover .signin-btn__bolt {
+  animation: bolt-flicker 1.2s steps(1) infinite;
+}
+.signin-btn[data-charging] .signin-btn__charge {
+  opacity: 1;
+  animation: spin-var 0.28s linear infinite;
+}
+.signin-btn[data-charging]::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, color-mix(in oklch, white 55%, transparent), var(--brand-2));
+  transform-origin: left;
+  animation: charge-fill 0.55s cubic-bezier(0.7, 0, 0.3, 1) both;
+}
+.signin-btn[data-charging] {
+  animation: charge-buzz 0.08s linear 6;
+}
+.signin-btn[data-charging] .signin-btn__bolt {
+  filter: drop-shadow(0 0 6px white);
+  transform: scale(1.25);
+}
+@keyframes charge-fill {
+  from {
+    transform: scaleX(0);
+    opacity: 0.9;
+  }
+  85% {
+    transform: scaleX(1);
+    opacity: 0.9;
+  }
+  to {
+    transform: scaleX(1);
+    opacity: 0;
+  }
+}
+@keyframes charge-buzz {
+  50% {
+    transform: translate(1px, -1px);
+  }
+}
+@keyframes bolt-flicker {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  8% {
+    opacity: 0.4;
+  }
+  12% {
+    opacity: 1;
+  }
+  55% {
+    opacity: 0.6;
+  }
+  58% {
+    opacity: 1;
+  }
+}
+
+.account-chip[data-powered] {
+  border-color: color-mix(in oklch, var(--brand) 55%, transparent);
+  box-shadow: 0 0 20px -8px var(--brand);
+}
+.account-chip[data-powered] .account-chip__bolt {
+  filter: drop-shadow(0 0 5px var(--brand));
+  animation: bolt-flicker 3s steps(1) infinite;
+}
+
+/* ---------- Sign in: the reactor ---------- */
+
+.reactor__ring {
+  position: absolute;
+  inset: 0;
+  border-radius: 9999px;
+  border: 1px solid color-mix(in oklch, var(--brand) 30%, transparent);
+}
+.reactor__ring--1 {
+  border-style: dashed;
+  animation: spin 24s linear infinite;
+}
+.reactor__ring--2 {
+  inset: 14%;
+  border-color: color-mix(in oklch, var(--brand-2) 40%, transparent);
+  border-width: 2px;
+  border-style: dotted;
+  animation: spin 14s linear infinite reverse;
+}
+.reactor__ring--3 {
+  inset: 28%;
+  box-shadow:
+    inset 0 0 30px -10px var(--brand),
+    0 0 40px -14px var(--brand);
+  animation: reactor-breathe 2.4s ease-in-out infinite;
+}
+.reactor__arc {
+  position: absolute;
+  inset: 7%;
+  border-radius: 9999px;
+  padding: 3px;
+  background: conic-gradient(from var(--spin), transparent 0 60%, var(--brand) 78%, white 84%, transparent 92%);
+  mask:
+    linear-gradient(#000 0 0) content-box exclude,
+    linear-gradient(#000 0 0);
+  filter: drop-shadow(0 0 8px var(--brand));
+  animation: spin-var 2.2s linear infinite;
+}
+.reactor__core {
+  position: absolute;
+  inset: 36%;
+  color: var(--primary-foreground);
+  background: radial-gradient(circle at 35% 30%, color-mix(in oklch, white 45%, var(--brand-2)), var(--brand) 55%, var(--primary));
+  box-shadow:
+    0 0 0 6px color-mix(in oklch, var(--brand) 18%, transparent),
+    0 0 50px -6px var(--brand);
+  animation: reactor-core 2.4s ease-in-out infinite;
+}
+.reactor__core svg {
+  filter: drop-shadow(0 0 6px color-mix(in oklch, white 70%, transparent));
+  animation: bolt-flicker 2.6s steps(1) infinite;
+}
+/* Motes of energy drawn into the core from all sides. */
+.reactor__mote {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 6px;
+  height: 6px;
+  margin: -3px;
+  border-radius: 9999px;
+  background: var(--brand-2);
+  box-shadow: 0 0 10px var(--brand);
+  transform: rotate(var(--a)) translateX(8.5rem);
+  opacity: 0;
+  animation: mote-in 2.4s cubic-bezier(0.55, 0, 0.9, 0.4) var(--d) infinite;
+}
+@keyframes mote-in {
+  10% {
+    opacity: 1;
+  }
+  to {
+    transform: rotate(var(--a)) translateX(2rem) scale(0.4);
+    opacity: 0;
+  }
+}
+@keyframes reactor-breathe {
+  50% {
+    transform: scale(1.06);
+  }
+}
+@keyframes reactor-core {
+  50% {
+    transform: scale(1.05);
+    box-shadow:
+      0 0 0 10px color-mix(in oklch, var(--brand) 10%, transparent),
+      0 0 70px -4px var(--brand);
+  }
+}
+[data-motion]:not([data-inview]) .reactor__ring,
+[data-motion]:not([data-inview]) .reactor__arc,
+[data-motion]:not([data-inview]) .reactor__mote,
+[data-motion]:not([data-inview]) .reactor__core {
+  animation-play-state: paused;
+}
+
+/* ---------- Sign in: the card ---------- */
+
+.auth-card__edge {
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  padding: 1px;
+  background: conic-gradient(from var(--spin), transparent 0 75%, var(--brand) 88%, transparent 100%);
+  mask:
+    linear-gradient(#000 0 0) content-box exclude,
+    linear-gradient(#000 0 0);
+  animation: spin-var 6s linear infinite;
+  pointer-events: none;
+}
+.auth-tabs__pill {
+  position: absolute;
+  top: 4px;
+  bottom: 4px;
+  left: 4px;
+  width: calc(50% - 4px);
+  border-radius: 9999px;
+  background: var(--primary);
+  box-shadow: 0 6px 18px -8px var(--brand);
+  transition: transform 0.45s var(--motion-ease-out-expo);
+}
+.auth-tabs[data-mode="signup"] .auth-tabs__pill {
+  transform: translateX(100%);
+}
+.auth-field-in {
+  animation: field-in 0.45s var(--motion-ease-out-expo) both;
+}
+@keyframes field-in {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+}
+
+/* ---------- Settings: the power switch ---------- */
+
+.power-panel {
+  transition:
+    border-color 0.6s,
+    box-shadow 0.6s;
+}
+.power-panel[data-on] {
+  border-color: color-mix(in oklch, var(--brand) 45%, transparent);
+  box-shadow: 0 0 60px -30px var(--brand);
+}
+.power-panel__grid {
+  background-image:
+    linear-gradient(color-mix(in oklch, var(--brand) 8%, transparent) 1px, transparent 1px),
+    linear-gradient(90deg, color-mix(in oklch, var(--brand) 8%, transparent) 1px, transparent 1px);
+  background-size: 28px 28px;
+  mask-image: radial-gradient(circle at 18% 50%, #000, transparent 70%);
+  opacity: 0;
+  transition: opacity 0.8s;
+}
+.power-panel[data-on] .power-panel__grid {
+  opacity: 1;
+  animation: grid-flow 3s linear infinite;
+}
+@keyframes grid-flow {
+  to {
+    background-position: 28px 28px;
+  }
+}
+
+.power-btn {
+  cursor: pointer;
+  transition: transform 0.25s var(--motion-ease-out-expo);
+}
+.power-btn:active {
+  transform: scale(0.95);
+}
+.power-btn__ring {
+  position: absolute;
+  inset: 0;
+  border-radius: 9999px;
+  border: 2px solid var(--border-strong);
+  background: radial-gradient(circle, var(--background) 55%, var(--card));
+  transition:
+    border-color 0.5s,
+    box-shadow 0.5s;
+}
+.power-btn__arc {
+  position: absolute;
+  inset: -4px;
+  border-radius: 9999px;
+  padding: 3px;
+  background: conic-gradient(from var(--spin), transparent 0 50%, var(--brand) 72%, white 80%, var(--brand-2) 86%, transparent 96%);
+  mask:
+    linear-gradient(#000 0 0) content-box exclude,
+    linear-gradient(#000 0 0);
+  opacity: 0;
+  filter: drop-shadow(0 0 10px var(--brand));
+  transition: opacity 0.5s;
+}
+.power-btn__face {
+  position: relative;
+  color: var(--muted-foreground);
+  background: linear-gradient(160deg, var(--muted), var(--card));
+  box-shadow:
+    inset 0 2px 0 color-mix(in oklch, white 10%, transparent),
+    0 10px 24px -12px black;
+  transition:
+    color 0.4s,
+    background 0.4s,
+    box-shadow 0.4s;
+}
+.power-btn:hover .power-btn__face {
+  color: var(--foreground);
+}
+.power-btn:hover .power-btn__arc {
+  opacity: 0.35;
+  animation: spin-var 3s linear infinite;
+}
+.power-btn[aria-pressed="true"] .power-btn__ring {
+  border-color: var(--brand);
+  box-shadow:
+    0 0 0 8px color-mix(in oklch, var(--brand) 12%, transparent),
+    0 0 60px -10px var(--brand);
+}
+.power-btn[aria-pressed="true"] .power-btn__arc {
+  opacity: 1;
+  animation: spin-var 1.4s linear infinite;
+}
+.power-btn[aria-pressed="true"] .power-btn__face {
+  color: var(--primary-foreground);
+  background: radial-gradient(circle at 35% 30%, color-mix(in oklch, white 35%, var(--brand-2)), var(--brand) 60%, var(--primary));
+  box-shadow:
+    inset 0 2px 0 color-mix(in oklch, white 35%, transparent),
+    0 0 40px -6px var(--brand);
+}
+.power-btn[aria-pressed="true"] .power-btn__face svg {
+  filter: drop-shadow(0 0 6px color-mix(in oklch, white 70%, transparent));
+}
+[data-motion]:not([data-inview]) .power-btn__arc,
+[data-motion]:not([data-inview]) .power-panel__grid {
+  animation-play-state: paused;
+}
+
+/* ---------- Settings: key test steps ---------- */
+
+.key-step {
+  color: var(--subtle-foreground);
+  transition: color 0.3s;
+}
+.key-step__dot {
+  border: 1.5px solid var(--border-strong);
+  transition:
+    background 0.3s,
+    border-color 0.3s,
+    color 0.3s;
+}
+.key-step[data-state="run"] {
+  color: var(--foreground);
+}
+.key-step[data-state="run"] .key-step__dot {
+  border-color: var(--brand);
+  color: var(--brand-text);
+  box-shadow: 0 0 12px -2px var(--brand);
+}
+.key-step[data-state="done"] {
+  color: var(--foreground);
+}
+.key-step[data-state="done"] .key-step__dot {
+  border-color: var(--success);
+  background: var(--success);
+  color: var(--background);
+  animation: sent-pop 0.4s var(--motion-ease-out-expo) both;
+}
+.key-step[data-state="fail"] {
+  color: var(--destructive);
+}
+.key-step[data-state="fail"] .key-step__dot {
+  border-color: var(--destructive);
+  background: var(--destructive);
+  color: white;
+}
+.key-saved {
+  animation: field-in 0.5s var(--motion-ease-out-expo) both;
+}
+
+/* ---------- Settings: models ---------- */
+
+.price-chip {
+  border-radius: 9999px;
+  padding: 0.15rem 0.5rem;
+  background: color-mix(in oklch, var(--brand) 12%, transparent);
+  color: var(--brand-text);
+  font-variant-numeric: tabular-nums;
+}
+.price-chip--soft {
+  background: var(--muted);
+  color: var(--muted-foreground);
+}
+.model-opt {
+  transition:
+    border-color 0.25s,
+    background 0.25s,
+    transform 0.25s var(--motion-ease-out-expo);
+}
+.model-opt:hover {
+  border-color: color-mix(in oklch, var(--brand) 40%, transparent);
+}
+.model-opt__radio {
+  border-color: var(--border-strong);
+  transition:
+    border-color 0.25s,
+    box-shadow 0.25s;
+}
+.model-opt[aria-checked="true"] {
+  border-color: var(--brand);
+  background: color-mix(in oklch, var(--brand) 7%, var(--card));
+}
+.model-opt[aria-checked="true"] .model-opt__radio {
+  border-color: var(--brand);
+  box-shadow:
+    inset 0 0 0 3px var(--card),
+    inset 0 0 0 8px var(--brand);
+}
+.voice-chip {
+  transition:
+    border-color 0.25s,
+    background 0.25s,
+    color 0.25s;
+}
+.voice-chip:hover {
+  border-color: color-mix(in oklch, var(--brand) 45%, transparent);
+}
+.voice-chip[aria-checked="true"],
+.voice-chip[aria-pressed="true"] {
+  border-color: var(--brand);
+  background: var(--primary);
+  color: var(--primary-foreground);
+}
+/* "In use now": the card whose picker is open below is lit. */
+.in-use {
+  transition:
+    border-color 0.3s,
+    box-shadow 0.3s,
+    transform 0.3s var(--motion-ease-out-expo);
+}
+.in-use:hover {
+  border-color: color-mix(in oklch, var(--brand) 40%, transparent);
+  transform: translateY(-2px);
+}
+.in-use[data-active] {
+  border-color: var(--brand);
+  box-shadow:
+    0 0 0 3px color-mix(in oklch, var(--brand) 14%, transparent),
+    0 14px 30px -20px var(--brand);
+}
+.models-tabs__pill {
+  position: absolute;
+  top: 4px;
+  bottom: 4px;
+  left: 4px;
+  width: calc((100% - 8px) / 3);
+  border-radius: 9999px;
+  background: var(--primary);
+  box-shadow: 0 6px 18px -8px var(--brand);
+  transform: translateX(calc(var(--i) * 100%));
+  transition: transform 0.45s var(--motion-ease-out-expo);
+}
+.voice-card {
+  transition:
+    border-color 0.25s,
+    background 0.25s;
+}
+.voice-card:hover {
+  border-color: color-mix(in oklch, var(--brand) 40%, transparent);
+}
+.voice-card[aria-checked="true"] {
+  border-color: var(--brand);
+  background: color-mix(in oklch, var(--brand) 8%, var(--card));
+}
+/* A tiny equalizer that dances on the chosen voice. */
+.voice-card__wave {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  height: 16px;
+}
+.voice-card__wave i {
+  width: 3px;
+  height: 6px;
+  border-radius: 2px;
+  background: var(--border-strong);
+}
+.voice-card[aria-checked="true"] .voice-card__wave i {
+  background: var(--brand);
+  animation: eq 0.9s ease-in-out infinite;
+}
+.voice-card[aria-checked="true"] .voice-card__wave i:nth-child(2) {
+  animation-delay: -0.3s;
+}
+.voice-card[aria-checked="true"] .voice-card__wave i:nth-child(3) {
+  animation-delay: -0.6s;
+}
+@keyframes eq {
+  50% {
+    height: 16px;
+  }
+}
+.saved-toast {
+  animation: toast-in 0.4s var(--motion-ease-out-expo) both;
+}
+@keyframes toast-in {
+  from {
+    opacity: 0;
+    transform: translate(-50%, 10px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reactor *,
+  .auth-card__edge,
+  .power-btn__arc,
+  .power-panel__grid,
+  .signin-btn__charge,
+  html[data-power="on"] .abi-orb::after {
+    animation: none !important;
+  }
+}

@@ -21,7 +21,7 @@ The website calls the agent through the `/api/agent/*` rewrite in `apps/web/next
 | Config | `apps/web/vercel.json` (Next.js) | `vercel.json` at the repo root |
 | Code entry | Next.js | `api/index.py` (imports `apps/agent/app/main.py`) |
 | Packages | `apps/web/package.json` | `requirements.txt` at the repo root |
-| Env vars | `AGENT_URL`, optional `SMTP_*` | `GROQ_API_KEY`, `GEMINI_API_KEY`, `DATABASE_URL`, `ABI_CHAT_MODEL`, `ABI_FAST_MODEL`, `ABI_EMBED_MODEL`, `ABI_EMBED_DIM`, optional `BOOKING_URL`, `GITHUB_TOKEN` |
+| Env vars | `AGENT_URL`, optional `SMTP_*`, power users: `DATABASE_URL`, `BETTER_AUTH_SECRET`, `BETTER_AUTH_URL`, `ABI_KEY_SECRET`, `ABI_POWER_SECRET`, optional `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET` | `ABI_POWER_SECRET` (same value as the website's), `GROQ_API_KEY`, `GEMINI_API_KEY`, `DATABASE_URL`, `ABI_CHAT_MODEL`, `ABI_FAST_MODEL`, `ABI_EMBED_MODEL`, `ABI_EMBED_DIM`, optional `BOOKING_URL`, `GITHUB_TOKEN` |
 
 - Both projects read the shared `content/` folder ("Include files outside the root directory"
   is on for the website; the agent bundles `content/**`).
@@ -60,6 +60,15 @@ that project.
 - **Agent Python packages:** after changing `apps/agent/pyproject.toml`, regenerate the root
   `requirements.txt` (the command is in its header), then redeploy the agent.
 - **Models:** change `ABI_CHAT_MODEL` / `ABI_FAST_MODEL` in the agent's env and redeploy.
+
+## Power users (accounts)
+
+- Create the tables once per database: `cd apps/web && DATABASE_URL="<Neon URL>" node scripts/migrate-db.mjs`
+  (locally `npm run db:migrate` reads `.env.local`).
+- `BETTER_AUTH_URL` is the site's public URL. `ABI_KEY_SECRET` must never change once users have
+  saved keys (they would have to add them again). `ABI_POWER_SECRET` must match on both projects.
+- Google sign-in: OAuth client in Google Cloud console, authorized redirect URI
+  `<site>/api/auth/callback/google`. Without the two variables the Google button is hidden.
 
 ## Still to do
 

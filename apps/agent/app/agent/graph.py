@@ -8,12 +8,12 @@ from dataclasses import asdict
 from typing import Annotated, TypedDict
 
 from langchain_core.messages import AIMessage, AnyMessage, HumanMessage, SystemMessage, ToolMessage
-from langchain_groq import ChatGroq
 from langgraph.checkpoint.postgres.aio import AsyncPostgresSaver
 from langgraph.graph import END, START, StateGraph
 from langgraph.graph.message import add_messages
 from langgraph.prebuilt import ToolNode
 
+from app.agent.llm import llm
 from app.agent.prompts import REWRITE, SYSTEM, clean, format_context
 from app.agent.tools import TOOLS
 from app.config import get_settings
@@ -31,21 +31,23 @@ class State(TypedDict):
     hits: list[dict]
 
 
-def _llm(model: str, **kwargs) -> ChatGroq:
-    return ChatGroq(model=model, api_key=get_settings().groq_api_key, max_retries=3, **kwargs)
-
-
 def _recent(messages: list[AnyMessage]) -> list[AnyMessage]:
     """Last N messages, starting at a visitor message so no tool result loses its tool call."""
     recent = messages[-get_settings().history_messages :]
     while recent and not isinstance(recent[0], HumanMessage):
         recent = recent[1:]
-    return [
-        ToolMessage(m.content[:TOOL_RESULT_CHARS], tool_call_id=m.tool_call_id, name=m.name)
-        if isinstance(m, ToolMessage) and isinstance(m.content, str) and len(m.content) > TOOL_RESULT_CHARS
-        else m
-        for m in recent
-    ]
+    return [_portable(m) for m in recent]
+
+
+def _portable(m: AnyMessage) -> AnyMessage:
+    """History any provider accepts: plain text and tool calls only (no provider ids, reasoning
+    items or metadata), so a conversation can move between Groq and OpenAI mid-way."""
+    if isinstance(m, ToolMessage):
+        content = m.content if isinstance(m.content, str) else m.text
+        return ToolMessage(content[:TOOL_RESULT_CHARS], tool_call_id=m.tool_call_id, name=m.name)
+    if isinstance(m, AIMessage):
+        return AIMessage(m.text, tool_calls=m.tool_calls)
+    return m
 
 
 def _turn_start(messages: list[AnyMessage]) -> int:
@@ -58,14 +60,11 @@ def _turn_start(messages: list[AnyMessage]) -> int:
 async def rewrite(state: State) -> dict:
     question = state["messages"][-1].content
     earlier = [m for m in _recent(state["messages"][:-1]) if isinstance(m, (HumanMessage, AIMessage)) and m.content]
-    s = get_settings()
-    if not earlier or not s.abi_fast_model:
+    if not earlier or not get_settings().abi_fast_model:
         return {"query": question}
-    history = "\n".join(f"{m.type}: {str(m.content)[:400]}" for m in earlier[-4:])
-    res = await _llm(s.abi_fast_model, temperature=0, max_tokens=400, reasoning_effort="low").ainvoke(
-        REWRITE.format(history=history, question=question)
-    )
-    return {"query": str(res.content).strip() or question}
+    history = "\n".join(f"{m.type}: {m.text[:400]}" for m in earlier[-4:])
+    res = await llm(True, temperature=0, max_tokens=400).ainvoke(REWRITE.format(history=history, question=question))
+    return {"query": res.text.strip() or question}
 
 
 async def retrieve(state: State) -> dict:
@@ -74,17 +73,15 @@ async def retrieve(state: State) -> dict:
 
 
 async def agent(state: State) -> dict:
-    s = get_settings()
     rounds = sum(
         1 for m in state["messages"][_turn_start(state["messages"]) :] if isinstance(m, AIMessage) and m.tool_calls
     )
-    llm = _llm(s.abi_chat_model, temperature=0.2, max_tokens=900)
+    model = llm(False, temperature=0.2, max_tokens=900)
     if rounds < MAX_TOOL_ROUNDS:
-        llm = llm.bind_tools(TOOLS)
+        model = model.bind_tools(TOOLS)
     system = SystemMessage(SYSTEM.format(context=format_context(state["hits"])))
-    res = await llm.ainvoke([system, *_recent(state["messages"])])
-    res.content = clean(str(res.content))
-    return {"messages": [res]}
+    res = await model.ainvoke([system, *_recent(state["messages"])])
+    return {"messages": [AIMessage(clean(res.text), tool_calls=res.tool_calls)]}
 
 
 def _route(state: State) -> str:

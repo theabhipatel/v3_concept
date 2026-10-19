@@ -5,6 +5,7 @@ so every route lives under that prefix. /chat streams the Vercel AI SDK UI messa
 protocol (SSE), so the browser can use useChat directly.
 """
 
+import hmac
 import json
 import logging
 import re
@@ -14,15 +15,16 @@ from contextlib import asynccontextmanager
 from typing import AsyncIterator
 
 import httpx
+import openai
 from fastapi import APIRouter, FastAPI, File, HTTPException, Request, UploadFile
 from fastapi.responses import Response, StreamingResponse
 from groq import APIStatusError, RateLimitError
 from langchain_core.messages import AIMessage, ToolMessage
-from langchain_groq import ChatGroq
 from langgraph.errors import GraphRecursionError
 from pydantic import BaseModel, Field
 
 from app.agent.graph import get_graph, user_turn
+from app.agent.llm import Power, llm, model_name, parse_json, power
 from app.agent.prompts import FOLLOWUPS, clean
 from app.config import get_settings
 from app.db import close_pool
@@ -36,6 +38,10 @@ BUSY = (
 BLOCKED = (
     "That message looks like an attempt to change how I work, so I'll skip it. I'm happy to "
     "answer anything about Abhishek's work, skills or projects!"
+)
+POWER_FAILED = (
+    "OpenAI did not accept that request. Your key may be out of credit, or the model is not "
+    "available to it. Check your key and models in [ABI settings](/settings)."
 )
 SESSION_RE = re.compile(r"^[A-Za-z0-9_-]{8,64}$")
 logger = logging.getLogger("abi")
@@ -96,23 +102,35 @@ async def _guard_score(text: str) -> float:
 
 
 async def _followups(question: str, answer: str) -> list[str]:
-    s = get_settings()
     try:
-        llm = ChatGroq(
-            model=s.abi_fast_model, api_key=s.groq_api_key, temperature=0.5, max_tokens=500,
-            reasoning_effort="low",
-        ).bind(response_format={"type": "json_object"})
-        res = await llm.ainvoke(FOLLOWUPS.format(question=question[:500], answer=answer[:1200]))
-        return [clean(q) for q in json.loads(str(res.content)).get("questions", [])][:3]
+        model = llm(True, temperature=0.5, max_tokens=500, json_mode=True)
+        res = await model.ainvoke(FOLLOWUPS.format(question=question[:500], answer=answer[:1200]))
+        return [clean(q) for q in parse_json(res.text).get("questions", [])][:3]
     except Exception:
         return []
 
 
-async def _stream(session: str, message: str) -> AsyncIterator[str]:
+def _power(request: Request) -> Power | None:
+    """A signed-in power user's OpenAI key, forwarded by the website behind the shared secret."""
+    secret = get_settings().abi_power_secret
+    sent = request.headers.get("x-abi-power", "")
+    key = request.headers.get("x-abi-openai-key", "")
+    model = request.headers.get("x-abi-model", "")
+    if not (secret and sent and key and model):
+        return None
+    if not hmac.compare_digest(sent.encode(), secret.encode()):
+        raise HTTPException(401, "Bad power secret")
+    if not re.fullmatch(r"[A-Za-z0-9._:-]{1,80}", model):
+        raise HTTPException(400, "Invalid model")
+    return Power(key=key, model=model)
+
+
+async def _stream(session: str, message: str, owner: Power | None = None) -> AsyncIterator[str]:
     started = time.monotonic()
     s = get_settings()
+    power.set(owner)  # this request's model (the context is copied into every graph step)
     text_id = "text-1"
-    trace: dict = {"model": s.abi_chat_model, "query": message, "tools": [], "sources": 0}
+    trace: dict = {"model": model_name(), "query": message, "tools": [], "sources": 0}
     hits: list[dict] = []
     tool_args: dict[str, dict] = {}
     answer, pending, ok = "", "", True
@@ -120,8 +138,10 @@ async def _stream(session: str, message: str) -> AsyncIterator[str]:
     yield _sse({"type": "start", "messageId": uuid.uuid4().hex})
     yield _sse({"type": "text-start", "id": text_id})
 
-    score = await _guard_score(message)
-    trace["guard"] = round(score, 3)
+    # Power users are signed in and pay for their own key, so their messages skip the guard.
+    score = 0.0 if owner else await _guard_score(message)
+    if not owner:
+        trace["guard"] = round(score, 3)
     if score >= s.abi_guard_threshold:
         answer, ok = BLOCKED, False
         yield _sse({"type": "text-delta", "id": text_id, "delta": BLOCKED})
@@ -173,9 +193,10 @@ async def _stream(session: str, message: str) -> AsyncIterator[str]:
                             pending += "\n\n"
                 elif mode == "messages":
                     chunk, meta = payload
-                    if meta.get("langgraph_node") == "agent" and isinstance(chunk.content, str) and chunk.content:
+                    text = chunk.text if meta.get("langgraph_node") == "agent" else ""
+                    if text:
                         # Hold back a possibly unfinished citation like "[3†L2" until it closes.
-                        pending += chunk.content
+                        pending += text
                         if pending.rfind("[") > pending.rfind("]") and len(pending) < 40:
                             continue
                         delta, pending = clean(pending), ""
@@ -190,6 +211,10 @@ async def _stream(session: str, message: str) -> AsyncIterator[str]:
             logger.warning("groq error: %s", e)
             answer, ok = answer + BUSY, False
             yield _sse({"type": "text-delta", "id": text_id, "delta": BUSY})
+        except openai.APIError as e:
+            logger.warning("openai error: %s", type(e).__name__)  # never log the request (it holds the key)
+            answer, ok = answer + POWER_FAILED, False
+            yield _sse({"type": "text-delta", "id": text_id, "delta": POWER_FAILED})
         except GraphRecursionError:
             pass
         except Exception:
@@ -224,9 +249,11 @@ async def chat(request: Request) -> StreamingResponse:
         raise HTTPException(400, "Empty message")
     if len(message) > s.max_message_chars:
         raise HTTPException(413, f"Message too long (max {s.max_message_chars} characters)")
-    await _limit(request, "chat")
+    owner = _power(request)
+    if not owner:
+        await _limit(request, "chat")
     return StreamingResponse(
-        _stream(session, message),
+        _stream(session, message, owner),
         media_type="text/event-stream",
         headers={"x-vercel-ai-ui-message-stream": "v1", "Cache-Control": "no-cache"},
     )

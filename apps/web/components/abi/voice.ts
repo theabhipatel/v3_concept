@@ -3,6 +3,7 @@
 // Push-to-talk: browser records -> Groq Whisper (via the agent) -> ABI -> browser speech.
 // Recordings are sent once for transcription and never stored.
 import { useSyncExternalStore } from "react";
+import { isPowered } from "@/components/power/power-store";
 import { abi, PTT_RELEASE } from "./abi-store";
 
 const CONSENT_KEY = "abi-mic-ok";
@@ -110,17 +111,20 @@ async function finish() {
   const form = new FormData();
   form.append("audio", new Blob(chunks, { type }), `speech.${type.includes("mp4") ? "mp4" : "webm"}`);
   try {
-    const res = await fetch("/api/agent/transcribe", { method: "POST", body: form });
+    const res = await fetch(transcribeUrl(), { method: "POST", body: form });
     const data = await res.json();
     abi.setVoice({ caption: "" });
     if (res.ok && data.text) onText(data.text);
-    else abi.setVoice({ caption: data.detail || "I couldn't hear that. Please try again or type." });
+    else abi.setVoice({ caption: data.detail || data.error || "I couldn't hear that. Please try again or type." });
   } catch {
     abi.setVoice({ caption: "Voice is resting right now. Please type your question." });
   }
 }
 
 if (typeof window !== "undefined") window.addEventListener(PTT_RELEASE, stopListening);
+
+/** Speech to text: Groq Whisper for everyone, OpenAI on the user's key in power mode. */
+export const transcribeUrl = () => (isPowered() ? "/api/power/transcribe" : "/api/agent/transcribe");
 
 // ---------- Speech out ----------
 // First choice: Groq's natural voice (Orpheus), played inside the page so the browser's echo
@@ -133,12 +137,13 @@ let groqOffUntil = 0;
 let playId = 0;
 let audio: HTMLAudioElement | null = null;
 let endAudio: (() => void) | null = null;
-let voiceMode: "groq" | "browser" | null = null;
+let voiceMode: "groq" | "openai" | "browser" | null = null;
 
 /**
- * Which voice is speaking. "groq" plays inside the page, so the browser's echo cancellation
- * removes it from the microphone and live mode can keep listening (barge-in). "browser" speech
- * comes from the operating system and would be heard as the visitor, so the mic pauses.
+ * Which voice is speaking. "groq" and "openai" (power mode) play inside the page, so the
+ * browser's echo cancellation removes them from the microphone and live mode can keep listening
+ * (barge-in). "browser" speech comes from the operating system and would be heard as the
+ * visitor, so the mic pauses.
  */
 export const currentVoice = () => voiceMode;
 
@@ -218,6 +223,32 @@ async function speakGroq(text: string, id: number) {
   abi.setVoice({ speaking: false, caption: "" });
 }
 
+/** Power mode: the whole answer in one OpenAI voice clip, in the user's chosen voice. */
+async function speakOpenAI(text: string, id: number) {
+  voiceMode = "openai";
+  abi.setVoice({ speaking: true, caption: text.length > 160 ? `${text.slice(0, 157)}...` : text });
+  let url: string | null = null;
+  try {
+    const res = await fetch("/api/power/speak", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ text: text.slice(0, 4000) }),
+    });
+    if (!res.ok) throw new Error(`speak ${res.status}`);
+    url = URL.createObjectURL(await res.blob());
+  } catch {
+    if (id === playId) void speakGroq(text, id); // fall back to the free voices
+    return;
+  }
+  if (id !== playId) return URL.revokeObjectURL(url);
+  await playClip(url);
+  URL.revokeObjectURL(url);
+  if (id !== playId) return;
+  audio = null;
+  voiceMode = null;
+  abi.setVoice({ speaking: false, caption: "" });
+}
+
 /** The free fallback: the browser's own speech engine, sentence by sentence with captions. */
 function speakBrowser(text: string) {
   voiceMode = "browser";
@@ -248,7 +279,8 @@ export function speak(markdown: string) {
   if (!text) return;
   stopSpeaking();
   const id = ++playId;
-  if (Date.now() < groqOffUntil || typeof Audio === "undefined") speakBrowser(text);
+  if (isPowered() && typeof Audio !== "undefined") void speakOpenAI(text, id);
+  else if (Date.now() < groqOffUntil || typeof Audio === "undefined") speakBrowser(text);
   else void speakGroq(text, id);
 }
 

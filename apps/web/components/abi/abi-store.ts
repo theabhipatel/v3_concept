@@ -26,6 +26,8 @@ interface AbiState {
   /** Live conversation (hands-free voice loop) state. */
   live: LiveState;
   liveRequested: boolean;
+  /** A saved conversation to reopen (signed-in users). */
+  resumeRequested: string | null;
 }
 
 export type LiveState = "off" | "starting" | "listening" | "hearing" | "thinking" | "speaking" | "error";
@@ -41,6 +43,7 @@ const initial: AbiState = {
   jdMode: false,
   live: "off",
   liveRequested: false,
+  resumeRequested: null,
 };
 let state: AbiState = initial;
 const listeners = new Set<() => void>();
@@ -82,6 +85,9 @@ export const abi = {
   /** End the live conversation; the live module tears down the microphone. */
   stopLive: () => set({ live: "off", liveRequested: false }),
   clearListen: () => set({ listenRequested: false }),
+  /** Reopen a saved conversation in the panel. */
+  resume: (id: string) => set({ open: true, activated: true, resumeRequested: id }),
+  clearResume: () => set({ resumeRequested: null }),
   setVoice: (patch: Partial<Pick<AbiState, "listening" | "speaking" | "caption">>) => set(patch),
 };
 
@@ -94,6 +100,13 @@ export function useAbi<T>(selector: (s: AbiState) => T): T {
     () => selector(state),
     () => selector(initial),
   );
+}
+
+/** Continue a saved conversation: the agent keeps its memory under this id. */
+export function setSessionId(id: string) {
+  try {
+    sessionStorage.setItem("abi-session", id);
+  } catch {}
 }
 
 export function getSessionId(): string {

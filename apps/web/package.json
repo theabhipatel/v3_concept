@@ -9,12 +9,14 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "postinstall": "node scripts/copy-vad-assets.mjs"
+    "postinstall": "node scripts/copy-vad-assets.mjs",
+    "db:migrate": "node --env-file=.env.local scripts/migrate-db.mjs"
   },
   "dependencies": {
     "@ai-sdk/react": "^4.0.141",
     "@ricky0123/vad-web": "^0.0.31",
     "ai": "^7.0.138",
+    "better-auth": "^1.7.11",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "cmdk": "^1.1.1",
@@ -24,11 +26,13 @@
     "next": "16.4.0",
     "next-themes": "^0.4.6",
     "nodemailer": "^10.1.0",
+    "pg": "^8.23.1",
     "radix-ui": "^1.8.1",
     "react": "19.3.0",
     "react-dom": "19.3.0",
     "react-markdown": "^10.1.0",
     "remark-gfm": "^4.0.1",
+    "server-only": "^0.0.1",
     "tailwind-merge": "^3.7.0",
     "zod": "^4.6.7"
   },
@@ -36,6 +40,7 @@
     "@tailwindcss/turbopack": "^4",
     "@types/node": "^20",
     "@types/nodemailer": "^8.0.2",
+    "@types/pg": "^8.23.1",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",

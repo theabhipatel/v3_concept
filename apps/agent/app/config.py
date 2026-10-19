@@ -28,6 +28,10 @@ class Settings(BaseSettings):
     abi_embed_model: str = "gemini-embedding-001"
     abi_embed_dim: int = 768
 
+    # Shared with the website: lets it forward a signed-in power user's own OpenAI key.
+    # Empty turns power mode off.
+    abi_power_secret: str = ""
+
     database_url: str = ""
     github_token: str = ""  # optional, raises the GitHub API limit during ingestion
 

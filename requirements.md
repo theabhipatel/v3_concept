@@ -64,6 +64,8 @@ Success means:
 | `/contact` | Contact form + ways to reach Abhishek |
 | `/abi` | Full-screen "Talk to ABI" workspace for long chats and voice |
 | `/lab` | Small live AI demos built by Abhishek, as proof of skill |
+| `/signin` | Power users: sign in or create an account (noindex) |
+| `/settings` | Power users: power switch, OpenAI key, models, saved conversations (noindex) |
 
 Every page is server-rendered or static for SEO. AI features hydrate on top.
 
@@ -153,6 +155,49 @@ almost no tokens. Top picks marked with *.
     arc from its last position with a sparkle trail, then clicks with rings of light, a burst
     of sparks and a glow on the target.
 - Later (section 11): OpenAI Realtime speech-to-speech for owner mode.
+
+### 5.6 Power users (built 2026-10-19)
+Visitors use ABI as before (free Groq models). Anyone can sign up and bring their own OpenAI key;
+only that user's ABI runs on it.
+- **Accounts:** Better Auth in the web app (email and password, Google when `GOOGLE_CLIENT_ID`
+  is set), tables in the same Postgres. `npm run db:migrate` creates them (plus `abi_power`,
+  `abi_conversation`). Normal visitors never call the server for this: `/api/me` is only asked
+  once this browser has signed in.
+- **Sign in button** top right of the header: pressing it charges the button and throws a small
+  spark of lightning before `/signin` opens. Signed in, it becomes the user's chip with a bolt
+  (lit while power is on), linking to `/settings`.
+- **OpenAI key:** tested against OpenAI (list models) before saving, sealed with AES-256-GCM
+  (`ABI_KEY_SECRET`, user id bound in), never sent back to the browser (only a hint like
+  `sk-...abcd`). "Delete key" removes it from the row and turns power off.
+- **Power switch** (`/settings`): flips ABI to OpenAI. Turning it on plays the surge
+  (`components/power/surge.ts`): lightning forks from the button to every edge, a shockwave, a
+  thunderclap shake, edge glow and fire spreading along the bottom. While on, ABI's orb carries a
+  ring of current.
+- **What moves to OpenAI:** chat, rewrite, follow-ups, JD match and resume (main model, default
+  `gpt-6-luna`, via the agent with the key forwarded server to server behind
+  `ABI_POWER_SECRET`, guard skipped for power users); push-to-talk (`gpt-4o-mini-transcribe`) and
+  spoken answers (`gpt-4o-mini-tts`, the chosen voice); live conversation becomes OpenAI
+  voice: GPT-Live by default (`gpt-live-1`, decided 2026-10-19) or an OpenAI Realtime model over WebRTC (voice `marin`) with page tools and `ask_abi`
+  delegation to the full agent (`components/abi/realtime.ts`, tools in `lib/realtime-tools.ts`).
+  If Realtime can't start, the normal voice loop takes over.
+- **Embeddings stay Gemini** (`gemini-embedding-001`, locked): the knowledge base was built with it.
+- **GPT-Live** (`gpt-live-1`, $0.05/min) is the default voice model and always offered: the server opens
+  the session from the browser's offer (`/api/power/live`), the voice layer delegates to the
+  user's main model (Responses delegation) whose tool calls run in the browser. It has its own
+  22 voices; Realtime models use all 10 Realtime voices (`liveVoice` and `voice` are saved apart).
+- **Settings layout:** power switch, then key and conversations, then a full-width "Models and
+  voice" section: "In use now" cards (default badge or "Use default") on top, tabs below
+  (main model, voice model, voice) with search, family filters and price chips.
+- **Models list** comes live from the user's key; prices come from `lib/openai-models.ts`
+  (copied from OpenAI's pricing page 2026-10-19, update when prices change).
+- **Conversations** of signed-in users are saved after every answer and listed in `/settings`
+  (Continue reopens one with the agent's memory, Delete removes it).
+
+### 5.7 Next: ABI Chat app (planned, not built)
+After the realtime features are proven, grow `/abi` into a full chat application **for signed-in
+users only** (visitors keep today's `/abi`): a sidebar of saved conversations (new, rename,
+search, delete), full-height chat, model picker in the composer, voice and realtime built in,
+attachments later. Remind Abhishek when realtime work is done.
 
 ## 6. Home page and design concept
 
@@ -270,6 +315,7 @@ a "portfolio". Replaced "Ask first, built for you" (roles picker, removed). No p
 | Models | Groq free tier for chat and STT, browser Web Speech API for TTS (IDs in env vars) |
 | Observability | Langfuse tracing + a small eval set for answer accuracy |
 | Email | Contact form sends email to theabhipatel.co@gmail.com, subject starts with `[Portfolio v3]` |
+| Accounts | Better Auth (email/password + Google), Postgres via `pg` |
 | Hosting | **Vercel free plan for both**: Next.js app and the FastAPI agent (Python on Vercel) |
 
 ### 8.1 Vercel notes for the Python agent
@@ -309,11 +355,11 @@ the contact form. Built:
   no em/en dashes).
 - Contact form: honeypot field + 3 messages per hour per IP; works without AI.
 
+- **Power users (built, section 5.6):** bring-your-own OpenAI key behind sign-in replaced the
+  "owner mode" idea. Each user pays for their own usage; set a budget on the OpenAI project.
+
 Ideas parked for later (not decided):
-- **Owner mode:** a secret unlock link sets a signed cookie so only Abhishek gets paid OpenAI
-  features (Realtime voice, stronger model) when showcasing. OpenAI project budget as backstop.
-- **BYOK:** visitors paste their own OpenAI key for premium features.
-- Bot protection (Cloudflare Turnstile or Vercel BotID), Google sign-in.
+- Bot protection (Cloudflare Turnstile or Vercel BotID), email verification and password reset.
 
 ## 12. Repo layout
 
@@ -355,6 +401,11 @@ v3/
       Deployed 2026-10-16 on Vercel (website `theabhipatel-v3`, agent `theabhipatel-v3-abi`)
       with Neon; see DEPLOYMENT.md. Remaining: SMTP credentials for the contact form, a custom
       domain, a real-device Lighthouse run.
+- [x] **Phase 9 - Power users (section 5.6):** accounts, encrypted OpenAI keys, power switch with
+      surge animation, OpenAI models with prices, Realtime voice, saved conversations. Tested
+      locally with a fake key (the whole chain up to OpenAI's rejection); needs a real key, Google
+      OAuth and production env vars to finish.
+- [ ] **Phase 10 - ABI Chat app (section 5.7):** full chat app on `/abi` for signed-in users.
 
 Run locally: Docker `abi_pg` (port 5434), then `uv run uvicorn app.main:app --port 8000` in
 `apps/agent` and `npm run build && npm start` in `apps/web` (http://localhost:3000).

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { AccountButton } from "@/components/power/account-button";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { profile } from "@/lib/content";
 import { PaletteTrigger } from "./command-palette";
@@ -21,6 +22,7 @@ export function Header() {
         <div className="flex items-center gap-2">
           <PaletteTrigger />
           <ThemeToggle />
+          <AccountButton />
         </div>
       </div>
     </header>

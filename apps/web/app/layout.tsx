@@ -9,6 +9,7 @@ import { Footer } from "@/components/site/footer";
 import { Header } from "@/components/site/header";
 import { MotionObserver } from "@/components/site/motion-observer";
 import { OrbNav } from "@/components/site/orb-nav";
+import { PowerBoot } from "@/components/power/power-boot";
 import { SmoothScroll } from "@/components/site/smooth-scroll";
 import { ThemeProvider } from "@/components/theme-provider";
 import { profile, seo } from "@/lib/content";
@@ -121,6 +122,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           <VadPrefetch />
           <SmoothScroll />
           <MotionObserver />
+          <PowerBoot />
         </ThemeProvider>
       </body>
     </html>

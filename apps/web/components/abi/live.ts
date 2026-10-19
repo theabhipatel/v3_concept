@@ -7,7 +7,8 @@
 import type { MicVAD } from "@ricky0123/vad-web";
 import { abi } from "./abi-store";
 import { VAD_ASSET_PATH } from "./vad-assets";
-import { currentVoice, stopSpeaking } from "./voice";
+import { isPowered } from "@/components/power/power-store";
+import { currentVoice, stopSpeaking, transcribeUrl } from "./voice";
 
 // Model and WASM files are self-hosted in public/vad/ (see scripts/copy-vad-assets.mjs),
 // versioned and cached for a year, and warmed in the background on page load (VadPrefetch).
@@ -60,7 +61,7 @@ function toWav(samples: Float32Array) {
 async function transcribe(samples: Float32Array) {
   const form = new FormData();
   form.append("audio", toWav(samples), "speech.wav");
-  const res = await fetch("/api/agent/transcribe", { method: "POST", body: form });
+  const res = await fetch(transcribeUrl(), { method: "POST", body: form });
   const data = await res.json().catch(() => ({}));
   if (!res.ok) throw new Error(data.detail || "transcription failed");
   return String(data.text ?? "").trim();
@@ -75,7 +76,7 @@ async function untilQuiet(id: number) {
     if (!window.speechSynthesis?.speaking && !abi.get().speaking) break;
     // Groq's voice plays in the page, so echo cancellation keeps it out of the mic: listen for
     // the visitor cutting in. The browser's own voice would be heard as the visitor, so not then.
-    if (!listening && vad && currentVoice() === "groq") {
+    if (!listening && vad && (currentVoice() === "groq" || currentVoice() === "openai")) {
       listening = true;
       bargeIn = true;
       vad.setOptions(WHILE_SPEAKING);
@@ -120,6 +121,12 @@ async function onUtterance(samples: Float32Array) {
 
 export async function startLive() {
   if (vad || starting) return;
+  // Power mode: OpenAI Realtime, speech to speech. If it can't start, the normal loop takes over.
+  if (isPowered()) {
+    const { startRealtime } = await import("./realtime");
+    if (await startRealtime()) return;
+    if (!isLive()) return;
+  }
   starting = true;
   stopSpeaking();
   abi.setLive("starting");
@@ -169,6 +176,7 @@ export async function startLive() {
 /** Skip the rest of ABI's spoken answer and listen again. */
 export function interruptLive() {
   stopSpeaking();
+  void import("./realtime").then((r) => r.interruptRealtime());
 }
 
 async function teardown() {

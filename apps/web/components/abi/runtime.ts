@@ -3,7 +3,8 @@
 // One shared ABI conversation for the whole visit (side panel and /abi page use the same chat).
 import { Chat } from "@ai-sdk/react";
 import { DefaultChatTransport, type UIMessage } from "ai";
-import { abi, getSessionId } from "./abi-store";
+import { isPowered, powerStore } from "@/components/power/power-store";
+import { abi, getSessionId, setSessionId } from "./abi-store";
 import { clickLabel, control, navigateTo, runAction, scrollPage, searchFor, themeTo, tourPage, typeInto, type UiAction } from "./actions";
 import { parseCommand, type Command } from "./commands";
 import { configureLive, startLive } from "./live";
@@ -36,7 +37,9 @@ export const chat = new Chat<AbiMessage>({
   transport: new DefaultChatTransport({
     api: "/api/agent/chat",
     // The agent keeps the conversation (Postgres checkpoints), so only the new message is sent.
+    // In power mode the website's own route adds the user's OpenAI key on the server.
     prepareSendMessagesRequest: ({ messages }) => ({
+      api: isPowered() ? "/api/power/chat" : "/api/agent/chat",
       body: { sessionId: getSessionId(), message: messageText(messages[messages.length - 1]) },
     }),
   }),
@@ -46,8 +49,37 @@ export const chat = new Chat<AbiMessage>({
   onFinish: ({ message }) => {
     if (voiceTurn) speak(messageText(message));
     voiceTurn = false;
+    persist();
   },
 });
+
+let saveTimer: number | undefined;
+
+/** Signed-in users: save the conversation to their account (debounced, after each answer). */
+export function persist() {
+  if (!powerStore.get().user) return;
+  window.clearTimeout(saveTimer);
+  saveTimer = window.setTimeout(() => {
+    const messages = chat.messages.filter((m) => m.parts.length);
+    if (!messages.some((m) => m.role === "user")) return;
+    void fetch(`/api/me/conversations/${getSessionId()}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ messages }),
+      keepalive: true,
+    }).catch(() => undefined);
+  }, 800);
+}
+
+/** Reopen a saved conversation: its messages come back and the agent's memory continues. */
+async function resume(id: string) {
+  const res = await fetch(`/api/me/conversations/${id}`, { cache: "no-store" }).catch(() => null);
+  if (!res?.ok) return;
+  const data = (await res.json()) as { messages: AbiMessage[] };
+  if (chat.status === "streaming" || chat.status === "submitted") await chat.stop();
+  setSessionId(id);
+  chat.messages = data.messages;
+}
 
 const SCROLL_TEXT = { little: "a little", more: "a bit more", page: "one screen", end: "" } as const;
 
@@ -61,6 +93,7 @@ async function runCommand(cmd: Command, text: string, voice: boolean) {
       { id: id(), role: "assistant", parts: [{ type: "text", text: reply }] },
     ];
     if (voice) speak(reply);
+    persist();
   };
   switch (cmd.kind) {
     case "navigate":
@@ -129,6 +162,7 @@ if (typeof window !== "undefined")
       ...chat.messages,
       { id: crypto.randomUUID(), role: "assistant", parts: [{ type: "text", text: `Your browser wants you to open this one yourself: [${href}](${href})` }] },
     ];
+    persist();
   });
 
 configureVoice({
@@ -140,6 +174,11 @@ configureVoice({
 
 // Consume questions queued from anywhere on the site, and push-to-talk requests.
 function drain() {
+  const resumeId = abi.get().resumeRequested;
+  if (resumeId) {
+    abi.clearResume();
+    void resume(resumeId);
+  }
   for (const req of abi.take()) void send(req.text, req.voice);
   if (abi.get().liveRequested) {
     abi.clearLiveRequest();

@@ -12,8 +12,8 @@ from typing import Literal
 
 import httpx
 from langchain_core.tools import tool
-from langchain_groq import ChatGroq
 
+from app.agent.llm import llm, parse_json
 from app.agent.prompts import format_context
 from app.config import get_settings
 from app.rag.embeddings import embed_query
@@ -240,22 +240,17 @@ def show_code(repo: str, path: str = "") -> str:
 
 
 async def _grounded_json(task: str, job_description: str) -> dict:
-    s = get_settings()
     jd = job_description[:4000]
     hits = await hybrid_search(jd[:1500], await embed_query(jd[:1500]), top_k=10)
-    llm = ChatGroq(
-        model=s.abi_fast_model, api_key=s.groq_api_key, temperature=0.1, max_tokens=1600,
-        max_retries=3, reasoning_effort="low",
-    ).bind(response_format={"type": "json_object"})
     prompt = (
         f"{task}\nUse ONLY facts from the CONTEXT about Abhishek Patel. Never invent skills, "
         "projects, numbers or employers. Project slugs are the last part of /projects/<slug> URLs; "
         "experience slugs are the part after /about#experience-. Never use em or en dashes.\n\n"
         f"JOB DESCRIPTION:\n{jd}\n\nCONTEXT:\n{format_context([h.__dict__ for h in hits])}"
     )
-    res = await llm.ainvoke(prompt)
+    res = await llm(True, temperature=0.1, max_tokens=1600, json_mode=True).ainvoke(prompt)
     try:
-        return json.loads(str(res.content))
+        return parse_json(res.text)
     except json.JSONDecodeError:
         return {"error": "Could not analyse that job description"}
 
