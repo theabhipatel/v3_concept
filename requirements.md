@@ -217,7 +217,13 @@ a "portfolio". Replaced "Ask first, built for you" (roles picker, removed). No p
   while thinking, a pulsing glow while speaking), a live status pill, "I can ___" rotating
   capabilities, "Start talking" (hands-free live mode) and "Match a job". Right: the same chat as
   the side panel in a glass card, with animated starter cards on the page layout.
-- **Next (planned, not built):** Resume and the 404 page in the new style.
+- **Resume (built):** a paper sheet (paper tokens, same in both themes) that prints out of a
+  printer slot on load, its parts fading in; a rubber stamp ("Tailored by ABI" or "Real data
+  only") thumps on; a side desk with Download PDF (browser print, only the sheet prints),
+  quick numbers and "Tailor it for a job" (sends the JD to ABI's `tailored_resume`).
+- **404 (built):** ABI sweeps a flashlight across a giant "404" that lights up under the beam
+  (`@property --sx`), with four ways back and "Ask ABI to find it" (sends the broken path).
+- All pages are now in the new style.
 
 ### 6.1 Nudging visitors to try ABI
 - After about 20 seconds or 40% scroll, ABI comments on what the visitor is looking at

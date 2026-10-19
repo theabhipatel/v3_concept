@@ -1352,6 +1352,155 @@
     var(--elevation-lg);
 }
 
+/* ---------- Resume ---------- */
+/* The sheet prints out of the slot: it slides down while its clip opens, then the parts fade in. */
+.printer {
+  background: linear-gradient(var(--border-strong), var(--muted));
+  box-shadow:
+    inset 0 -3px 0 color-mix(in oklch, var(--foreground) 25%, transparent),
+    0 8px 18px -10px color-mix(in oklch, var(--foreground) 50%, transparent);
+}
+.printer__light {
+  background: var(--success);
+  box-shadow: 0 0 8px var(--success);
+  animation: caret 0.5s steps(1) 6;
+}
+.paper {
+  box-shadow:
+    0 1px 0 var(--paper-line),
+    0 30px 60px -30px color-mix(in oklch, black 45%, transparent);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .paper-clip .paper {
+    animation: print-out 2.2s cubic-bezier(0.45, 0, 0.2, 1) both;
+  }
+  .paper__part {
+    animation: ship-in 0.7s var(--motion-ease-out-expo) both;
+    animation-delay: calc(0.5s + var(--i) * 0.28s);
+  }
+  .paper__skill {
+    animation: ship-in 0.5s var(--motion-ease-out-expo) both;
+    animation-delay: calc(1.1s + var(--i) * 40ms);
+  }
+  .stamp {
+    animation: stamp 0.5s cubic-bezier(0.3, 1.6, 0.5, 1) 2.3s both;
+  }
+}
+@keyframes print-out {
+  from {
+    transform: translateY(-100%);
+  }
+}
+/* A rubber stamp thumps onto the sheet once it is out. */
+.stamp {
+  border: 2.5px solid currentColor;
+  rotate: -8deg;
+  opacity: 0.85;
+  mix-blend-mode: multiply;
+}
+.stamp--abi {
+  color: var(--paper-brand);
+}
+.stamp--real {
+  color: oklch(0.55 0.13 155);
+}
+@keyframes stamp {
+  from {
+    opacity: 0;
+    transform: scale(2.2);
+  }
+  60% {
+    opacity: 0.95;
+    transform: scale(0.94);
+  }
+}
+@media print {
+  .paper,
+  .paper * {
+    animation: none !important;
+  }
+  .paper {
+    box-shadow: none;
+    background: white;
+    color: black;
+  }
+}
+
+/* ---------- 404: ABI searches with a flashlight ---------- */
+@property --sx {
+  syntax: "<percentage>";
+  inherits: true;
+  initial-value: 50%;
+}
+.lost__stage {
+  --sx: 50%;
+  animation: search 6s ease-in-out infinite alternate;
+}
+@keyframes search {
+  from {
+    --sx: 12%;
+  }
+  to {
+    --sx: 88%;
+  }
+}
+.lost__digits {
+  font-size: clamp(8rem, 30vw, 19rem);
+}
+.lost__digits--dim {
+  color: color-mix(in oklch, var(--foreground) 7%, transparent);
+  -webkit-text-stroke: 1px color-mix(in oklch, var(--foreground) 12%, transparent);
+}
+.lost__digits--lit {
+  background: linear-gradient(180deg, var(--abi), var(--brand));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-mask-image: radial-gradient(9rem 12rem at var(--sx) 45%, black 30%, transparent 75%);
+  mask-image: radial-gradient(9rem 12rem at var(--sx) 45%, black 30%, transparent 75%);
+}
+.lost__bot {
+  left: var(--sx);
+  bottom: -1.5rem;
+  translate: -50% 0;
+}
+.lost__beam {
+  left: 50%;
+  bottom: 70%;
+  width: 18rem;
+  height: 15rem;
+  translate: -50% 0;
+  background: linear-gradient(0deg, color-mix(in oklch, var(--abi) 45%, transparent), transparent 90%);
+  clip-path: polygon(44% 100%, 56% 100%, 100% 0, 0 0);
+  filter: blur(6px);
+  opacity: 0.55;
+  animation: beam-flicker 3s ease-in-out infinite;
+}
+@keyframes beam-flicker {
+  50% {
+    opacity: 0.4;
+  }
+}
+.way {
+  transition:
+    border-color 0.3s,
+    transform 0.4s var(--motion-ease-out-expo),
+    box-shadow 0.4s;
+}
+.way:hover {
+  border-color: color-mix(in oklch, var(--brand) 45%, var(--border));
+  transform: translateY(-3px);
+  box-shadow: 0 16px 34px -22px var(--brand);
+}
+.way__icon {
+  background: color-mix(in oklch, var(--brand) 14%, var(--card));
+  color: var(--brand-text);
+  transition: transform 0.5s var(--motion-ease-out-expo);
+}
+.way:hover .way__icon {
+  transform: rotate(-8deg) scale(1.08);
+}
+
 /* ---------- Toolbox marquee ---------- */
 .marquee-mask {
   -webkit-mask-image: linear-gradient(90deg, transparent, black 8%, black 92%, transparent);
@@ -2053,7 +2202,10 @@
   .match *,
   .presence *,
   .presence__can,
-  .starter {
+  .starter,
+  .lost__stage,
+  .lost__beam,
+  .printer__light {
     animation: none !important;
   }
   .marquee-mask,

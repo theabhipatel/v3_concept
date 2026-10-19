@@ -105,6 +105,13 @@
 
 /* ---------- Theme-independent: type, shape, motion ---------- */
 :root {
+  /* The resume sheet is paper in both themes. */
+  --paper: oklch(0.995 0.003 80);
+  --paper-ink: oklch(0.22 0.018 50);
+  --paper-muted: oklch(0.47 0.02 50);
+  --paper-line: oklch(0.91 0.012 70);
+  --paper-brand: oklch(0.53 0.16 42);
+
   /* Dark "console" panels (AI Lab output, terminals) look the same in both themes. */
   --console: oklch(0.13 0.012 45);
   --console-foreground: oklch(0.96 0.008 80);
@@ -175,6 +182,11 @@
   --color-destructive-foreground: var(--destructive-foreground);
   --color-success: var(--success);
   --color-on-brand: var(--on-brand);
+  --color-paper: var(--paper);
+  --color-paper-ink: var(--paper-ink);
+  --color-paper-muted: var(--paper-muted);
+  --color-paper-line: var(--paper-line);
+  --color-paper-brand: var(--paper-brand);
   --color-console: var(--console);
   --color-console-foreground: var(--console-foreground);
   --color-tone-1: var(--tone-1);
