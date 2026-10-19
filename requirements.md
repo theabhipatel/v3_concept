@@ -194,8 +194,13 @@ a "portfolio". Replaced "Ask first, built for you" (roles picker, removed). No p
   tilted photo card (photo is allowed here, not on home); counting numbers; the story in four
   chapters with a sticky rail that lights the chapter being read; the journey from college to
   today as a self-drawing timeline; values and services; floating interests; call to action.
-- **Next (planned, not built):** Skills as an animated map; Lab, Contact and Resume in the new
-  reveal style.
+- **Skills (built):** hero with level counts and an orbit of tools (expert ones on the inner
+  rings, CSS only, paused off screen); a sticky category rail (sliding tabs, faded edges when
+  it scrolls) plus search; skill cards tinted by category (`components/skills/skill-meta.ts`)
+  with the logo inside a full, softly glowing ring in its category color that draws as the card scrolls in (CSS scroll-driven
+  animation), a pointer-following tilt and spotlight, and Ask ABI. Filtering animates with
+  `ViewTransition`.
+- **Next (planned, not built):** Lab, Contact and Resume in the new reveal style.
 
 ### 6.1 Nudging visitors to try ABI
 - After about 20 seconds or 40% scroll, ABI comments on what the visitor is looking at

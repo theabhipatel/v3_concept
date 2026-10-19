@@ -1,6 +1,5 @@
+import { toneOf } from "@/components/skills/skill-meta";
 import type { Skill } from "@/lib/content";
-
-const TONE: Record<string, number> = { AI: 2, Frontend: 1, Backend: 3, Languages: 5, Database: 4, DevOps: 6, Cloud: 4, Tools: 5, Testing: 6 };
 
 function Row({ items, reverse = false }: { items: Skill[]; reverse?: boolean }) {
   return (
@@ -12,7 +11,7 @@ function Row({ items, reverse = false }: { items: Skill[]; reverse?: boolean }) 
             <li
               key={s.slug}
               className="flex shrink-0 items-center gap-2 rounded-full border bg-card px-4 py-2 text-sm font-medium"
-              style={{ "--tone": `var(--tone-${TONE[s.category] ?? 1})` } as React.CSSProperties}
+              style={{ "--tone": toneOf(s.category) } as React.CSSProperties}
             >
               <span className="size-2 rounded-full bg-(--tone)" aria-hidden />
               {s.name}

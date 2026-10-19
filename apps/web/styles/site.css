@@ -305,6 +305,18 @@
 .tabs::-webkit-scrollbar {
   display: none;
 }
+.tabs[data-more-right] {
+  -webkit-mask-image: linear-gradient(90deg, black calc(100% - 4rem), transparent);
+  mask-image: linear-gradient(90deg, black calc(100% - 4rem), transparent);
+}
+.tabs[data-more-left] {
+  -webkit-mask-image: linear-gradient(90deg, transparent, black 4rem);
+  mask-image: linear-gradient(90deg, transparent, black 4rem);
+}
+.tabs[data-more-left][data-more-right] {
+  -webkit-mask-image: linear-gradient(90deg, transparent, black 4rem, black calc(100% - 4rem), transparent);
+  mask-image: linear-gradient(90deg, transparent, black 4rem, black calc(100% - 4rem), transparent);
+}
 .tabs__glow {
   background: color-mix(in oklch, var(--brand) 14%, var(--card));
   box-shadow:
@@ -442,6 +454,157 @@
   /* The reveal sets transform; let the float own it once the chip is shown. */
   .interest[data-reveal]:not([data-shown]) {
     animation: none;
+  }
+}
+
+/* ---------- Skills ---------- */
+/* Orbit: three rings turn at their own pace; icons counter-turn so they stay upright. */
+.orbit {
+  container-type: inline-size;
+}
+.orbit__core {
+  background: radial-gradient(circle, color-mix(in oklch, var(--brand) 22%, var(--card)), var(--card) 70%);
+  box-shadow:
+    0 0 0 1px color-mix(in oklch, var(--brand) 35%, var(--border)),
+    0 0 60px -10px color-mix(in oklch, var(--brand) 60%, transparent);
+  animation: core-breathe 5s ease-in-out infinite;
+}
+@keyframes core-breathe {
+  50% {
+    box-shadow:
+      0 0 0 1px color-mix(in oklch, var(--brand) 55%, var(--border)),
+      0 0 90px -6px color-mix(in oklch, var(--brand) 70%, transparent);
+  }
+}
+.orbit__ring {
+  animation: spin var(--dur) linear infinite;
+}
+.orbit__ring--reverse {
+  animation-direction: reverse;
+}
+.orbit__path {
+  width: calc(var(--r) * 2cqw);
+  height: calc(var(--r) * 2cqw);
+  translate: -50% -50%;
+  border-style: dashed;
+  border-color: color-mix(in oklch, var(--brand) 22%, var(--border));
+}
+.orbit__item {
+  width: 0;
+  height: 0;
+  transform: rotate(var(--a)) translateX(calc(var(--r) * 1cqw)) rotate(calc(-1 * var(--a)));
+}
+.orbit__icon {
+  width: 10cqw;
+  height: 10cqw;
+  translate: -50% -50%;
+  animation: spin var(--dur) linear infinite reverse;
+}
+.orbit__ring--reverse .orbit__icon {
+  animation-direction: normal;
+}
+@keyframes spin {
+  to {
+    rotate: 360deg;
+  }
+}
+
+/* Skill cards: tinted by category, tilt toward the pointer, spotlight follows it. */
+.skill {
+  --mx: 50%;
+  --my: 0%;
+  --rx: 0deg;
+  --ry: 0deg;
+  perspective: 900px;
+}
+.skill__card {
+  transform: rotateX(var(--rx)) rotateY(var(--ry));
+  transition:
+    transform 0.5s var(--motion-ease-out-expo),
+    border-color 0.3s,
+    box-shadow 0.5s var(--motion-ease-out-expo);
+}
+.skill:hover .skill__card {
+  border-color: color-mix(in oklch, var(--tone) 55%, var(--border));
+  box-shadow: 0 24px 50px -28px color-mix(in oklch, var(--tone) 75%, transparent);
+  transition-duration: 0.15s, 0.3s, 0.5s;
+}
+.skill:not(:hover) .skill__card {
+  transform: none;
+}
+.skill__spot {
+  background: radial-gradient(18rem circle at var(--mx) var(--my), color-mix(in oklch, var(--tone) 20%, transparent), transparent 60%);
+  opacity: 0;
+  transition: opacity 0.4s;
+}
+.skill:hover .skill__spot {
+  opacity: 1;
+}
+.skill__track,
+.skill__arc {
+  fill: none;
+  stroke-width: 4;
+}
+.skill__track {
+  stroke: color-mix(in oklch, var(--tone) 12%, transparent);
+}
+/* A full, softly glowing ring in the category's color; it brightens on hover. */
+.skill__arc {
+  stroke: var(--tone);
+  stroke-dasharray: 100;
+  stroke-dashoffset: 0;
+  opacity: 0.45;
+  filter: drop-shadow(0 0 6px color-mix(in oklch, var(--tone) 70%, transparent));
+  transition: opacity 0.4s;
+}
+.skill:hover .skill__arc {
+  opacity: 0.9;
+}
+.skill__logo {
+  background: color-mix(in oklch, var(--tone) 12%, var(--background));
+  transition: transform 0.5s var(--motion-ease-out-expo);
+}
+.skill:hover .skill__logo {
+  transform: scale(1.1) rotate(-4deg);
+}
+.skill__level {
+  background: var(--muted);
+  color: var(--muted-foreground);
+}
+.skill__level--top {
+  background: color-mix(in oklch, var(--tone) 22%, var(--card));
+  color: var(--foreground);
+}
+.skill-group__icon {
+  background: color-mix(in oklch, var(--tone) 18%, var(--card));
+}
+.skill-group__line {
+  background: linear-gradient(90deg, color-mix(in oklch, var(--tone) 50%, var(--border)), transparent);
+}
+/* As each card scrolls in: it rises, and its ring draws itself closed. */
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .skill {
+      animation: skill-in linear both;
+      animation-timeline: view();
+      animation-range: entry 0% entry 70%;
+    }
+    .skill__arc {
+      animation: ring-draw linear both;
+      animation-timeline: view();
+      animation-range: entry 20% cover 40%;
+    }
+  }
+}
+@keyframes skill-in {
+  from {
+    opacity: 0;
+    transform: translateY(24px) scale(0.96);
+  }
+}
+@keyframes ring-draw {
+  from {
+    stroke-dashoffset: 100;
   }
 }
 
@@ -1135,7 +1298,9 @@
   .loop-block--on,
   .loop-ship--live > span,
   .rotator__track,
-  .interest {
+  .interest,
+  .orbit *,
+  .orbit__core {
     animation: none !important;
   }
   .marquee-mask,

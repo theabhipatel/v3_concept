@@ -41,15 +41,20 @@ export function SlidingTabs<T extends string>({
     const measure = () => {
       const active = el.querySelector<HTMLElement>('[aria-pressed="true"]');
       if (active) setBox({ x: active.offsetLeft, w: active.offsetWidth });
+      // Fade the edge that has more tabs hidden behind it.
+      el.toggleAttribute("data-more-right", el.scrollLeft + el.clientWidth < el.scrollWidth - 4);
+      el.toggleAttribute("data-more-left", el.scrollLeft > 4);
     };
     measure();
     // Glide only after the first placement, so the page does not open with a slide.
     const id = requestAnimationFrame(() => setReady(true));
     const ro = new ResizeObserver(measure);
     ro.observe(el);
+    el.addEventListener("scroll", measure, { passive: true });
     return () => {
       cancelAnimationFrame(id);
       ro.disconnect();
+      el.removeEventListener("scroll", measure);
     };
   }, [value]);
 
