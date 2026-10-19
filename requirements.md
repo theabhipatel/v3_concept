@@ -190,8 +190,12 @@ a "portfolio". Replaced "Ask first, built for you" (roles picker, removed). No p
   name `banner-<slug>`), then facts, the story, features, how it works (self-drawing steps), a
   framed screenshot, stack, Ask ABI and "Up next" banners. Extra details come from
   `content/project-details.json`, written from each project's GitHub README.
-- **Next (planned, not built):** About as a scroll story; Skills as an animated map; Lab,
-  Contact and Resume in the new reveal style.
+- **About (built):** intro with a live local-time pill, "I build ___" rotating words and a
+  tilted photo card (photo is allowed here, not on home); counting numbers; the story in four
+  chapters with a sticky rail that lights the chapter being read; the journey from college to
+  today as a self-drawing timeline; values and services; floating interests; call to action.
+- **Next (planned, not built):** Skills as an animated map; Lab, Contact and Resume in the new
+  reveal style.
 
 ### 6.1 Nudging visitors to try ABI
 - After about 20 seconds or 40% scroll, ABI comments on what the visitor is looking at

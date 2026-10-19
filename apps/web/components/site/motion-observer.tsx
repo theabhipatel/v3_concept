@@ -37,13 +37,15 @@ export function MotionObserver() {
       document.querySelectorAll<HTMLElement>("[data-reveal]:not([data-shown])").forEach((el) => reveal.observe(el));
       document.querySelectorAll<HTMLElement>("[data-motion]").forEach((el) => motion.observe(el));
     };
-    // After hydration has settled (attributes added earlier would not match the server HTML),
-    // and again a moment later for sections that stream in.
-    const first = requestAnimationFrame(() => requestAnimationFrame(scan));
-    const late = window.setTimeout(scan, 600);
+    // Only once the browser is idle, so hydration has finished (attributes added earlier would
+    // not match the server HTML), and again a moment later for sections that stream in.
+    const idle = window.requestIdleCallback ?? ((cb: () => void) => window.setTimeout(cb, 200));
+    const cancelIdle = window.cancelIdleCallback ?? window.clearTimeout;
+    const first = idle(scan, { timeout: 800 });
+    const late = window.setTimeout(scan, 1200);
 
     return () => {
-      cancelAnimationFrame(first);
+      cancelIdle(first);
       window.clearTimeout(late);
       reveal.disconnect();
       motion.disconnect();

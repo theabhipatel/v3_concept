@@ -326,6 +326,125 @@
   background: color-mix(in oklch, var(--foreground) 4%, transparent);
 }
 
+/* ---------- About ---------- */
+/* "I build ___": the words roll up one by one (4 words + the first again, for a seamless loop). */
+.rotator {
+  display: inline-block;
+  height: 1.3em;
+  overflow: hidden;
+  vertical-align: bottom;
+}
+.rotator__track {
+  display: flex;
+  flex-direction: column;
+  animation: rotate-words 10s var(--motion-ease-in-out-quint) infinite;
+}
+.rotator__word {
+  display: block;
+  height: 1.3em;
+  line-height: 1.3em;
+  white-space: nowrap;
+}
+@keyframes rotate-words {
+  0%,
+  20% {
+    transform: translateY(0);
+  }
+  25%,
+  45% {
+    transform: translateY(-1.3em);
+  }
+  50%,
+  70% {
+    transform: translateY(-2.6em);
+  }
+  75%,
+  95% {
+    transform: translateY(-3.9em);
+  }
+  100% {
+    transform: translateY(-5.2em);
+  }
+}
+/* The photo card tilts a little and a soft light sweeps across it on hover. */
+.id-card {
+  transform: rotate(2deg);
+  transition: transform 0.7s var(--motion-ease-out-expo);
+}
+.id-card:hover {
+  transform: rotate(0deg) translateY(-4px);
+}
+.id-card__shine {
+  background: linear-gradient(115deg, transparent 35%, color-mix(in oklch, white 22%, transparent) 50%, transparent 65%);
+  transform: translateX(-100%);
+  transition: transform 1.1s var(--motion-ease-out-expo);
+}
+.id-card:hover .id-card__shine {
+  transform: translateX(100%);
+}
+/* Chapter rail: a line that fills up to the chapter being read. */
+.chapter-link::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.35rem;
+  bottom: 0.35rem;
+  width: 2px;
+  border-radius: 9999px;
+  background: var(--border);
+  transition: background-color 0.5s;
+}
+.chapter-link[data-on]::before {
+  background: var(--brand);
+}
+.value__icon {
+  background: color-mix(in oklch, var(--tone) 16%, var(--card));
+  color: var(--foreground);
+  transition: transform 0.5s var(--motion-ease-out-expo);
+}
+.value {
+  transition: border-color 0.3s;
+}
+.value::after {
+  content: "";
+  position: absolute;
+  inset: auto -30% -60% auto;
+  width: 14rem;
+  height: 14rem;
+  border-radius: 9999px;
+  background: radial-gradient(closest-side, color-mix(in oklch, var(--tone) 22%, transparent), transparent);
+  opacity: 0;
+  transition: opacity 0.5s;
+}
+.value:hover {
+  border-color: color-mix(in oklch, var(--tone) 45%, var(--border));
+}
+.value:hover::after {
+  opacity: 1;
+}
+.value:hover .value__icon {
+  transform: rotate(-8deg) scale(1.08);
+}
+/* Interests float gently, each on its own beat. */
+.interest {
+  animation: float 6s ease-in-out infinite;
+  animation-delay: calc(var(--i) * -1.1s);
+}
+.interest__icon {
+  background: color-mix(in oklch, var(--tone) 18%, var(--card));
+}
+@keyframes float {
+  50% {
+    transform: translateY(-8px);
+  }
+}
+@media (scripting: enabled) and (prefers-reduced-motion: no-preference) {
+  /* The reveal sets transform; let the float own it once the chip is shown. */
+  .interest[data-reveal]:not([data-shown]) {
+    animation: none;
+  }
+}
+
 /* ---------- Toolbox marquee ---------- */
 .marquee-mask {
   -webkit-mask-image: linear-gradient(90deg, transparent, black 8%, black 92%, transparent);
@@ -1014,7 +1133,9 @@
   .loop-caret,
   .loop-link__spark,
   .loop-block--on,
-  .loop-ship--live > span {
+  .loop-ship--live > span,
+  .rotator__track,
+  .interest {
     animation: none !important;
   }
   .marquee-mask,
