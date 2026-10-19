@@ -58,9 +58,36 @@ def filter_skills(category: SKILL_CATEGORIES = "all") -> str:
 
 
 @tool
-def set_theme(theme: Literal["light", "dark"]) -> str:
-    """Switch the website between light and dark theme."""
+def set_theme(theme: Literal["light", "dark", "system"]) -> str:
+    """Switch the website theme: light, dark, or system (follow the device setting)."""
     return _ui("theme", theme=theme)
+
+
+@tool
+def find_on_page(text: str) -> str:
+    """Find a word or phrase on the current page: scrolls to the first match and highlights every
+    match. Use for "find X on this page" or "where does it say X"."""
+    return _ui("find", text=text.strip()[:80])
+
+
+@tool
+def highlight(label: str) -> str:
+    """Point at and spotlight an element on the current page WITHOUT clicking it (a button, link,
+    card, heading or section), e.g. "show me where the download button is"."""
+    return _ui("highlight", label=label.strip()[:80])
+
+
+@tool
+def voice_settings(muted: bool | None = None, speed: Literal["slower", "normal", "faster"] | None = None) -> str:
+    """Change ABI's own voice: mute or unmute spoken answers, or speak slower, faster or at normal speed."""
+    return _ui("voice", muted=muted, speed=speed)
+
+
+@tool
+def open_profile(network: Literal["github", "linkedin", "x", "leetcode", "whatsapp"]) -> str:
+    """Open one of Abhishek's profiles in a new tab. whatsapp ONLY when the visitor explicitly asks
+    for his phone number or WhatsApp."""
+    return _ui("open-profile", network=network)
 
 
 @tool
@@ -94,7 +121,8 @@ def fill_contact_form(name: str = "", email: str = "", subject: str = "", messag
 CONTROL_ACTIONS = Literal[
     "section", "panel_full", "panel_dock", "panel_float", "panel_wider", "panel_narrower", "panel_close",
     "open_menu", "close_menu", "forward", "back", "zoom_in", "zoom_out", "zoom_reset", "read_aloud",
-    "copy_email", "copy_link", "stop", "end_live",
+    "copy_email", "copy_link", "share", "print", "reduce_motion", "restore_motion", "find_next",
+    "clear_chat", "stop", "end_live",
 ]
 
 
@@ -104,7 +132,10 @@ def control(action: CONTROL_ACTIONS, value: str = "") -> str:
     "experience"). panel_*: full screen, dock, float, wider, narrower or close ABI's panel.
     open_menu/close_menu: the site menu. forward/back: browser history. zoom_*: page zoom.
     read_aloud: read the visible part of the page. copy_email/copy_link: copy to clipboard.
-    stop: stop a tour or speech. end_live: end the live voice conversation."""
+    share: share this page (phone share sheet, or copy the link). print: print or save the page as
+    PDF. zoom_in/zoom_out also make text bigger or smaller. reduce_motion/restore_motion: calm or
+    restore the site's animations. find_next: next match of the last find_on_page. clear_chat:
+    start a fresh conversation. stop: stop a tour or speech. end_live: end the live voice conversation."""
     return _ui("control", action=action, value=value.strip()[:80])
 
 
@@ -282,7 +313,8 @@ async def tailored_resume(job_description: str) -> str:
 
 
 TOOLS = [
-    go_to, filter_projects, filter_skills, set_theme, scroll_page, tour_page, click_on, type_text,
+    go_to, filter_projects, filter_skills, set_theme, find_on_page, highlight, voice_settings, open_profile,
+    scroll_page, tour_page, click_on, type_text,
     fill_contact_form, control, show_projects, compare_projects, show_skills,
     show_timeline, book_call, draft_contact_message, github_stats, show_code, match_job_description,
     tailored_resume,

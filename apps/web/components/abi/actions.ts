@@ -242,6 +242,12 @@ export type ControlAction =
   | "read_aloud"
   | "copy_email"
   | "copy_link"
+  | "share"
+  | "print"
+  | "reduce_motion"
+  | "restore_motion"
+  | "find_next"
+  | "clear_chat"
   | "stop"
   | "end_live";
 
@@ -261,8 +267,8 @@ async function copy(text: string, what: string) {
   }
 }
 
-/** Scroll to the heading that best matches a section name ("experience", "FAQ"). */
-async function scrollToSection(name: string) {
+/** The heading or section that best matches a name ("experience", "FAQ"). */
+function bestHeading(name: string) {
   const q = tokens(name);
   let best: HTMLElement | null = null;
   let bestScore = 0;
@@ -276,11 +282,179 @@ async function scrollToSection(name: string) {
       bestScore = score;
     }
   }
+  return best;
+}
+
+/** Scroll to the heading that best matches a section name ("experience", "FAQ"). */
+async function scrollToSection(name: string) {
+  const best = bestHeading(name);
   if (!best) return false;
   scrollToElement(best);
   await sleep(800);
   await moveTo(best);
   return true;
+}
+
+// ---------- Find on the page ("find Docker on this page", "next") ----------
+// Matches are painted with the CSS Custom Highlight API, so the page's own markup is untouched.
+
+let matches: Range[] = [];
+let current = 0;
+let lastQuery = "";
+let unpaint: number | undefined;
+
+function paintMatches() {
+  window.clearTimeout(unpaint);
+  if (typeof Highlight === "undefined" || !("highlights" in CSS)) {
+    const sel = window.getSelection();
+    sel?.removeAllRanges();
+    if (matches[current]) sel?.addRange(matches[current]);
+    return;
+  }
+  CSS.highlights.set("abi-find", new Highlight(...matches));
+  CSS.highlights.set("abi-find-current", new Highlight(matches[current]));
+  unpaint = window.setTimeout(clearMatches, 20_000);
+}
+
+function clearMatches() {
+  if (typeof Highlight !== "undefined" && "highlights" in CSS) {
+    CSS.highlights.delete("abi-find");
+    CSS.highlights.delete("abi-find-current");
+  }
+}
+
+async function showMatch(i: number) {
+  current = i;
+  paintMatches();
+  const host = matches[i].startContainer.parentElement;
+  if (host) await bringIntoView(host);
+  const r = matches[i].getBoundingClientRect();
+  await moveToPoint(r.left + r.width / 2, r.top + r.height / 2, `${i + 1} of ${matches.length}`);
+}
+
+/** Find text on the current page: highlight every match and go to the first. */
+export async function findOnPage(text: string): Promise<string> {
+  stepAside();
+  const q = text.trim().toLowerCase();
+  if (!q) return "What should I look for?";
+  matches = [];
+  const root = document.getElementById("main") ?? document.body;
+  const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {
+    acceptNode: (n) => {
+      const el = n.parentElement;
+      if (!el || el.closest('script, style, [aria-hidden="true"], [inert]')) return NodeFilter.FILTER_REJECT;
+      return (el.checkVisibility?.() ?? true) ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT;
+    },
+  });
+  for (let n = walker.nextNode(); n && matches.length < 200; n = walker.nextNode()) {
+    const lower = (n.textContent ?? "").toLowerCase();
+    for (let i = lower.indexOf(q); i >= 0; i = lower.indexOf(q, i + q.length)) {
+      const r = new Range();
+      r.setStart(n, i);
+      r.setEnd(n, i + q.length);
+      matches.push(r);
+    }
+  }
+  lastQuery = text.trim();
+  if (!matches.length) {
+    clearMatches();
+    return `I couldn't find "${lastQuery}" on this page.`;
+  }
+  await showMatch(0);
+  return matches.length === 1 ? `Found "${lastQuery}" once on this page.` : `Found "${lastQuery}" ${matches.length} times. Say "next" for the next one.`;
+}
+
+/** The next match of the last search (searches again if the page changed). */
+export async function findNext(): Promise<string> {
+  if (!lastQuery) return "Tell me what to find first, like \"find Docker\".";
+  if (!matches.length || !matches[0].startContainer.isConnected) return findOnPage(lastQuery);
+  const next = (current + 1) % matches.length;
+  await showMatch(next);
+  return `Match ${next + 1} of ${matches.length}.`;
+}
+
+// ---------- Spotlight ("show me where the download button is") ----------
+
+/** Point at an element and dim everything else for a moment, without clicking it. */
+export async function spotlight(label: string): Promise<boolean> {
+  stepAside();
+  const el = findByLabel(label) ?? bestHeading(label);
+  if (!el) return false;
+  await bringIntoView(el);
+  await moveTo(el, "Here");
+  document.querySelector(".abi-spotlight")?.remove();
+  const r = el.getBoundingClientRect();
+  const pad = 10;
+  const spot = document.createElement("div");
+  spot.className = "abi-spotlight";
+  spot.setAttribute("aria-hidden", "true");
+  spot.style.cssText = `left:${r.left - pad}px;top:${r.top - pad}px;width:${r.width + pad * 2}px;height:${r.height + pad * 2}px`;
+  document.body.appendChild(spot);
+  const remove = () => {
+    spot.classList.add("abi-spotlight--out");
+    window.setTimeout(() => spot.remove(), 400);
+    window.removeEventListener("scroll", remove);
+    window.removeEventListener("pointerdown", remove);
+  };
+  window.addEventListener("scroll", remove, { passive: true, once: true });
+  window.addEventListener("pointerdown", remove, { once: true });
+  window.setTimeout(remove, 3600);
+  return true;
+}
+
+// ---------- Profiles, sharing, printing, calm mode, voice ----------
+
+export type Network = "github" | "linkedin" | "x" | "leetcode" | "whatsapp";
+
+/** Open one of Abhishek's profiles in a new tab (or hand over the link if the browser blocks it). */
+export function openProfile(network: Network): string {
+  const url =
+    network === "whatsapp" ? `https://wa.me/${profile.phone.href.replace(/\D/g, "")}` : profile.socials.find((s) => s.icon === network)?.url;
+  if (!url) return "I don't have that profile.";
+  const name = network === "whatsapp" ? "WhatsApp" : profile.socials.find((s) => s.icon === network)!.name;
+  const tab = window.open(url, "_blank", "noopener");
+  if (!tab) window.dispatchEvent(new CustomEvent("abi:external-link", { detail: url }));
+  return tab ? `Opening his ${name}.` : `Your browser wants you to open his ${name} yourself.`;
+}
+
+async function share(): Promise<string> {
+  const url = window.location.href;
+  if (navigator.share) {
+    try {
+      await navigator.share({ title: document.title, url });
+      return "Opened the share sheet.";
+    } catch {
+      // Not allowed without a tap, or cancelled: copy the link instead.
+    }
+  }
+  return copy(url, "the page link");
+}
+
+const CALM_KEY = "abi-calm";
+
+/** Calm mode: animations and transitions stop (on top of the device's reduced-motion setting). */
+export function setCalm(on: boolean) {
+  if (on) document.documentElement.dataset.calm = "on";
+  else delete document.documentElement.dataset.calm;
+  try {
+    if (on) localStorage.setItem(CALM_KEY, "on");
+    else localStorage.removeItem(CALM_KEY);
+  } catch {}
+  return on ? "Animations are calmed down. Say \"restore animations\" to bring them back." : "Animations are back on.";
+}
+
+export type Speed = "slower" | "normal" | "faster";
+
+/** Mute, unmute or change the speed of ABI's voice. */
+export function voiceSettings({ muted, speed }: { muted?: boolean | null; speed?: Speed | null }): string {
+  const rate = abi.get().voiceRate;
+  const nextRate = speed === "slower" ? rate - 0.15 : speed === "faster" ? rate + 0.15 : speed === "normal" ? 1 : rate;
+  abi.setVoicePrefs({ muted: muted ?? undefined, rate: nextRate });
+  if (muted) stopSpeaking();
+  const now = abi.get();
+  if (muted === true) return "Muted. I'll answer in text only.";
+  if (muted === false && !speed) return "Voice is back on.";
+  return `Voice speed is now ${Math.round(now.voiceRate * 100)}%.`;
 }
 
 /** Visible text of the current screen, top to bottom, for reading aloud. */
@@ -298,6 +472,21 @@ function visibleText() {
     }
   }
   return out.join(" ").slice(0, 1500);
+}
+
+/** The main text of the whole page (headings, paragraphs, list items), for "summarize this page". */
+export function pageText(max = 5000) {
+  const seen = new Set<string>();
+  const out: string[] = [];
+  for (const el of document.querySelectorAll<HTMLElement>("main h1, main h2, main h3, main p, main li, main dt, main dd, main figcaption")) {
+    if (!(el.checkVisibility?.() ?? true) || el.closest('[aria-hidden="true"]')) continue;
+    if (el.querySelector("p, li")) continue;
+    const t = (el.innerText || "").replace(/\s+/g, " ").trim();
+    if (t.length < 2 || seen.has(t)) continue;
+    seen.add(t);
+    out.push(/^H\d$/.test(el.tagName) ? `\n## ${t}` : t);
+  }
+  return out.join("\n").slice(0, max);
 }
 
 /** Perform a control action and return a short reply for the chat. */
@@ -356,6 +545,21 @@ export async function control(action: ControlAction, value = ""): Promise<string
       return copy(profile.email, "his email");
     case "copy_link":
       return copy(window.location.href, "the page link");
+    case "share":
+      return share();
+    case "print":
+      stepAside();
+      window.setTimeout(() => window.print(), 300);
+      return "Opening print. Pick \"Save as PDF\" to keep a copy.";
+    case "reduce_motion":
+      return setCalm(true);
+    case "restore_motion":
+      return setCalm(false);
+    case "find_next":
+      return findNext();
+    case "clear_chat":
+      window.dispatchEvent(new Event("abi:clear-chat"));
+      return "Started a fresh chat.";
     case "stop":
       stopTour();
       stopSpeaking();
@@ -459,7 +663,7 @@ export async function tourPage() {
   if (!stopped) stop();
 }
 
-export async function themeTo(theme: "light" | "dark") {
+export async function themeTo(theme: "light" | "dark" | "system") {
   await runAction({ tool: "command", input: {}, output: { ui: "theme", theme } });
 }
 
@@ -485,7 +689,7 @@ async function highlight(section: string) {
   window.setTimeout(() => el.classList.remove("abi-highlight"), 2600);
 }
 
-const PAGE_ACTIONS = new Set(["navigate", "filter-projects", "filter-skills", "scroll", "click", "tour", "type", "fill-contact"]);
+const PAGE_ACTIONS = new Set(["navigate", "filter-projects", "filter-skills", "scroll", "click", "tour", "type", "fill-contact", "find", "highlight"]);
 
 export async function runAction(action: UiAction) {
   const o = action.output;
@@ -533,6 +737,22 @@ export async function runAction(action: UiAction) {
     }
     case "control": {
       await control(o.action as ControlAction, String(o.value ?? ""));
+      break;
+    }
+    case "find": {
+      await findOnPage(String(o.text ?? ""));
+      break;
+    }
+    case "highlight": {
+      await spotlight(String(o.label ?? ""));
+      break;
+    }
+    case "voice": {
+      voiceSettings({ muted: o.muted as boolean | null, speed: o.speed as Speed | null });
+      break;
+    }
+    case "open-profile": {
+      openProfile(o.network as Network);
       break;
     }
     case "theme": {

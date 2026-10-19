@@ -1,6 +1,6 @@
 "use client";
 
-import { Maximize2, PanelRight, PictureInPicture2, X, type LucideIcon } from "lucide-react";
+import { Maximize2, PanelRight, PictureInPicture2, Volume2, VolumeX, X, type LucideIcon } from "lucide-react";
 import { useEffect } from "react";
 import { cn } from "@/lib/utils";
 import { AbiBot } from "./abi-bot";
@@ -68,6 +68,7 @@ export function AbiPanel() {
   const listening = useAbi((s) => s.listening);
   const speaking = useAbi((s) => s.speaking);
   const live = useAbi((s) => s.live);
+  const muted = useAbi((s) => s.voiceMuted);
   const layout = useAbiLayout();
   const wide = useWideScreen();
   const mode: AbiMode = wide ? layout.mode : "full";
@@ -200,6 +201,19 @@ export function AbiPanel() {
             })}
           </div>
         )}
+        <button
+          type="button"
+          onClick={() => abi.setVoicePrefs({ muted: !muted })}
+          aria-pressed={muted}
+          title={muted ? "Unmute ABI's voice" : "Mute ABI's voice"}
+          className={cn(
+            "grid size-9 place-items-center rounded-full transition-colors hover:bg-accent hover:text-foreground",
+            muted ? "text-brand-text" : "text-muted-foreground",
+          )}
+          aria-label={muted ? "Unmute ABI's voice" : "Mute ABI's voice"}
+        >
+          {muted ? <VolumeX className="size-4" aria-hidden /> : <Volume2 className="size-4" aria-hidden />}
+        </button>
         <button
           type="button"
           onClick={() => {

@@ -674,7 +674,7 @@ function shake() {
  */
 export function surge(x: number, y: number, mode: Mode = "surge", r = 40) {
   if (typeof window === "undefined") return;
-  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches || document.documentElement.dataset.calm === "on") {
     const soft = document.createElement("div");
     soft.className = "power-glow";
     soft.style.setProperty("--x", `${x}px`);

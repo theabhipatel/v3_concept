@@ -15,7 +15,7 @@ export function getLenis() {
 export function scrollToElement(el: HTMLElement, offset = -96) {
   if (lenis) lenis.scrollTo(el, { offset, duration: 1.1 });
   else {
-    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches || document.documentElement.dataset.calm === "on";
     window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY + offset, behavior: reduce ? "auto" : "smooth" });
   }
 }
@@ -31,7 +31,7 @@ export function SmoothScroll() {
   const pathname = usePathname();
 
   useEffect(() => {
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches || document.documentElement.dataset.calm === "on") return;
     lenis = new Lenis({ autoRaf: true, lerp: 0.11, prevent: isScrollable });
     return () => {
       lenis?.destroy();

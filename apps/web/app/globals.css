@@ -494,6 +494,63 @@ body {
   }
 }
 
+/* "Find on this page": every match, and the one ABI is pointing at. */
+::highlight(abi-find) {
+  background-color: color-mix(in oklch, var(--abi) 35%, transparent);
+  color: inherit;
+}
+::highlight(abi-find-current) {
+  background-color: var(--abi);
+  color: var(--background);
+}
+
+/* Spotlight: the page dims around an element ABI points at, without clicking it. */
+.abi-spotlight {
+  position: fixed;
+  z-index: 60;
+  pointer-events: none;
+  border-radius: var(--radius-xl);
+  box-shadow:
+    0 0 0 2px var(--abi),
+    0 0 30px 4px color-mix(in oklch, var(--abi) 45%, transparent),
+    0 0 0 200vmax color-mix(in oklch, black 55%, transparent);
+  animation: abi-spot-in 0.45s var(--motion-ease-out-expo) both;
+  transition: opacity 0.4s;
+}
+.abi-spotlight::after {
+  content: "";
+  position: absolute;
+  inset: -6px;
+  border-radius: inherit;
+  border: 2px solid var(--abi);
+  animation: abi-spot-pulse 1.4s ease-out infinite;
+}
+.abi-spotlight--out {
+  opacity: 0;
+}
+@keyframes abi-spot-in {
+  from {
+    opacity: 0;
+    transform: scale(1.15);
+  }
+}
+@keyframes abi-spot-pulse {
+  to {
+    inset: -18px;
+    opacity: 0;
+  }
+}
+
+/* Calm mode (ABI: "reduce motion"): everything settles instantly, nothing loops. */
+html[data-calm="on"] *,
+html[data-calm="on"] *::before,
+html[data-calm="on"] *::after {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
+  scroll-behavior: auto !important;
+}
+
 /* Chat markdown */
 .abi-prose {
   font-size: 0.9375rem;

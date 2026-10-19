@@ -56,17 +56,35 @@ export const REALTIME_TOOLS = [
   tool(
     "control",
     "Page and panel controls. section = scroll to the section named in value. panel_* = ABI's chat panel. " +
-      "zoom_* = page zoom. copy_email / copy_link = clipboard. stop = stop a tour.",
+      "zoom_* = page zoom (bigger or smaller text). copy_email / copy_link = clipboard. share = share sheet or copy link. " +
+      "print = print or save as PDF. reduce_motion / restore_motion = calm or restore animations. find_next = next find match. " +
+      "clear_chat = start a fresh chat. stop = stop a tour.",
     {
       action: oneOf([
         "section", "panel_full", "panel_dock", "panel_float", "panel_close", "open_menu", "close_menu",
-        "forward", "back", "zoom_in", "zoom_out", "zoom_reset", "copy_email", "copy_link", "stop",
+        "forward", "back", "zoom_in", "zoom_out", "zoom_reset", "copy_email", "copy_link", "share", "print",
+        "reduce_motion", "restore_motion", "find_next", "clear_chat", "stop",
       ]),
       value: str("Section name for action=section, else empty"),
     },
     ["action", "value"],
   ),
-  tool("set_theme", "Switch the website theme.", { theme: oneOf(["light", "dark"]) }, ["theme"]),
+  tool("set_theme", "Switch the website theme. system = follow the device setting.", { theme: oneOf(["light", "dark", "system"]) }, ["theme"]),
+  tool("find_on_page", "Find a word or phrase on the current page, highlight every match and go to the first.", { text: str("What to find") }, ["text"]),
+  tool("highlight", "Point at and spotlight an element on the page without clicking it.", { label: str("Its visible text, or a section name") }, ["label"]),
+  tool(
+    "voice_settings",
+    "Mute or unmute ABI's voice, or change its speed. Use empty strings for what stays the same.",
+    { muted: oneOf(["true", "false", ""]), speed: oneOf(["slower", "normal", "faster", ""]) },
+    ["muted", "speed"],
+  ),
+  tool(
+    "open_profile",
+    "Open one of Abhishek's profiles in a new tab. whatsapp only when the visitor asks for his phone or WhatsApp.",
+    { network: oneOf(["github", "linkedin", "x", "leetcode", "whatsapp"]) },
+    ["network"],
+  ),
+  tool("summarize_page", "Get the text of the page the visitor is on, to summarize it or answer about it. Summarize in two or three spoken sentences."),
   tool("tour_page", "Walk through the whole current page from top to bottom, pausing on each section."),
   tool("end_conversation", "End the voice conversation when the visitor says goodbye or asks to stop talking."),
 ];

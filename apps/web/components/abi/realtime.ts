@@ -10,7 +10,7 @@
 import { powerStore } from "@/components/power/power-store";
 import { isLiveModel } from "@/lib/openai-models";
 import { abi } from "./abi-store";
-import { runAction, type UiAction } from "./actions";
+import { pageText, runAction, type UiAction } from "./actions";
 import { chat, messageText, persist, send } from "./runtime";
 
 let pc: RTCPeerConnection | null = null;
@@ -56,6 +56,10 @@ const UI: Record<string, (a: Record<string, string>) => UiAction["output"]> = {
   control: (a) => ({ ui: "control", action: a.action, value: a.value ?? "" }),
   set_theme: (a) => ({ ui: "theme", theme: a.theme }),
   tour_page: () => ({ ui: "tour" }),
+  find_on_page: (a) => ({ ui: "find", text: a.text }),
+  highlight: (a) => ({ ui: "highlight", label: a.label }),
+  voice_settings: (a) => ({ ui: "voice", muted: a.muted === "true" ? true : a.muted === "false" ? false : null, speed: a.speed || null }),
+  open_profile: (a) => ({ ui: "open-profile", network: a.network }),
 };
 
 /** Run one tool call from the voice model and return what it should know about the result. */
@@ -73,6 +77,7 @@ async function runTool(name: string, args: Record<string, string>): Promise<obje
     window.setTimeout(() => ending && abi.stopLive(), 6000);
     return { ok: true, note: "Say a short goodbye." };
   }
+  if (name === "summarize_page") return { page: window.location.pathname, text: pageText(3500) };
   const make = UI[name];
   if (!make) return { error: `Unknown tool ${name}` };
   const output = make(args);
@@ -267,6 +272,7 @@ export async function startRealtime(): Promise<boolean> {
     pc.ontrack = (ev) => {
       if (speaker) speaker.srcObject = ev.streams[0];
     };
+    speaker.muted = abi.get().voiceMuted;
     mic = await navigator.mediaDevices.getUserMedia({
       audio: { channelCount: 1, echoCancellation: true, noiseSuppression: true, autoGainControl: true },
     });
@@ -320,6 +326,7 @@ async function startGptLive(): Promise<boolean> {
     pc.ontrack = (ev) => {
       if (speaker) speaker.srcObject = ev.streams[0];
     };
+    speaker.muted = abi.get().voiceMuted;
     mic = await navigator.mediaDevices.getUserMedia({
       audio: { channelCount: 1, echoCancellation: true, noiseSuppression: true, autoGainControl: true },
     });
@@ -380,4 +387,5 @@ export function stopRealtime() {
 // Ending live mode from anywhere (End button, closing the panel, "bye") closes the session.
 abi.subscribe(() => {
   if (abi.get().live === "off" && pc) stopRealtime();
+  if (speaker) speaker.muted = abi.get().voiceMuted; // mute applies mid-conversation too
 });

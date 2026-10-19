@@ -5,7 +5,23 @@ import { Chat } from "@ai-sdk/react";
 import { DefaultChatTransport, type UIMessage } from "ai";
 import { isPowered, powerStore } from "@/components/power/power-store";
 import { abi, getSessionId, setSessionId } from "./abi-store";
-import { clickLabel, control, navigateTo, runAction, scrollPage, searchFor, themeTo, tourPage, typeInto, type UiAction } from "./actions";
+import {
+  clickLabel,
+  control,
+  findOnPage,
+  navigateTo,
+  openProfile,
+  pageText,
+  runAction,
+  scrollPage,
+  searchFor,
+  spotlight,
+  themeTo,
+  tourPage,
+  typeInto,
+  voiceSettings,
+  type UiAction,
+} from "./actions";
 import { parseCommand, type Command } from "./commands";
 import { configureLive, startLive } from "./live";
 import { configureVoice, speak, startListening, stopSpeaking } from "./voice";
@@ -27,6 +43,8 @@ export type AbiData = {
 export type AbiMessage = UIMessage<never, AbiData>;
 
 let voiceTurn = false;
+/** Page text for the next request only ("summarize this page"). */
+let nextPageText = "";
 
 export function messageText(m: AbiMessage) {
   return m.parts.map((p) => (p.type === "text" ? p.text : "")).join("");
@@ -38,10 +56,20 @@ export const chat = new Chat<AbiMessage>({
     api: "/api/agent/chat",
     // The agent keeps the conversation (Postgres checkpoints), so only the new message is sent.
     // In power mode the website's own route adds the user's OpenAI key on the server.
-    prepareSendMessagesRequest: ({ messages }) => ({
-      api: isPowered() ? "/api/power/chat" : "/api/agent/chat",
-      body: { sessionId: getSessionId(), message: messageText(messages[messages.length - 1]) },
-    }),
+    // The current page always goes along, so ABI knows where the visitor is.
+    prepareSendMessagesRequest: ({ messages }) => {
+      const pageTextNow = nextPageText;
+      nextPageText = "";
+      return {
+        api: isPowered() ? "/api/power/chat" : "/api/agent/chat",
+        body: {
+          sessionId: getSessionId(),
+          message: messageText(messages[messages.length - 1]),
+          page: window.location.pathname,
+          ...(pageTextNow && { pageText: pageTextNow }),
+        },
+      };
+    },
   }),
   onData: (part) => {
     if (part.type === "data-ui") void runAction(part.data);
@@ -116,6 +144,7 @@ async function runCommand(cmd: Command, text: string, voice: boolean) {
       note(await control("stop"));
       return;
     case "control":
+      if (cmd.action === "clear_chat") return void (await control("clear_chat")); // the empty chat says it all
       note(await control(cmd.action, cmd.value));
       return;
     case "type":
@@ -129,9 +158,28 @@ async function runCommand(cmd: Command, text: string, voice: boolean) {
       window.history.back();
       return;
     case "theme":
-      note(`Switching to the ${cmd.theme} theme.`);
+      note(cmd.theme === "system" ? "Following your device's theme." : `Switching to the ${cmd.theme} theme.`);
       await themeTo(cmd.theme);
       return;
+    case "find":
+      note(await findOnPage(cmd.text));
+      return;
+    case "highlight":
+      note((await spotlight(cmd.label)) ? `Here is "${cmd.label}".` : `I couldn't find "${cmd.label}" on this page.`);
+      return;
+    case "voice":
+      note(voiceSettings(cmd));
+      return;
+    case "profile":
+      note(openProfile(cmd.network));
+      return;
+    case "summarize": {
+      // The agent reads this page's text (sent once, not kept in the conversation).
+      nextPageText = pageText();
+      voiceTurn = voice;
+      await chat.sendMessage({ text });
+      return;
+    }
     case "click": {
       const result = await clickLabel(cmd.label);
       if (result === "ok") note(`Clicking "${cmd.label}".`);
@@ -153,6 +201,16 @@ export async function send(text: string, voice = false) {
 }
 
 configureLive((text) => send(text, true));
+
+// "Clear the chat": a fresh conversation (a new session, so the agent starts clean too). A signed-in
+// user's earlier conversation stays saved in their account.
+if (typeof window !== "undefined")
+  window.addEventListener("abi:clear-chat", () => {
+    stopSpeaking();
+    if (chat.status === "streaming" || chat.status === "submitted") void chat.stop();
+    setSessionId(`s_${crypto.randomUUID().replace(/-/g, "")}`);
+    chat.messages = [];
+  });
 
 // A link to another site that the browser would not let ABI open: hand it to the visitor.
 if (typeof window !== "undefined")

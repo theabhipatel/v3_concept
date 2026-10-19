@@ -91,20 +91,28 @@ gives the full name. Show the full name in the UI (orb tooltip, `/abi` header, a
   print to PDF, free).
 - Book a call (scheduling link from `BOOKING_URL`; empty = contact form) and draft a contact
   message the visitor reviews and sends (never sent without a click).
-- Switch light/dark theme.
+- Switch the theme: light, dark or system.
 
-**Most awaited (next ABI tools, agreed 2026-10-19, not built yet).** All run in the browser with
-almost no tokens. Top picks marked with *.
-- [ ] *System theme (light / dark / system).
-- [ ] *Find on page: search the current page, scroll to and highlight the word.
-- [ ] *Summarize this page (whatever page the visitor is on).
-- [ ] Share: copy a project or section link, or open the phone's share sheet.
-- [ ] Contact shortcuts: open LinkedIn or GitHub; WhatsApp only when asked for a number.
-- [ ] Reading comfort: bigger or smaller text, reduced motion.
-- [ ] *Voice settings: mute or unmute ABI's voice, speaking speed.
-- [ ] Print or save as PDF of the current page.
-- [ ] Clear chat (start fresh) by voice.
-- [ ] *Highlight: point at and spotlight an element without clicking it.
+**Most awaited tools (built 2026-10-19).** Clear phrasings run instantly in the browser
+(`components/abi/commands.ts`, no tokens); the agent and the Realtime/GPT-Live voice have the same
+tools for everything else. Every chat request now also sends the visitor's current page.
+- [x] System theme: light, dark or "use system theme" (follows the device).
+- [x] Find on page: "find Docker" highlights every match (CSS Custom Highlight API) and goes to
+      the first; "next" steps through them. Agent tool `find_on_page`.
+- [x] Summarize this page: "summarize this page", "what is this page about", "tldr". The page's
+      text goes with that one request (`pageText`, max 5,000 characters, only in that turn's
+      system prompt, never kept in history).
+- [x] Share: phone share sheet, or copies the link.
+- [x] Profiles: "open his LinkedIn / GitHub / X / LeetCode"; WhatsApp only when asked directly.
+- [x] Reading comfort: bigger or smaller text (zoom), and calm mode ("reduce motion": animations
+      settle instantly, remembered in the browser, applied before first paint).
+- [x] Voice settings: mute or unmute (also a speaker button in ABI's panel), speak slower, faster
+      or normally (remembered in the browser; Realtime voice honours mute).
+- [x] Print or save the page as PDF (browser print).
+- [x] Clear chat: "clear the chat", "start fresh", "new chat" starts a new session (a signed-in
+      user's earlier conversation stays saved).
+- [x] Highlight: "highlight / point at / show me where X" spotlights it (the page dims around it)
+      without clicking.
 
 ### 5.3 Operating the portfolio
 - Visitors can say or type "show me your AI projects" and watch ABI do it.

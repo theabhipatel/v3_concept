@@ -99,6 +99,8 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       className={`${jakarta.variable} ${geistMono.variable} h-full`}
     >
       <body className="min-h-full">
+        {/* Calm mode (ABI's "reduce motion") applies before the first paint on every page. */}
+        <script dangerouslySetInnerHTML={{ __html: `try{if(localStorage.getItem("abi-calm")==="on")document.documentElement.dataset.calm="on"}catch(e){}` }} />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={ld(jsonLd)}

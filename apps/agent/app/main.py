@@ -66,6 +66,16 @@ def _sse(part: dict) -> str:
     return f"data: {json.dumps(part)}\n\n"
 
 
+PAGE_RE = re.compile(r"^/[A-Za-z0-9/_-]{0,120}$")
+PAGE_TEXT_CHARS = 5000
+
+
+def _page(body: dict) -> tuple[str, str]:
+    """The visitor's current path, and the page's text when they asked to summarize it."""
+    page = str(body.get("page") or "")
+    return (page if PAGE_RE.match(page) else ""), str(body.get("pageText") or "")[:PAGE_TEXT_CHARS]
+
+
 def _parse_body(body: dict) -> tuple[str, str]:
     """Accept {sessionId, message} or the AI SDK useChat shape {id, messages: [...]}."""
     session = body.get("sessionId") or body.get("id") or ""
@@ -125,7 +135,9 @@ def _power(request: Request) -> Power | None:
     return Power(key=key, model=model)
 
 
-async def _stream(session: str, message: str, owner: Power | None = None) -> AsyncIterator[str]:
+async def _stream(
+    session: str, message: str, owner: Power | None = None, page: str = "", page_text: str = ""
+) -> AsyncIterator[str]:
     started = time.monotonic()
     s = get_settings()
     power.set(owner)  # this request's model (the context is copied into every graph step)
@@ -149,7 +161,7 @@ async def _stream(session: str, message: str, owner: Power | None = None) -> Asy
         graph = await get_graph()
         config = {"configurable": {"thread_id": session}, "recursion_limit": 12}
         try:
-            async for mode, payload in graph.astream(user_turn(message), config, stream_mode=["updates", "messages"]):
+            async for mode, payload in graph.astream(user_turn(message, page, page_text), config, stream_mode=["updates", "messages"]):
                 if mode == "updates":
                     if "rewrite" in payload:
                         trace["query"] = payload["rewrite"]["query"]
@@ -242,7 +254,9 @@ async def _stream(session: str, message: str, owner: Power | None = None) -> Asy
 @router.post("/chat")
 async def chat(request: Request) -> StreamingResponse:
     s = get_settings()
-    session, message = _parse_body(await request.json())
+    body = await request.json()
+    session, message = _parse_body(body)
+    page, page_text = _page(body)
     if not SESSION_RE.match(session):
         raise HTTPException(400, "Invalid session id")
     if not message:
@@ -253,7 +267,7 @@ async def chat(request: Request) -> StreamingResponse:
     if not owner:
         await _limit(request, "chat")
     return StreamingResponse(
-        _stream(session, message, owner),
+        _stream(session, message, owner, page, page_text),
         media_type="text/event-stream",
         headers={"x-vercel-ai-ui-message-stream": "v1", "Cache-Control": "no-cache"},
     )

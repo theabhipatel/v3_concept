@@ -187,6 +187,7 @@ async function fetchVoice(text: string) {
 function playClip(url: string) {
   return new Promise<boolean>((resolve) => {
     const a = new Audio(url);
+    a.playbackRate = abi.get().voiceRate; // the visitor's chosen speed (pitch is kept)
     audio = a;
     endAudio = () => resolve(true);
     a.onended = () => resolve(true);
@@ -263,7 +264,7 @@ function speakBrowser(text: string) {
   sentences.forEach((sentence, i) => {
     const u = new SpeechSynthesisUtterance(sentence.trim());
     if (voice) u.voice = voice;
-    u.rate = 1.03;
+    u.rate = 1.03 * abi.get().voiceRate;
     u.onstart = () => abi.setVoice({ speaking: true, caption: sentence.trim() });
     if (i === sentences.length - 1)
       u.onend = u.onerror = () => {
@@ -276,7 +277,7 @@ function speakBrowser(text: string) {
 
 export function speak(markdown: string) {
   const text = speakable(markdown);
-  if (!text) return;
+  if (!text || abi.get().voiceMuted) return; // muted: answers stay in text
   stopSpeaking();
   const id = ++playId;
   if (isPowered() && typeof Audio !== "undefined") void speakOpenAI(text, id);

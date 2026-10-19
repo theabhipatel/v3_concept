@@ -28,6 +28,20 @@ interface AbiState {
   liveRequested: boolean;
   /** A saved conversation to reopen (signed-in users). */
   resumeRequested: string | null;
+  /** The visitor's voice settings for ABI (remembered in this browser). */
+  voiceMuted: boolean;
+  voiceRate: number;
+}
+
+const PREFS_KEY = "abi-voice";
+
+function savedVoice(): Pick<AbiState, "voiceMuted" | "voiceRate"> {
+  try {
+    const v = JSON.parse(localStorage.getItem(PREFS_KEY) ?? "{}");
+    return { voiceMuted: v.muted === true, voiceRate: typeof v.rate === "number" ? v.rate : 1 };
+  } catch {
+    return { voiceMuted: false, voiceRate: 1 };
+  }
 }
 
 export type LiveState = "off" | "starting" | "listening" | "hearing" | "thinking" | "speaking" | "error";
@@ -44,8 +58,10 @@ const initial: AbiState = {
   live: "off",
   liveRequested: false,
   resumeRequested: null,
+  voiceMuted: false,
+  voiceRate: 1,
 };
-let state: AbiState = initial;
+let state: AbiState = typeof window === "undefined" ? initial : { ...initial, ...savedVoice() };
 const listeners = new Set<() => void>();
 let nextId = 1;
 
@@ -87,6 +103,17 @@ export const abi = {
   clearListen: () => set({ listenRequested: false }),
   /** Reopen a saved conversation in the panel. */
   resume: (id: string) => set({ open: true, activated: true, resumeRequested: id }),
+  /** Mute or unmute ABI's voice, or change its speed (0.75 to 1.5). */
+  setVoicePrefs(patch: { muted?: boolean; rate?: number }) {
+    const next = {
+      voiceMuted: patch.muted ?? state.voiceMuted,
+      voiceRate: Math.min(1.5, Math.max(0.75, patch.rate ?? state.voiceRate)),
+    };
+    set(next);
+    try {
+      localStorage.setItem(PREFS_KEY, JSON.stringify({ muted: next.voiceMuted, rate: next.voiceRate }));
+    } catch {}
+  },
   clearResume: () => set({ resumeRequested: null }),
   setVoice: (patch: Partial<Pick<AbiState, "listening" | "speaking" | "caption">>) => set(patch),
 };
