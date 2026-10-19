@@ -659,7 +659,34 @@ html[data-power="on"] .abi-orb::after {
   animation: field-in 0.35s var(--motion-ease-out-expo) both;
 }
 
+/* Confirm popup (sign out). */
+.confirm-dialog {
+  margin: auto;
+  width: min(420px, calc(100% - 32px));
+  max-width: none;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+  background: var(--card);
+  color: var(--foreground);
+  box-shadow: 0 30px 80px -20px color-mix(in oklch, black 60%, transparent);
+  padding: 0;
+}
+.confirm-dialog[open] {
+  animation: confirm-in 0.3s var(--motion-ease-out-expo) both;
+}
+.confirm-dialog::backdrop {
+  background: color-mix(in oklch, black 55%, transparent);
+  backdrop-filter: blur(4px);
+}
+@keyframes confirm-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.97);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
+  .confirm-dialog[open],
   .admin-bar,
   .reactor *,
   .auth-card__edge,

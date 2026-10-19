@@ -5,11 +5,12 @@
   "scripts": {
     "predev": "node scripts/copy-vad-assets.mjs",
     "dev": "next dev",
-    "prebuild": "node scripts/copy-vad-assets.mjs",
+    "prebuild": "node scripts/copy-vad-assets.mjs && node --env-file-if-exists=.env.local scripts/db-setup.mjs",
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
     "postinstall": "node scripts/copy-vad-assets.mjs",
+    "db:setup": "node --env-file=.env.local scripts/db-setup.mjs",
     "db:migrate": "node --env-file=.env.local scripts/migrate-db.mjs",
     "db:seed-admin": "node --env-file=.env.local scripts/seed-admin.mjs"
   },

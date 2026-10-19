@@ -578,6 +578,69 @@ function ConversationsCard() {
 }
 
 /** ABI settings for a signed-in power user. */
+// Set while signing out, so the settings page heads home instead of bouncing to /signin.
+let leaving = false;
+
+/** Sign out, after a confirm popup (a native modal dialog: focus trap and Escape for free). */
+function SignOutButton() {
+  const router = useRouter();
+  const ref = useRef<HTMLDialogElement>(null);
+  const [busy, setBusy] = useState(false);
+  const close = () => ref.current?.close();
+
+  async function signOut() {
+    setBusy(true);
+    leaving = true;
+    await authClient.signOut();
+    powerStore.signedOut();
+    close();
+    router.push("/");
+  }
+
+  return (
+    <>
+      <button
+        type="button"
+        onClick={() => ref.current?.showModal()}
+        className="inline-flex h-10 items-center gap-2 rounded-full border px-4 text-sm font-semibold transition-colors hover:bg-muted"
+      >
+        <LogOut className="size-4" aria-hidden /> Sign out
+      </button>
+      <dialog
+        ref={ref}
+        aria-labelledby="signout-title"
+        className="confirm-dialog"
+        onClick={(e) => e.target === e.currentTarget && !busy && close()}
+        onCancel={(e) => busy && e.preventDefault()}
+      >
+        <div className="p-6">
+          <span className="grid size-11 place-items-center rounded-full bg-brand/12 text-brand-text">
+            <LogOut className="size-5" aria-hidden />
+          </span>
+          <h2 id="signout-title" className="mt-4 text-xl font-bold">Sign out?</h2>
+          <p className="mt-1.5 text-sm text-muted-foreground">
+            ABI goes back to its free mode on this device. Your key, settings and saved chats stay safe for next time.
+          </p>
+          <div className="mt-6 flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
+            <button type="button" onClick={close} disabled={busy} className="h-10 rounded-full border px-5 text-sm font-semibold transition-colors hover:bg-muted">
+              Stay signed in
+            </button>
+            <button
+              type="button"
+              autoFocus
+              onClick={signOut}
+              disabled={busy}
+              className="inline-flex h-10 items-center justify-center gap-2 rounded-full bg-brand px-5 text-sm font-semibold text-on-brand transition-opacity hover:opacity-90 disabled:opacity-70"
+            >
+              {busy ? <Loader2 className="size-4 animate-spin" aria-hidden /> : <LogOut className="size-4" aria-hidden />} Sign out
+            </button>
+          </div>
+        </div>
+      </dialog>
+    </>
+  );
+}
+
 export function SettingsView() {
   const router = useRouter();
   const ready = usePower((s) => s.ready);
@@ -586,11 +649,12 @@ export function SettingsView() {
   const [checked, setChecked] = useState(false);
 
   useEffect(() => {
+    leaving = false;
     void powerStore.load(true).then(() => setChecked(true));
   }, []);
   useEffect(() => {
     // A failed confirmation link lands here with ?error=...; the sign-in page explains it.
-    if (checked && ready && !user) router.replace(`/signin${window.location.search}`);
+    if (checked && ready && !user && !leaving) router.replace(`/signin${window.location.search}`);
   }, [checked, ready, user, router]);
 
   if (!checked || !user || !power)
@@ -614,17 +678,7 @@ export function SettingsView() {
             <Shield className="size-4" aria-hidden /> Admin dashboard
           </Link>
         )}
-        <button
-          type="button"
-          onClick={async () => {
-            await authClient.signOut();
-            powerStore.signedOut();
-            router.push("/");
-          }}
-          className="inline-flex h-10 items-center gap-2 rounded-full border px-4 text-sm font-semibold transition-colors hover:bg-muted"
-        >
-          <LogOut className="size-4" aria-hidden /> Sign out
-        </button>
+        <SignOutButton />
         </div>
       </div>
       <div data-intro style={{ "--d": 1 } as React.CSSProperties}>

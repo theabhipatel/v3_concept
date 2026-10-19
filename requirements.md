@@ -170,7 +170,7 @@ tools for everything else. Every chat request now also sends the visitor's curre
 Visitors use ABI as before (free Groq models). Anyone can sign up and bring their own OpenAI key;
 only that user's ABI runs on it.
 - **Accounts:** Better Auth in the web app (email and password, Google when `GOOGLE_CLIENT_ID`
-  is set), tables in the same Postgres. `npm run db:migrate` creates them (plus `abi_power`,
+  is set), tables in the same Postgres. `npm run db:setup` (also run on every build) creates them (plus `abi_power`,
   `abi_conversation`). Normal visitors never call the server for this: `/api/me` is only asked
   once this browser has signed in.
 - **Email accounts must confirm their email** (built 2026-10-19): sign-up sends a "Confirm your
