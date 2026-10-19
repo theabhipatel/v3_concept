@@ -628,7 +628,39 @@ html[data-power="on"] .abi-orb::after {
   }
 }
 
+/* ---------- Admin ---------- */
+
+.admin-bar {
+  background: linear-gradient(to top, var(--brand), color-mix(in oklch, var(--brand-2) 80%, white));
+  transform-origin: bottom;
+  animation: bar-grow 0.7s var(--motion-ease-out-expo) both;
+  animation-delay: calc(var(--i) * 35ms);
+}
+.admin-bar[data-zero] {
+  background: var(--muted);
+}
+@keyframes bar-grow {
+  from {
+    transform: scaleY(0);
+  }
+}
+.admin-stat::after {
+  content: "";
+  position: absolute;
+  right: -30%;
+  top: -60%;
+  width: 70%;
+  aspect-ratio: 1;
+  border-radius: 9999px;
+  background: radial-gradient(circle, color-mix(in oklch, var(--brand) 14%, transparent), transparent 70%);
+  pointer-events: none;
+}
+.admin-manage {
+  animation: field-in 0.35s var(--motion-ease-out-expo) both;
+}
+
 @media (prefers-reduced-motion: reduce) {
+  .admin-bar,
   .reactor *,
   .auth-card__edge,
   .power-btn__arc,

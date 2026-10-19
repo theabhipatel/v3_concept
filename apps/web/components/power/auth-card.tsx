@@ -287,7 +287,7 @@ export function AuthCard() {
             name="password"
             type={show ? "text" : "password"}
             required
-            minLength={8}
+            minLength={mode === "signup" ? 8 : undefined}
             autoComplete={mode === "signup" ? "new-password" : "current-password"}
             placeholder=" "
             className="field__input pr-12"

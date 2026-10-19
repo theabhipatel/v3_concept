@@ -1,6 +1,7 @@
 "use client";
 
-import { AudioLines, Check, Cpu, KeyRound, Loader2, Lock, LogOut, MessagesSquare, Mic, Power, Search, ShieldCheck, Trash2, X } from "lucide-react";
+import { AudioLines, Check, Cpu, KeyRound, Loader2, Lock, LogOut, MessagesSquare, Mic, Power, Search, Shield, ShieldCheck, Trash2, X } from "lucide-react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { abi } from "@/components/abi/abi-store";
@@ -607,6 +608,12 @@ export function SettingsView() {
           <h1 className="mt-2 text-4xl font-bold tracking-tight sm:text-5xl">Hi, {user.name.split(" ")[0] || "there"}.</h1>
           <p className="mt-1 text-muted-foreground">{user.email}</p>
         </div>
+        <div className="flex flex-wrap gap-2">
+        {user.role === "admin" && (
+          <Link href="/admin" className="inline-flex h-10 items-center gap-2 rounded-full border border-brand/40 px-4 text-sm font-semibold text-brand-text transition-colors hover:bg-brand/10">
+            <Shield className="size-4" aria-hidden /> Admin dashboard
+          </Link>
+        )}
         <button
           type="button"
           onClick={async () => {
@@ -618,6 +625,7 @@ export function SettingsView() {
         >
           <LogOut className="size-4" aria-hidden /> Sign out
         </button>
+        </div>
       </div>
       <div data-intro style={{ "--d": 1 } as React.CSSProperties}>
         <PowerSwitch power={power} />

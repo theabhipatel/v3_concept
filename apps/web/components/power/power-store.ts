@@ -11,6 +11,7 @@ export interface PowerUser {
   name: string;
   email: string;
   image: string | null;
+  role: string;
 }
 
 interface State {

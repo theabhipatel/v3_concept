@@ -3,13 +3,14 @@
 // Run: npm run db:migrate   (reads DATABASE_URL from .env.local)
 import { betterAuth } from "better-auth";
 import { getMigrations } from "better-auth/db/migration";
+import { admin } from "better-auth/plugins/admin";
 import pg from "pg";
 
 const pool = new pg.Pool({ connectionString: process.env.DATABASE_URL });
 
-// Same tables as lib/server/auth.ts (Google sign-in adds no tables of its own).
+// Same tables as lib/server/auth.ts (Google sign-in adds no tables; admin adds role and ban columns).
 const { runMigrations, toBeCreated, toBeAdded } = await getMigrations(
-  betterAuth({ database: pool, emailAndPassword: { enabled: true } }).options,
+  betterAuth({ database: pool, emailAndPassword: { enabled: true }, plugins: [admin()] }).options,
 );
 console.log("auth tables:", toBeCreated.map((t) => t.table).join(", ") || "up to date", toBeAdded.length ? `(+${toBeAdded.length} changes)` : "");
 await runMigrations();

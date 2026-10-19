@@ -6,7 +6,7 @@ import { getPower } from "@/lib/server/power";
 export async function GET() {
   const user = await currentUser();
   const body = user
-    ? { user: { id: user.id, name: user.name, email: user.email, image: user.image ?? null }, power: await getPower(user.id), googleEnabled }
+    ? { user: { id: user.id, name: user.name, email: user.email, image: user.image ?? null, role: (user as { role?: string | null }).role ?? "user" }, power: await getPower(user.id), googleEnabled }
     : { user: null, power: null, googleEnabled };
   return NextResponse.json(body, { headers: { "Cache-Control": "no-store" } });
 }

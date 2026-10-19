@@ -65,6 +65,8 @@ that project.
 
 - Create the tables once per database: `cd apps/web && DATABASE_URL="<Neon URL>" node scripts/migrate-db.mjs`
   (locally `npm run db:migrate` reads `.env.local`).
+- Create the admin once: `cd apps/web && DATABASE_URL="<Neon URL>" ADMIN_EMAIL=... ADMIN_PASSWORD=... node scripts/seed-admin.mjs`
+  (never the test password 1234 in production).
 - `BETTER_AUTH_URL` is the site's public URL. `ABI_KEY_SECRET` must never change once users have
   saved keys (they would have to add them again). `ABI_POWER_SECRET` must match on both projects.
 - Account emails (confirm email, reset password) use the same `SMTP_*` variables as the contact
@@ -73,6 +75,14 @@ that project.
   `<site>/api/auth/callback/google`. Without the two variables the Google button is hidden.
 
 ## Still to do
+
+Power users (deployed 2026-10-19; set on Vercel already: `BETTER_AUTH_SECRET`, `ABI_KEY_SECRET`,
+`ABI_POWER_SECRET` on both projects, `BETTER_AUTH_URL=https://theabhipatel-v3.vercel.app`). Left:
+- Website env: `DATABASE_URL` (same Neon URL as the agent), `SMTP_*`, `GOOGLE_CLIENT_ID`,
+  `GOOGLE_CLIENT_SECRET`; then redeploy the website. Until then sign-in returns 500.
+- Neon tables: `node scripts/migrate-db.mjs` and the admin seed (see "Power users" above).
+- Google console: redirect URI `https://theabhipatel-v3.vercel.app/api/auth/callback/google`.
+- Rotate the secrets that were shared in chat (Gmail app password, Google client secret, Neon password).
 
 - Contact form email: add `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS` (a Gmail app
   password) to the website project. Until then the form asks visitors to email directly.

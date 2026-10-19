@@ -10,7 +10,8 @@
     "start": "next start",
     "lint": "eslint",
     "postinstall": "node scripts/copy-vad-assets.mjs",
-    "db:migrate": "node --env-file=.env.local scripts/migrate-db.mjs"
+    "db:migrate": "node --env-file=.env.local scripts/migrate-db.mjs",
+    "db:seed-admin": "node --env-file=.env.local scripts/seed-admin.mjs"
   },
   "dependencies": {
     "@ai-sdk/react": "^4.0.141",

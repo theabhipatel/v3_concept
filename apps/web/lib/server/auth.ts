@@ -1,6 +1,7 @@
 import "server-only";
 import { betterAuth } from "better-auth";
 import { nextCookies } from "better-auth/next-js";
+import { admin } from "better-auth/plugins/admin";
 import { headers } from "next/headers";
 import { authEmailHtml, authEmailSubject, authEmailText } from "./auth-email";
 import { pool } from "./db";
@@ -49,7 +50,8 @@ export const auth = betterAuth({
   // No cookie cache: a password reset or sign-out must end other sessions right away.
   session: { expiresIn: 60 * 60 * 24 * 30 },
   rateLimit: { enabled: true, window: 60, max: 20 },
-  plugins: [nextCookies()],
+  // admin: roles, banning, sign-outs and deletion for the /admin dashboard (admins only).
+  plugins: [admin(), nextCookies()],
 });
 
 export const googleEnabled = Boolean(google);

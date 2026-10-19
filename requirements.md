@@ -66,6 +66,7 @@ Success means:
 | `/lab` | Small live AI demos built by Abhishek, as proof of skill |
 | `/signin` | Power users: sign in or create an account (noindex) |
 | `/settings` | Power users: power switch, OpenAI key, models, saved conversations (noindex) |
+| `/admin` | Admins: accounts, sign-ups, user management (noindex) |
 
 Every page is server-rendered or static for SEO. AI features hydrate on top.
 
@@ -210,6 +211,16 @@ only that user's ABI runs on it.
   (copied from OpenAI's pricing page 2026-10-19, update when prices change).
 - **Conversations** of signed-in users are saved after every answer and listed in `/settings`
   (Continue reopens one with the agent's memory, Delete removes it).
+
+### 5.6.1 Admin dashboard (built 2026-10-19)
+`/admin`, admins only (Better Auth `admin` plugin: `role`, `banned` columns). Shows accounts,
+verified, with OpenAI key, power on, saved chats, new this week, a 14-day sign-up chart, and every
+user (search, filters: power users, unverified, banned, admins) with sign-in method, status,
+models, chats and last activity. Actions: make or remove admin, sign out everywhere, remove
+their OpenAI key, ban (with reason; they can't sign in) or unban, delete. Admins can't ban, delete
+or demote themselves. It never shows keys or conversation text. "Admin dashboard" link on
+`/settings` for admins. Seed: `npm run db:seed-admin` (test default admin@gmail.com / 1234,
+below the 8-character minimum; set `ADMIN_EMAIL` / `ADMIN_PASSWORD` for production).
 
 ### 5.7 Next: ABI Chat app (planned, not built)
 After the realtime features are proven, grow `/abi` into a full chat application **for signed-in
@@ -423,6 +434,7 @@ v3/
       surge animation, OpenAI models with prices, Realtime voice, saved conversations. Tested
       locally with a fake key (the whole chain up to OpenAI's rejection); needs a real key, Google
       OAuth and production env vars to finish.
+- [x] **Phase 9b - Email verification, forgot password, ABI tools (5.2), admin dashboard (5.6.1).**
 - [ ] **Phase 10 - ABI Chat app (section 5.7):** full chat app on `/abi` for signed-in users.
 
 Run locally: Docker `abi_pg` (port 5434), then `uv run uvicorn app.main:app --port 8000` in
