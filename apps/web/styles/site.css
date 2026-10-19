@@ -608,6 +608,300 @@
   }
 }
 
+/* ---------- Contact ---------- */
+/* Hero: a plane flies the dashed route into the inbox, which bounces as it lands (4s loop). */
+.plane__route {
+  stroke: color-mix(in oklch, var(--brand) 45%, var(--border));
+  stroke-width: 2;
+  stroke-dasharray: 6 8;
+  animation: route-march 1.2s linear infinite;
+}
+@keyframes route-march {
+  to {
+    stroke-dashoffset: -14;
+  }
+}
+.plane__icon {
+  color: var(--brand-text);
+  filter: drop-shadow(0 0 8px color-mix(in oklch, var(--brand) 70%, transparent));
+}
+.plane__inbox {
+  animation: inbox-land 4s var(--motion-ease-out-expo) infinite;
+}
+.plane__count {
+  animation: count-pop 4s var(--motion-ease-out-expo) infinite;
+}
+.plane__from {
+  animation: float 6s ease-in-out infinite;
+}
+@keyframes inbox-land {
+  0%,
+  74% {
+    transform: none;
+  }
+  78% {
+    transform: translateY(5px) scale(0.94);
+  }
+  86% {
+    transform: translateY(-4px) scale(1.04);
+  }
+  94% {
+    transform: none;
+  }
+}
+@keyframes count-pop {
+  0%,
+  75% {
+    opacity: 0;
+    transform: scale(0.4);
+  }
+  82%,
+  95% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+}
+
+/* Intent cards */
+.intent {
+  background: var(--background);
+  color: var(--muted-foreground);
+  transition:
+    border-color 0.3s,
+    background-color 0.3s,
+    color 0.3s,
+    transform 0.4s var(--motion-ease-out-expo);
+}
+.intent:hover {
+  color: var(--foreground);
+  transform: translateY(-2px);
+}
+.intent__icon {
+  background: var(--muted);
+  transition:
+    background-color 0.3s,
+    color 0.3s,
+    transform 0.5s var(--motion-ease-out-expo);
+}
+.intent--on {
+  border-color: color-mix(in oklch, var(--brand) 60%, var(--border));
+  background: color-mix(in oklch, var(--brand) 10%, var(--card));
+  color: var(--foreground);
+  box-shadow: 0 12px 30px -18px var(--brand);
+}
+.intent--on .intent__icon {
+  background: var(--brand);
+  color: var(--on-brand);
+  transform: rotate(-8deg) scale(1.05);
+}
+
+/* Fields: the label sits inside and floats up on focus or once filled; a glow line grows under. */
+.field {
+  position: relative;
+}
+.field__input {
+  display: block;
+  width: 100%;
+  border-radius: 1rem;
+  border: 1px solid var(--input);
+  background: var(--background);
+  padding: 1.45rem 1rem 0.55rem;
+  font-size: 0.9375rem;
+  outline: none;
+  transition: border-color 0.3s;
+}
+.field__input:focus {
+  border-color: color-mix(in oklch, var(--brand) 60%, var(--input));
+}
+.field__input[aria-invalid="true"] {
+  border-color: var(--destructive);
+}
+.field__label {
+  position: absolute;
+  left: 1rem;
+  top: 1rem;
+  font-size: 0.9375rem;
+  color: var(--subtle-foreground);
+  pointer-events: none;
+  transform-origin: left top;
+  transition:
+    transform 0.35s var(--motion-ease-out-expo),
+    color 0.3s;
+}
+.field__input:focus + .field__label,
+.field__input:not(:placeholder-shown) + .field__label {
+  transform: translateY(-0.6rem) scale(0.78);
+  color: var(--brand-text);
+}
+.field__glow {
+  position: absolute;
+  left: 1rem;
+  right: 1rem;
+  top: calc(100% - 1px);
+  height: 2px;
+  border-radius: 9999px;
+  background: var(--brand);
+  box-shadow: 0 0 12px var(--brand);
+  transform: scaleX(0);
+  transition: transform 0.5s var(--motion-ease-out-expo);
+}
+.field:has(.field__input:focus) .field__glow {
+  transform: scaleX(1);
+}
+.field:has(textarea) .field__glow {
+  top: auto;
+  bottom: 0;
+}
+.field:has([aria-invalid="true"]) .field__glow {
+  display: none;
+}
+
+/* Send: the plane takes off on hover; a shine sweeps across. */
+.send {
+  background: var(--primary);
+  color: var(--primary-foreground);
+  box-shadow: 0 12px 30px -14px var(--brand);
+  transition:
+    transform 0.3s var(--motion-ease-out-expo),
+    box-shadow 0.3s;
+}
+.send:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 16px 36px -14px var(--brand);
+}
+.send::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(115deg, transparent 30%, color-mix(in oklch, white 30%, transparent) 50%, transparent 70%);
+  transform: translateX(-120%);
+  transition: transform 0.8s var(--motion-ease-out-expo);
+}
+.send:hover::before {
+  transform: translateX(120%);
+}
+.send:hover .send__plane {
+  animation: take-off 0.7s var(--motion-ease-out-expo);
+}
+.send[data-pending] {
+  opacity: 0.85;
+}
+@keyframes take-off {
+  45% {
+    transform: translate(14px, -14px);
+    opacity: 0;
+  }
+  46% {
+    transform: translate(-14px, 14px);
+    opacity: 0;
+  }
+}
+
+/* Sent: a check draws itself inside a ring of light. */
+.sent__check {
+  background: color-mix(in oklch, var(--success) 16%, var(--card));
+  box-shadow: 0 0 0 8px color-mix(in oklch, var(--success) 8%, transparent);
+  color: var(--success);
+  animation: sent-pop 0.6s var(--motion-ease-out-expo) both;
+}
+.sent__check path {
+  stroke: currentColor;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: check-draw 0.6s var(--motion-ease-out-expo) 0.25s forwards;
+}
+.sent__burst {
+  background: radial-gradient(circle at 50% 30%, color-mix(in oklch, var(--success) 18%, transparent), transparent 55%);
+  animation: burst 1.2s ease-out both;
+}
+@keyframes sent-pop {
+  from {
+    transform: scale(0.5);
+    opacity: 0;
+  }
+}
+@keyframes check-draw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+@keyframes burst {
+  from {
+    transform: scale(0.6);
+    opacity: 0;
+  }
+}
+
+/* Direct ways to reach him */
+.reach,
+.social {
+  transition:
+    border-color 0.3s,
+    transform 0.4s var(--motion-ease-out-expo),
+    color 0.3s;
+}
+.reach:hover,
+.social:hover {
+  border-color: color-mix(in oklch, var(--brand) 45%, var(--border));
+  transform: translateY(-2px);
+  color: var(--foreground);
+}
+.reach__icon {
+  background: color-mix(in oklch, var(--brand) 14%, var(--card));
+  color: var(--brand-text);
+}
+
+/* The week chart: bars grow in from the left, one day after another. */
+.week-bar {
+  background: linear-gradient(90deg, var(--brand), color-mix(in oklch, var(--brand) 60%, var(--brand-2)));
+  transform-origin: left;
+  animation: bar-in 0.9s var(--motion-ease-out-expo) both;
+  animation-delay: calc(0.3s + var(--i) * 70ms);
+}
+@keyframes bar-in {
+  from {
+    transform: scaleX(0);
+  }
+}
+
+/* FAQ: answers open smoothly where the browser supports animating to auto height. */
+.faq {
+  transition: border-color 0.3s;
+}
+.faq[open] {
+  border-color: color-mix(in oklch, var(--brand) 40%, var(--border));
+}
+.faq__plus {
+  transition:
+    transform 0.4s var(--motion-ease-out-expo),
+    background-color 0.3s,
+    color 0.3s;
+}
+.faq[open] .faq__plus {
+  transform: rotate(45deg);
+  background: var(--brand);
+  color: var(--on-brand);
+}
+@supports (interpolate-size: allow-keywords) {
+  .faq {
+    interpolate-size: allow-keywords;
+  }
+  .faq::details-content {
+    height: 0;
+    overflow: clip;
+    transition:
+      height 0.45s var(--motion-ease-out-expo),
+      content-visibility 0.45s allow-discrete;
+  }
+  .faq[open]::details-content {
+    height: auto;
+  }
+}
+
 /* ---------- Toolbox marquee ---------- */
 .marquee-mask {
   -webkit-mask-image: linear-gradient(90deg, transparent, black 8%, black 92%, transparent);
@@ -1300,7 +1594,9 @@
   .rotator__track,
   .interest,
   .orbit *,
-  .orbit__core {
+  .orbit__core,
+  .plane *,
+  .week-bar {
     animation: none !important;
   }
   .marquee-mask,

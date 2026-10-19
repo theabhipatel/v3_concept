@@ -9,6 +9,8 @@ export interface ContactState {
   ok: boolean;
   message: string;
   errors?: Partial<Record<"name" | "email" | "subject" | "message", string>>;
+  /** What the visitor typed, sent back on failure so the form can restore it. */
+  values?: Partial<Record<"name" | "email" | "subject" | "message", string>>;
 }
 
 const schema = z.object({
@@ -32,6 +34,13 @@ function limited(ip: string) {
 }
 
 export async function sendContactMessage(_prev: ContactState | null, form: FormData): Promise<ContactState> {
+  const result = await send(form);
+  if (result.ok) return result;
+  const field = (k: string) => String(form.get(k) ?? "").slice(0, 5000);
+  return { ...result, values: { name: field("name"), email: field("email"), subject: field("subject"), message: field("message") } };
+}
+
+async function send(form: FormData): Promise<ContactState> {
   const parsed = schema.safeParse(Object.fromEntries(form));
   if (!parsed.success) {
     const errors: ContactState["errors"] = {};

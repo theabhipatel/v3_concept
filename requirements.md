@@ -200,7 +200,13 @@ a "portfolio". Replaced "Ask first, built for you" (roles picker, removed). No p
   with the logo inside a full, softly glowing ring in its category color that draws as the card scrolls in (CSS scroll-driven
   animation), a pointer-following tilt and spotlight, and Ask ABI. Filtering animates with
   `ViewTransition`.
-- **Next (planned, not built):** Lab, Contact and Resume in the new reveal style.
+- **Contact (built):** live "Available now / Away" status from the IST schedule; a paper plane
+  flying a dashed route into a bouncing inbox (SVG motion, paused off screen); a compose form
+  with intent cards that fill the subject, floating labels with a glowing underline, a character
+  counter, a send button whose plane takes off, an animated success check, and typed values kept
+  after a failed send (ids stay name/email/subject/message for ABI); direct contact cards; a week
+  chart with a "now" marker; "Draft it with ABI"; FAQ that opens smoothly.
+- **Next (planned, not built):** Lab and Resume in the new reveal style.
 
 ### 6.1 Nudging visitors to try ABI
 - After about 20 seconds or 40% scroll, ABI comments on what the visitor is looking at
