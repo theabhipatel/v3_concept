@@ -212,7 +212,12 @@ a "portfolio". Replaced "Ask first, built for you" (roles picker, removed). No p
   a swinging needle, blocked/safe verdict), 02 "See what ABI reads" (preset queries, fused-rank
   hits that slide in with growing score bars), 03 "Match a job description" (sample role, steps
   that light up, hands off to ABI); then the free-tier stack ABI runs on.
-- **Next (planned, not built):** Resume, Talk to ABI and the 404 page in the new style.
+- **Talk to ABI (built):** a studio. Left: ABI's presence (the robot inside rings and orbiting
+  dots that react to its state: breathing idle, rippling green while listening, a fast orbit
+  while thinking, a pulsing glow while speaking), a live status pill, "I can ___" rotating
+  capabilities, "Start talking" (hands-free live mode) and "Match a job". Right: the same chat as
+  the side panel in a glass card, with animated starter cards on the page layout.
+- **Next (planned, not built):** Resume and the 404 page in the new style.
 
 ### 6.1 Nudging visitors to try ABI
 - After about 20 seconds or 40% scroll, ABI comments on what the visitor is looking at

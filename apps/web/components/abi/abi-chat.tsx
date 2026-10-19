@@ -1,7 +1,7 @@
 "use client";
 
 import { useChat } from "@ai-sdk/react";
-import { ArrowUp, AudioLines, Briefcase, Loader2, Mic, Square, X } from "lucide-react";
+import { ArrowUp, AudioLines, Briefcase, Code2, GitCompare, Loader2, Mic, Sparkles, Square, UserRound, X } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
 import ReactMarkdown from "react-markdown";
@@ -17,10 +17,10 @@ import { chat, send, type AbiData, type AbiMessage } from "./runtime";
 import { declineConsent, grantConsent, toggleListening, useNeedsConsent, voiceSupported } from "./voice";
 
 const STARTERS = [
-  "Show me his AI projects",
-  "What does he do at IBR Infotech?",
-  "Compare Secure Vault and Pushable.ai",
-  "Show me real code from Secure Vault",
+  { q: "Show me his AI projects", icon: Sparkles, tag: "Projects" },
+  { q: "What does he do at IBR Infotech?", icon: UserRound, tag: "Career" },
+  { q: "Compare Secure Vault and Pushable.ai", icon: GitCompare, tag: "Compare" },
+  { q: "Show me real code from Secure Vault", icon: Code2, tag: "Code" },
 ];
 const JD_PREFIX = "Here is a job description. How well does Abhishek fit?\n\n";
 const STAGES = ["Reading your question", "Working on it", "Thinking", "Taking action", "Writing"];
@@ -184,7 +184,7 @@ export function AbiChat({ layout = "panel" }: { layout?: "panel" | "page" }) {
   }, [messages, status]);
 
   useEffect(() => {
-    if (window.matchMedia("(pointer: fine)").matches) inputRef.current?.focus();
+    if (window.matchMedia("(pointer: fine)").matches) inputRef.current?.focus({ preventScroll: true });
   }, []);
 
   useEffect(() => {
@@ -213,11 +213,30 @@ export function AbiChat({ layout = "panel" }: { layout?: "panel" | "page" }) {
               </p>
             </div>
             <div className="grid gap-2 sm:grid-cols-2">
-              {STARTERS.map((q) => (
-                <button key={q} type="button" onClick={() => void send(q)} className="rounded-2xl border bg-card px-4 py-3 text-left text-sm text-muted-foreground shadow-sm transition-colors hover:border-abi/40 hover:text-foreground">
-                  {q}
-                </button>
-              ))}
+              {STARTERS.map((s, i) =>
+                layout === "page" ? (
+                  <button
+                    key={s.q}
+                    type="button"
+                    onClick={() => void send(s.q)}
+                    style={{ "--i": i } as React.CSSProperties}
+                    className="starter group flex flex-col items-start gap-3 rounded-2xl border bg-background/60 p-4 text-left text-sm"
+                  >
+                    <span className="flex w-full items-center gap-2 text-xs font-medium text-subtle-foreground">
+                      <span className="starter__icon grid size-8 place-items-center rounded-xl">
+                        <s.icon className="size-4" aria-hidden />
+                      </span>
+                      {s.tag}
+                      <ArrowUp className="ml-auto size-4 rotate-45 opacity-0 transition-all group-hover:opacity-100" aria-hidden />
+                    </span>
+                    <span className="font-medium text-foreground">{s.q}</span>
+                  </button>
+                ) : (
+                  <button key={s.q} type="button" onClick={() => void send(s.q)} className="rounded-2xl border bg-card px-4 py-3 text-left text-sm text-muted-foreground shadow-sm transition-colors hover:border-abi/40 hover:text-foreground">
+                    {s.q}
+                  </button>
+                ),
+              )}
             </div>
             <button
               type="button"

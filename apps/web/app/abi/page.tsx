@@ -1,51 +1,40 @@
-import { Cpu, Database, MousePointer2, Mic, ShieldCheck, Wand2 } from "lucide-react";
-import { AbiBot } from "@/components/abi/abi-bot";
+import { AbiPresence } from "@/components/abi/abi-presence";
 import { AbiWorkspace } from "@/components/abi/abi-workspace";
 import { pageMetadata } from "@/lib/seo";
 
 export const metadata = pageMetadata("abi");
 
-const CAPABILITIES = [
-  { icon: Database, title: "Grounded answers", text: "Hybrid RAG over Abhishek's real data and GitHub READMEs, with citations." },
-  { icon: MousePointer2, title: "Operates the site", text: "Navigates, filters and highlights while you watch its cursor." },
-  { icon: Wand2, title: "Generative UI", text: "Answers with project cards, comparisons, skill charts and timelines." },
-  { icon: Cpu, title: "Agent tools", text: "Live GitHub stats, real code, job-description match, tailored resume." },
-  { icon: Mic, title: "Voice", text: "Hold Space or the mic to talk. Speech is never stored." },
-  { icon: ShieldCheck, title: "Guardrails", text: "Prompt-injection screening, rate limits and graceful fallbacks." },
-];
+// Talk to ABI: a studio for long conversations. ABI's presence on the left reacts to what it is
+// doing (listening, thinking, speaking); the chat on the right is the same conversation as the
+// side panel, so nothing is lost when visitors move between them.
 
 export default function AbiPage() {
   return (
-    <div className="mx-auto grid min-h-dvh max-w-6xl gap-8 px-4 pb-28 pt-24 sm:px-8 lg:grid-cols-[1fr_300px] lg:pt-28">
-      <section aria-labelledby="abi-title" className="flex min-h-[70dvh] flex-col overflow-hidden rounded-3xl border bg-card shadow-lg lg:h-[calc(100dvh-10rem)]">
-        <header className="flex items-center gap-3 border-b px-5 py-4">
-          <AbiBot state="active" size={40} />
-          <div>
-            <h1 id="abi-title" className="text-lg font-semibold">ABI (Abhi&apos;s Brain Interface)</h1>
-            <p className="text-xs text-muted-foreground">Abhishek&apos;s AI agent. Ask, paste a job description, or talk to it.</p>
+    <div className="relative overflow-hidden">
+      <div data-motion suppressHydrationWarning className="hero__wash pointer-events-none absolute inset-0" aria-hidden />
+      <div className="relative mx-auto grid max-w-6xl gap-8 px-4 pb-20 pt-24 sm:px-8 lg:min-h-dvh lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] lg:items-center lg:gap-12 lg:pt-24">
+        <section aria-labelledby="abi-title" data-intro className="lg:sticky lg:top-24">
+          <AbiPresence />
+        </section>
+        <section
+          aria-label="Conversation with ABI"
+          data-intro="scale"
+          style={{ "--d": 2 } as React.CSSProperties}
+          className="studio flex h-[78dvh] min-h-[32rem] flex-col overflow-hidden rounded-[2rem] border bg-card/85 shadow-lg backdrop-blur lg:h-[calc(100dvh-8rem)]"
+        >
+          <header className="flex items-center gap-3 border-b px-5 py-3.5">
+            <span className="relative flex size-2.5">
+              <span className="absolute inline-flex size-full animate-ping rounded-full bg-success opacity-60 motion-reduce:hidden" />
+              <span className="relative inline-flex size-2.5 rounded-full bg-success" />
+            </span>
+            <p className="text-sm font-semibold">Conversation</p>
+            <p className="ml-auto hidden text-xs text-subtle-foreground sm:block">Same chat as the side panel. Answers cite their sources.</p>
+          </header>
+          <div className="min-h-0 flex-1">
+            <AbiWorkspace />
           </div>
-        </header>
-        <div className="min-h-0 flex-1">
-          <AbiWorkspace />
-        </div>
-      </section>
-      <aside className="space-y-4">
-        <p className="font-medium text-xs text-brand-text">What ABI can do</p>
-        <ul className="space-y-3">
-          {CAPABILITIES.map((c) => (
-            <li key={c.title} className="flex gap-3 rounded-2xl border bg-card p-4">
-              <c.icon className="mt-0.5 size-5 shrink-0 text-abi-text" aria-hidden />
-              <div>
-                <p className="text-sm font-semibold">{c.title}</p>
-                <p className="text-xs text-muted-foreground">{c.text}</p>
-              </div>
-            </li>
-          ))}
-        </ul>
-        <p className="text-xs text-subtle-foreground">
-          Built with LangGraph, FastAPI, Postgres + pgvector, Groq and the Vercel AI SDK.
-        </p>
-      </aside>
+        </section>
+      </div>
     </div>
   );
 }
