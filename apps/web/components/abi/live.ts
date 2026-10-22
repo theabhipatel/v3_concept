@@ -6,7 +6,7 @@
 // listens again. Audio never leaves the browser except that one transcription request.
 import type { MicVAD } from "@ricky0123/vad-web";
 import { abi } from "./abi-store";
-import { chimeEnd, chimeStart } from "./chime";
+import { chimeEnd, chimeStart, preloadChimes } from "./chime";
 import { VAD_ASSET_PATH } from "./vad-assets";
 import { isPowered } from "@/components/power/power-store";
 import { currentVoice, stopSpeaking, transcribeUrl } from "./voice";
@@ -122,6 +122,7 @@ async function onUtterance(samples: Float32Array) {
 
 export async function startLive() {
   if (vad || starting) return;
+  preloadChimes();
   // Power mode: OpenAI Realtime, speech to speech. If it can't start, the normal loop takes over.
   if (isPowered()) {
     const { startRealtime } = await import("./realtime");

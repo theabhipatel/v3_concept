@@ -105,7 +105,7 @@ tools for everything else. Every chat request now also sends the visitor's curre
       system prompt, never kept in history).
 - [x] Share: phone share sheet, or copies the link.
 - [x] QR code: "show QR code" pops up a scannable QR of the current page (the live site URL when running locally); "close it" / "close the QR code" closes it.
-- [x] Voice chimes: an energetic rising chime when a live voice conversation starts listening, a falling one when it ends (Web Audio, no files).
+- [x] Voice chimes: Google Meet style join sound when a live voice conversation starts listening, leave sound when it ends. Free sound files (picked by Abhishek) in `apps/web/public/sounds/abi-voice-start.mp3` and `abi-voice-end.mp3`.
 - [x] Profiles: "open his LinkedIn / GitHub / X / LeetCode"; WhatsApp only when asked directly.
 - [x] Reading comfort: bigger or smaller text (zoom), and calm mode ("reduce motion": animations
       settle instantly, remembered in the browser, applied before first paint).
